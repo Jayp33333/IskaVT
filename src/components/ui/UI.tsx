@@ -3,8 +3,13 @@ import { AvatarPicker } from "./AvatarPicker";
 import { MiniMap } from "../MiniMap";
 import { useState } from "react";
 import useWorld from "../../hooks/useWorld";
-import { IoClose, IoAdd } from "react-icons/io5";
-import { BiMinus } from "react-icons/bi";
+import { IoClose } from "react-icons/io5";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+import { MdOutlineZoomIn, MdOutlineZoomOut } from "react-icons/md";
+import { IoLocation } from "react-icons/io5";
+import { AiOutlineDrag } from "react-icons/ai";
+import { DestinationChecker } from "./DestinationChecker";
+import { PinLine } from "./PinLine";
 
 const DistanceUpdater = () => {
   const characterPosition = useWorld((state: any) => state.characterPosition);
@@ -75,39 +80,50 @@ export const UI = () => {
 
   return (
     <>
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          zIndex: 300,
-        }}
-      >
-        <AvatarPicker />
-      </div>
+      {!showMiniMap && (
+        <div
+          style={{
+            position: "fixed",
+            top: "1.5vh", // scales with screen height
+            left: "1.5vw", // scales with screen width
+            zIndex: 300,
+            display: "flex",
+            flexDirection: "column",
+            gap: "1vh", // responsive spacing
+            // padding: "0.5rem",
+            borderRadius: "12px",
+            backdropFilter: "blur(6px)",
+            background: "rgba(0, 0, 0, 0.35)",
+            // width: "clamp(70px, 14vw, px)", // responsive width
+          }}
+        >
+          <AvatarPicker />
+        </div>
+      )}
 
       <div>
         {/* Overlay minimap */}
         <Canvas
           onClick={handleMapClick}
           style={{
-            position: "absolute",
-            width: showMiniMap ? "auto" : 200,
-            height: showMiniMap ? "auto" : 200,
+            position: "fixed", // use fixed for consistent positioning
+            width: showMiniMap ? "100vw" : "20vw", // responsive width
+            maxWidth: showMiniMap ? "100%" : "200px", // limit max width
+            height: showMiniMap ? "100vh" : "20vw", // responsive height
+            maxHeight: showMiniMap ? "100%" : "200px", // limit max height
             border: "2px solid white",
             borderRadius: showMiniMap ? "0" : "50%",
             zIndex: 100,
-            transition: "0.3s ",
-            inset: showMiniMap ? 0 : "none",
-            top: showMiniMap ? 0 : 10,
-            left: showMiniMap ? 0 : 10,
+            // transition: "all 0.3s ease-in-out",
+            top: showMiniMap ? "0" : "2%",
+            right: showMiniMap ? "0" : "2%",
             overflow: "hidden",
-            touchAction: "none"
+            touchAction: "none",
           }}
-          
         >
           <MiniMap showMiniMap={showMiniMap} />
           <DistanceUpdater />
+          <PinLine/>  
         </Canvas>
 
         {/* Close button (only when zoomed) */}
@@ -117,16 +133,16 @@ export const UI = () => {
               onClick={handleClose}
               style={{
                 position: "absolute",
-                top: 10,
-                right: 10,
+                top: "1em",
+                right: "1em",
                 zIndex: 101,
                 background: "rgba(0,0,0,0.7)",
                 color: "white",
                 border: "none",
-                borderRadius: "8px",
-                padding: "8px 12px",
+                borderRadius: "0.5em",
+                padding: "0.5em 0.8em",
                 cursor: "pointer",
-                fontSize: "14px",
+                fontSize: "1em",
               }}
             >
               <IoClose />
@@ -136,10 +152,12 @@ export const UI = () => {
             <div
               style={{
                 position: "absolute",
-                bottom: 20,
-                left: "50%",
-                transform: "translateX(-50%)",
+                right: '1em',
+                top: '10em',
+                // left: "50%",
+                // transform: "translateX(-50%)",
                 display: "flex",
+                flexDirection: "column",
                 gap: "10px",
                 zIndex: 101,
               }}
@@ -156,7 +174,7 @@ export const UI = () => {
                   fontSize: "16px",
                 }}
               >
-                <IoAdd />
+                <MdOutlineZoomIn/>
               </button>
 
               <button
@@ -171,7 +189,7 @@ export const UI = () => {
                   fontSize: "16px",
                 }}
               >
-                <BiMinus />
+                <MdOutlineZoomOut  />
               </button>
             </div>
           </>
@@ -182,23 +200,27 @@ export const UI = () => {
             onClick={handlePinClick}
             style={{
               position: "absolute",
-              top: 10,
-              left: 10,
+              top: "1em", // responsive spacing from top
+              left: "1em", // responsive spacing from left
               zIndex: 101,
               background: "rgba(0,0,0,0.7)",
               color: "white",
               border: "none",
-              borderRadius: "8px",
-              padding: "8px 12px",
+              borderRadius: "0.5em",
+              padding: "0.5em", // scales with text
               cursor: "pointer",
-              fontSize: "14px",
+              fontSize: "1em",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "4em", // optional: ensure button doesn't shrink too small
             }}
           >
-            <img
-              src={selectPin ? "/textures/pin.png" : "/textures/drag.png"}
-              alt="Pin"
-              style={{ width: 50, height: 50 }}
-            />
+            {selectPin ? <IoLocation size={30} /> : <AiOutlineDrag size={30} />}
+            <p style={{ margin: 0, fontSize: "0.8em", textAlign: "center" }}>
+              {selectPin ? "Pin Mode" : "Drag Mode"}
+            </p>
           </button>
         )}
 
@@ -211,34 +233,43 @@ export const UI = () => {
               transform: "translateX(-50%)",
               width: 220,
               padding: 12,
-              background: "white",
+              background: "rgba(0,0,0,0.7)",
               borderRadius: 8,
               zIndex: 200,
               boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-              color: "black",
+              color: "white",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p style={{ marginBottom: 10 }}>Pin Location Selected</p>
+            <p>Pin Location Selected</p>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsPinConfirmed(true);
-              }}
-              style={{ marginRight: 10 }}
-            >
-              Pin It
-            </button>
+            <div style={{}}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPinConfirmed(true);
+                }}
+                style={{ marginRight: 10, backgroundColor: "#7A0019" }}
+              >
+                Pin It
+              </button>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                teleportToPin();
-              }}
-            >
-              Teleport
-            </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  teleportToPin();
+                }}
+                style={{
+                  backgroundColor: "#7A0019",
+                }}
+              >
+                Teleport
+              </button>
+            </div>
           </div>
         )}
 
@@ -249,24 +280,33 @@ export const UI = () => {
               top: 10,
               left: "50%",
               transform: "translateX(-50%)",
-              width: 250,
-              background: "white",
+              width: 150,
+              background: "rgba(0,0,0,0.7)",
               padding: "12px",
               borderRadius: "8px",
               zIndex: 200,
-              color: "black",
+              color: "white",
               boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <p>Pinned Position:</p>
-            <p>X: {pinPosition.x.toFixed(2)}</p>
-            <p>Z: {pinPosition.z.toFixed(2)}</p>
+            <p style={{ marginBottom: 0 }}>Pinned Position:</p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <p>X: {pinPosition.x.toFixed(2)}</p>
+              <p>Z: {pinPosition.z.toFixed(2)}</p>
+            </div>
 
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setPinPosition(null);
                 setIsPinConfirmed(false);
+              }}
+              style={{
+                background: "#7A0019",
               }}
             >
               Unpin
@@ -280,20 +320,65 @@ export const UI = () => {
         <div
           style={{
             position: "absolute",
-            top: 10,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "white",
-            padding: "12px",
-            borderRadius: "8px",
+            top: "20vh",
+            left: "1vw",
+            padding: "1em",
+            borderRadius: "0.8em",
             zIndex: 200,
-            color: "black",
-            boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+            color: "white",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5em",
+            // Scales based on screen width — prevents huge boxes on small screens
+            maxWidth: "80vw",
+            backdropFilter: "blur(6px)",
+            background: "rgba(0,0,0,0.45)",
+            transition: "all 0.3s ease",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <p>Distance: {distance.toFixed(2)}m</p>
+          <p
+            style={{
+              fontSize: "clamp(0.5rem, 2.5vw, 1rem)", // responsive text
+              margin: 0,
+              fontWeight: 600,
+            }}
+          >
+            Distance
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6em",
+            }}
+          >
+            <FaLocationCrosshairs
+              size={28}
+              style={{
+                width: "clamp(12px, 4vw, 24px)", // responsive icon size
+                height: "clamp(12px, 4vw, 24px)",
+                color: "FFD700",
+              }}
+            />
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: "clamp(0.4rem, 2.2vw, 0.9rem)", // responsive number
+                fontWeight: 500,
+              }}
+            >
+              {distance.toFixed(1)}m
+            </p>
+          </div>
         </div>
       )}
+
+      <DestinationChecker />
+
     </>
   );
 };
