@@ -51,14 +51,14 @@ export const PinLine = () => {
 
   if (!characterPosition || !pinPosition || !isPinConfirmed) return null;
 
-  const points = [
-    new THREE.Vector3(characterPosition.x, characterPosition.y + 0.5, characterPosition.z),
-    new THREE.Vector3(pinPosition.x, pinPosition.y + 0.5, pinPosition.z),
-  ];
+  // const points = [
+  //   new THREE.Vector3(characterPosition.x, characterPosition.y + 0.5, characterPosition.z),
+  //   new THREE.Vector3(pinPosition.x, pinPosition.y + 0.5, pinPosition.z),
+  // ];
 
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({ color: "red", linewidth: 5 });
-  const line = new THREE.Line(geometry, material);
+  // const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  // const material = new THREE.LineBasicMaterial({ color: "red", linewidth: 5 });
+  // const line = new THREE.Line(geometry, material);
 
   return (
     <>
