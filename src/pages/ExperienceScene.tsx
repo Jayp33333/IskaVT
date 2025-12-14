@@ -6,12 +6,14 @@ import { UI } from "../components/ui/UI";
 
 export default function ExperienceScene() {
   return (
-    <Viverse clientId={import.meta.env.VITE_VIVERSE_APP_ID}>
+    <>
       <LoadingOverlay />
       <UI />
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
-        <Experience />
+        <Viverse clientId={import.meta.env.VITE_VIVERSE_APP_ID}>
+          <Experience />
+        </Viverse>
       </Canvas>
-    </Viverse>
+    </>
   );
 }
