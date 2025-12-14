@@ -20,9 +20,9 @@ const tmpVector = new THREE.Vector3();
 
 // Define map boundaries
 const MAP_BOUNDS = {
-  minX: -30,
+  minX: -40,
   maxX: 30,
-  minZ: -50,
+  minZ: -65,
   maxZ: 20,
   minZoom: 5,
   maxZoom: 50,
@@ -267,7 +267,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>
           <Html center>
-            <IoLocationSharp size={40} color="red" />
+            <IoLocationSharp size={24} color="red" />
           </Html>
         </Billboard>
       )}

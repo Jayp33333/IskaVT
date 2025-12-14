@@ -10,6 +10,8 @@ import { IoLocation } from "react-icons/io5";
 import { AiOutlineDrag } from "react-icons/ai";
 import { DestinationChecker } from "./DestinationChecker";
 import { PinLine } from "./PinLine";
+import { MiniMapEdgePin } from "./MiniMapEdgePin";
+  // import { TbArrowBigUpFilled } from "react-icons/tb";
 
 const DistanceUpdater = () => {
   const characterPosition = useWorld((state: any) => state.characterPosition);
@@ -39,6 +41,7 @@ export const UI = () => {
   );
   const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
   const setCurrentZoom = useWorld((state: any) => state.setCurrentZoom);
+  const cameraRotation = useWorld((state: any) => state.cameraRotation);
 
   const distance = useWorld((state: any) => state.distance);
 
@@ -80,6 +83,8 @@ export const UI = () => {
 
   return (
     <>
+    {!showMiniMap && <MiniMapEdgePin radius={90} />}
+
       {!showMiniMap && (
         <div
           style={{
@@ -100,6 +105,43 @@ export const UI = () => {
           <AvatarPicker />
         </div>
       )}
+
+      {/* {!showMiniMap && (
+        <div
+          style={{
+            position: "fixed",
+            top: "90px",
+            right: "110px",
+            width: "50px",
+            height: "50px",
+            zIndex: 500,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(255,255,255,0.8)",
+              borderRadius: "50%",
+              boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+            }}
+          >
+            <TbArrowBigUpFilled
+              size={30}
+              color="red"
+              style={{
+                transform: `rotate(${-cameraRotation.y}rad)`,
+                transition: "transform 0.1s linear",
+              }}
+            />
+          </div>
+        </div>
+      )} */}
 
       <div>
         {/* Overlay minimap */}
@@ -123,8 +165,31 @@ export const UI = () => {
         >
           <MiniMap showMiniMap={showMiniMap} />
           <DistanceUpdater />
-          <PinLine/>  
+          <PinLine />
         </Canvas>
+
+        {!showMiniMap && (
+          <div
+            style={{
+              position: "fixed",
+              width: "20vw",
+              maxWidth: "200px",
+              height: "20vw",
+              maxHeight: "200px",
+              zIndex: 101,
+              top: "2%",
+              right: "2%",
+              overflow: "hidden",
+              touchAction: "none",
+              background: "rgba(255, 255, 255, 0.3)", // semi-transparent yellow
+              borderRadius: "50%", // makes it circular
+              clipPath: "polygon(50% 50%, 25% 0, 75% 0)", // pie slice
+              border: "2px solid white",
+              transform: `rotate(${-cameraRotation.y}rad)`,
+              transition: "transform 0.1s linear",
+            }}
+          ></div>
+        )}
 
         {/* Close button (only when zoomed) */}
         {showMiniMap && (
@@ -152,8 +217,8 @@ export const UI = () => {
             <div
               style={{
                 position: "absolute",
-                right: '1em',
-                top: '10em',
+                right: "1em",
+                top: "10em",
                 // left: "50%",
                 // transform: "translateX(-50%)",
                 display: "flex",
@@ -174,7 +239,7 @@ export const UI = () => {
                   fontSize: "16px",
                 }}
               >
-                <MdOutlineZoomIn/>
+                <MdOutlineZoomIn />
               </button>
 
               <button
@@ -189,7 +254,7 @@ export const UI = () => {
                   fontSize: "16px",
                 }}
               >
-                <MdOutlineZoomOut  />
+                <MdOutlineZoomOut />
               </button>
             </div>
           </>
@@ -245,7 +310,7 @@ export const UI = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p>Pin Location Selected</p>
+            
 
             <div style={{}}>
               <button
@@ -378,7 +443,6 @@ export const UI = () => {
       )}
 
       <DestinationChecker />
-
     </>
   );
 };

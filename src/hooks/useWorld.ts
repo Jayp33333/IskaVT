@@ -6,11 +6,12 @@ const useWorld = create((set) => ({
   avatar:  SAMPLE_AVATAR_LIST[0],
   characterPosition: new Vector3(0, 0, 0),
   pinPosition: null,
-  selectPin: false,
+  selectPin: true,
   isPinConfirmed: false,
   isPinTeleported: false,
   distance: 0,
   currentZoom: 12,
+  cameraRotation: new Vector3(0, 0, 0), 
 
   setAvatar: (avatar: any) => set({ avatar }),
   setCharacterPosition: (characterPosition: Vector3) => set({ characterPosition}),
@@ -26,6 +27,7 @@ const useWorld = create((set) => ({
       Math.min(50, state.currentZoom * zoomChange)
     )
   })),
+  setCameraRotation: (cameraRotation: Vector3) => set({ cameraRotation }),
 
 }))
 
