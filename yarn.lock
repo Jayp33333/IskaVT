@@ -1841,6 +1841,11 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
+lucide-react@^0.561.0:
+  version "0.561.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.561.0.tgz#8eb440395cf01b27da9c65cb014eb2c71f77e656"
+  integrity sha512-Y59gMY38tl4/i0qewcqohPdEbieBy7SovpBL9IFebhc2mDd8x4PZSOsiFRkpPcOq6bj1r/mjH/Rk73gSlIJP2A==
+
 maath@^0.10.8:
   version "0.10.8"
   resolved "https://registry.yarnpkg.com/maath/-/maath-0.10.8.tgz#cf647544430141bf6982da6e878abb6c4b804e24"

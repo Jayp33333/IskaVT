@@ -7,7 +7,7 @@ import {
 import useWorld from "../hooks/useWorld";
 import { Suspense, useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { PinLine } from "../components/ui/PinLine";
+import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 
 const Experience = () => {
   const avatar = useWorld((state: any) => state.avatar);
@@ -116,10 +116,10 @@ const Experience = () => {
 
       <BvhPhysicsBody>
         <Gltf
-          src="./models/de_dust_2_with_real_light.glb"
-          // src="./models/PUPCampus.glb"
-          position={[0, 3, 0]}
-          // position={[-30, 0.1, 90]}
+          // src="./models/de_dust_2_with_real_light.glb"
+          src="./models/PUPCampus.glb"
+          // position={[0, 3, 0]}
+          position={[-30, 0.1, 90]}
           castShadow
           receiveShadow
         />
@@ -151,8 +151,8 @@ const Experience = () => {
             <meshStandardMaterial color="red" transparent opacity={0.5} />
           </mesh>
 
-          {/* Pin line */}
-          <PinLine />
+          {/* Arrow Guide */}
+          <ArrowGuide />
         </>
       )}
     </>
