@@ -1,13 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import { Hero } from "../components/Home/Hero";
 import { Features } from "../components/Home/Features";
 
 export default function HomePage() {
-  const navigate = useNavigate();
-
-  function onStart() {
-    navigate("/experience");
-  }
   return (
     <div
       style={{
@@ -23,7 +17,6 @@ export default function HomePage() {
       <Features />
 
       {/* About Section */}
-      
     </div>
   );
 }
