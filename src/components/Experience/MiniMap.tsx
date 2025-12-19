@@ -11,7 +11,6 @@ import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import useWorld from "../../hooks/useWorld";
 import { IoLocationSharp } from "react-icons/io5";
-import { ArrowGuide } from "./ui/ArrowGuide";
 
 interface MiniMapProps {
   showMiniMap: boolean;
