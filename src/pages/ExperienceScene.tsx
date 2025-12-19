@@ -16,13 +16,8 @@ export default function ExperienceScene() {
 
   return (
     <>
-      {/* Loading Overlay */}
       <LoadingOverlay onFinished={playWelcomeAudio} />
-
-      {/* UI */}
       <UI />
-
-      {/* 3D Scene */}
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
         <BvhPhysicsWorld>
           <Experience />
