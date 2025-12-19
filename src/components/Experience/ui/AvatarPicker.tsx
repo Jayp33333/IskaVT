@@ -5,7 +5,6 @@ import { SAMPLE_AVATAR_LIST } from "../../../sampleData";
 
 export const AvatarPicker = () => {
   const avatarList = useViverseAvatarList() || SAMPLE_AVATAR_LIST;
-  
 
   const currentAvatar = useWorld((state: any) => state.avatar);
   const setAvatar = useWorld((state: any) => state.setAvatar);
@@ -13,70 +12,45 @@ export const AvatarPicker = () => {
   const [openMenu, setOpenMenu] = useState(false);
 
   return (
-    <div style={{ position: "relative" }}>
-      {/* CURRENT AVATAR BUTTON */}
-      <div
-        style={{
-          width: "64px",
-          height: "64px",
-          borderRadius: "10px",
-          border: "2px solid white",
-          overflow: "hidden",
-          cursor: "pointer",
-        }}
+    <div className="relative">
+      {/* Current Avatar Button */}
+      <button
+        className="w-16 h-16 rounded-lg border-2 border-white overflow-hidden cursor-pointer focus:outline-none"
         onClick={() => setOpenMenu(!openMenu)}
       >
         <img
           src={currentAvatar.headIconUrl}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          alt="Current Avatar"
+          className="w-full h-full object-cover"
         />
-      </div>
+      </button>
 
-      {/* AVATAR LIST PANEL */}
+      {/* Avatar List Panel */}
       {openMenu && (
-        <div
-          style={{
-            position: "absolute",
-            top: "75px",
-            left: 0,
-            background: "rgba(0,0,0,0.85)",
-            padding: "10px",
-            borderRadius: "10px",
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 64px)",
-            gap: "10px",
-            zIndex: 999,
-          }}
-        >
-          {avatarList.map((a) => (
-            <div
-              key={a.id}
-              onClick={() => {
-                setAvatar(a);
-                setOpenMenu(false);
-              }}
-              style={{
-                width: "64px",
-                height: "64px",
-                cursor: "pointer",
-                borderRadius: "8px",
-                overflow: "hidden",
-                border:
-                  currentAvatar.id === a.id
-                    ? "2px solid #FFD700"
-                    : "1px solid #555",
-              }}
-            >
-              <img
-                src={a.headIconUrl}
-                style={{ width: "100%", height: "100%" }}
-              />
-            </div>
-          ))}
+        <div className="absolute top-[75px] left-0 z-999 bg-black/85 p-2.5 rounded-lg grid grid-cols-2 shadow-lg" style={{ gridTemplateColumns: "repeat(2, 64px)", gap: "10px" }}>
+          {avatarList.map((a) => {
+            const isSelected = currentAvatar.id === a.id;
+            return (
+              <button
+                key={a.id}
+                onClick={() => {
+                  setAvatar(a);
+                  setOpenMenu(false);
+                }}
+                className={`w-16 h-16 rounded-md overflow-hidden border transition-colors duration-200 ${
+                  isSelected
+                    ? "border-yellow-400"
+                    : "border-gray-600 hover:border-white"
+                }`}
+              >
+                <img
+                  src={a.headIconUrl}
+                  alt={"Avatar"}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

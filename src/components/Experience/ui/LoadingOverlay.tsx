@@ -1,8 +1,9 @@
 import { useProgress } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
-export default function LoadingOverlay() {
+export default function LoadingOverlay({ onFinished }: { onFinished: () => void }) {
   const { progress } = useProgress();
+  const [ done, setDone ] = useState(false);
   const [visible, setVisible] = useState(true);
   const [opacity, setOpacity] = useState(1);
   const [messageIndex, setMessageIndex] = useState(0);
@@ -25,15 +26,17 @@ export default function LoadingOverlay() {
   }, []);
 
   useEffect(() => {
-    if (progress === 100) {
+    if (progress === 100 && !done) {
+      const welcomeMessage = setTimeout(() => {onFinished(), setDone(true)}, 1000);
       const fadeTimeout = setTimeout(() => setOpacity(0), 300);
       const hideTimeout = setTimeout(() => setVisible(false), 800);
       return () => {
+        clearTimeout(welcomeMessage);
         clearTimeout(fadeTimeout);
         clearTimeout(hideTimeout);
       };
     }
-  }, [progress]);
+  }, [progress, done, onFinished]);
 
   if (!visible) return null;
 

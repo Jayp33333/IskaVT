@@ -1,25 +1,30 @@
-  import { useEffect, useState } from "react";
-  import { IoLocationSharp } from "react-icons/io5";
-  import useWorld from "../../../hooks/useWorld";
+import { useEffect, useRef, useState } from "react";
+import { IoLocationSharp } from "react-icons/io5";
+import useWorld from "../../../hooks/useWorld";
 
-export const MiniMapEdgePin = ({ radius = 90 }) => {
+export const MiniMapEdgePin = () => {
   const character = useWorld((s: any) => s.characterPosition);
   const pin = useWorld((s: any) => s.pinPosition);
   const isPinConfirmed = useWorld((s: any) => s.isPinConfirmed);
   const cameraRotation = useWorld((s: any) => s.cameraRotation);
 
-  const [pos, setPos] = useState({ x: 10, y: 50, angle: 90 });
-  const threshold = 5.2; // hide edge pin when closer than 10m
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0, angle: 0 });
+
+  const threshold = 11.3;
 
   useEffect(() => {
-    if (!character || !pin || !isPinConfirmed) return;
+    if (!character || !pin || !isPinConfirmed || !mapRef.current) return;
 
     const dx = pin.x - character.x;
     const dz = pin.z - character.z;
     const distance = Math.sqrt(dx * dx + dz * dz);
 
-    // hide edge pin if character is close
     if (distance < threshold) return;
+
+    const rect = mapRef.current.getBoundingClientRect();
+
+    const radius = Math.min(rect.width, rect.height) / 2 - 14;
 
     const angleToPin = Math.atan2(dz, dx);
 
@@ -31,9 +36,8 @@ export const MiniMapEdgePin = ({ radius = 90 }) => {
       y,
       angle: angleToPin - cameraRotation.y,
     });
-  }, [character, pin, isPinConfirmed, cameraRotation, radius]);
+  }, [character, pin, isPinConfirmed, cameraRotation]);
 
-  // hide pin if too close
   if (!pin || !isPinConfirmed) return null;
 
   const dx = pin.x - (character?.x || 0);
@@ -43,28 +47,14 @@ export const MiniMapEdgePin = ({ radius = 90 }) => {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        width: "20vw",
-        maxWidth: "200px",
-        height: "20vw",
-        maxHeight: "200px",
-        top: "2%",
-        right: "2%",
-        pointerEvents: "none",
-        zIndex: 500,
-      }}
+      ref={mapRef}
+      className="fixed top-[2%] right-[2%] z-500 w-[30vh] max-w-[200px] h-[30vh] max-h-[200px] pointer-events-none rounded-full"
     >
       <IoLocationSharp
+        className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-red-600 drop-shadow-lg"
         style={{
-          position: "absolute",
           left: `calc(50% + ${pos.x}px)`,
           top: `calc(50% - ${pos.y}px)`,
-          width: "24px",
-          height: "24px",
-          transform: `translate(-50%, -50%)`,
-          filter: "drop-shadow(0 0 5px black)",
-          color: "red",
         }}
       />
     </div>

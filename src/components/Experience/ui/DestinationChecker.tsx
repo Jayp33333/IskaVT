@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import useWorld from "../../../hooks/useWorld";
+import { audioManager } from "../../../services/AudioManager";
 
 export const DestinationChecker = () => {
   const characterPosition = useWorld((state: any) => state.characterPosition);
   const pinPosition = useWorld((state: any) => state.pinPosition);
   const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
   const isPinTeleported = useWorld((state: any) => state.isPinTeleported);
-  const [showDestinationText, setShowDestinationText] = useState(false);
   const setIsPinConfirmed = useWorld((state: any) => state.setIsPinConfirmed);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
+
+  const [showDestinationText, setShowDestinationText] = useState(false);
 
   useEffect(() => {
     if (!isPinConfirmed || !characterPosition || !pinPosition) return;
@@ -21,6 +23,7 @@ export const DestinationChecker = () => {
         setPinPosition(null);
         setIsPinConfirmed(false);
         setShowDestinationText(true);
+        audioManager.play("arrived");
         clearInterval(interval);
       }
     }, 100);
@@ -31,36 +34,13 @@ export const DestinationChecker = () => {
   if (!showDestinationText) return null;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "10vh",
-        left: "50%",
-        transform: "translateX(-50%)",
-        background: "rgba(0,0,0,0.75)",
-        padding: "1em 1.5em",
-        borderRadius: "0.8em",
-        color: "white",
-        fontSize: "clamp(1em, 2vw, 1.2em)", // responsive font
-        fontWeight: "bold",
-        zIndex: 500,
-        display: "flex",
-        alignItems: "center",
-        gap: "0.8em",
-        maxWidth: "90vw", // prevent overflow on small screens
-        wordBreak: "break-word", // handle long text
-      }}
-    >
+    <div className="fixed top-[10vh] left-1/2 -translate-x-1/2 z-500
+                    bg-black/75 text-white font-bold flex items-center gap-3 
+                    px-6 py-4 rounded-lg max-w-[90vw] wrap-break-word text-[clamp(1em,2vw,1.2em)]">
       <span>You have reached your destination!</span>
       <button
         onClick={() => setShowDestinationText(false)}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "white",
-          fontSize: "1.2em",
-          cursor: "pointer",
-        }}
+        className="text-white bg-transparent text-[1.2em] cursor-pointer"
       >
         ✖
       </button>

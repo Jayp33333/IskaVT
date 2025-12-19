@@ -10,7 +10,7 @@ const useWorld = create((set) => ({
   isPinConfirmed: false,
   isPinTeleported: false,
   distance: 0,
-  currentZoom: 12,
+  currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0), 
 
   setAvatar: (avatar: any) => set({ avatar }),
@@ -23,8 +23,8 @@ const useWorld = create((set) => ({
   setCurrentZoom: (zoomChange: number) =>
   set((state: any) => ({
     currentZoom: Math.max(
-      5,
-      Math.min(50, state.currentZoom * zoomChange)
+      19,
+      Math.min(100, state.currentZoom * zoomChange)
     )
   })),
   setCameraRotation: (cameraRotation: Vector3) => set({ cameraRotation }),

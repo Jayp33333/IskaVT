@@ -21,6 +21,7 @@ const Experience = () => {
   const isPinTeleported = useWorld((state: any) => state.isPinTeleported);
   const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
+  const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
 
   const teleportToPin = () => {
     if (characterRef.current && pinPosition && isPinTeleported) {
@@ -119,7 +120,7 @@ const Experience = () => {
           // src="./models/de_dust_2_with_real_light.glb"
           src="./models/PUPCampus.glb"
           // position={[0, 3, 0]}
-          position={[-30, 0.1, 90]}
+          position={[10, 0.1, 0]}
           castShadow
           receiveShadow
         />
@@ -131,12 +132,12 @@ const Experience = () => {
       </BvhPhysicsBody>
 
       {/* Pin mesh */}
-      {pinPosition && (
+      {pinPosition && isPinConfirmed && (
         <>
           <Gltf
             ref={pinRef}
             src="./models/location.glb"
-            position={[pinPosition.x, 5, pinPosition.z]}
+            position={[pinPosition.x, 3, pinPosition.z]}
             scale={0.5}
           >
             <meshStandardMaterial emissive="red" emissiveIntensity={0.8} />
@@ -144,7 +145,7 @@ const Experience = () => {
 
           {/* Circle on the floor */}
           <mesh
-            position={[pinPosition.x, 3.1, pinPosition.z]} // slightly above ground
+            position={[pinPosition.x, pinPosition.y, pinPosition.z]} // slightly above ground
             rotation={[-Math.PI / 2, 0, 0]}
           >
             <circleGeometry args={[1, 64]} />

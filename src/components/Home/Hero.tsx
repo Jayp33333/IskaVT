@@ -40,17 +40,25 @@ export function Hero() {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
-            <button
+                  <button
               onClick={() => navigate("/experience")}
-              className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl
-             bg-white text-red-900 font-semibold
-             hover:bg-blue-50 transition-all cursor-pointer"
+              className="relative bg-[#808080] rounded-xl  cursor-pointer inline-flex items-center gap-2 group"
             >
-              Start Virtual Tour
-              <BsArrowRight
-                className="w-4 h-4 transform transition-transform duration-300 ease-in-out
-               group-hover:translate-x-2"
-              />
+              <span
+                className=" bg-white text-red-900 font-semibold rounded-xl
+               px-6 py-3
+               transform -translate-y-1
+               transition-transform duration-100 ease-in-out
+               hover:bg-white/90
+               active:translate-y-0
+               inline-flex items-center gap-2"
+              >
+                Start Virtual Tour
+                <BsArrowRight
+                  className="w-4 h-4 transform transition-transform duration-300 ease-in-out
+                 group-hover:translate-x-2"
+                />
+              </span>
             </button>
 
             <button

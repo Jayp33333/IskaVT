@@ -11,6 +11,7 @@ import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import useWorld from "../../hooks/useWorld";
 import { IoLocationSharp } from "react-icons/io5";
+import { ArrowGuide } from "./ui/ArrowGuide";
 
 interface MiniMapProps {
   showMiniMap: boolean;
@@ -20,16 +21,16 @@ const tmpVector = new THREE.Vector3();
 
 // Define map boundaries
 const MAP_BOUNDS = {
-  minX: -40,
-  maxX: 30,
-  minZ: -65,
+  minX: -70,
+  maxX: 90,
+  minZ: -145,
   maxZ: 20,
-  minZoom: 5,
-  maxZoom: 50,
+  minZoom: 10,
+  maxZoom: 100,
 };
 
 export function MiniMap({ showMiniMap }: MiniMapProps) {
-  const defaultZoom = 12;
+  const defaultZoom = 24;
 
   const characterPosition = useWorld(
     (state: any) => state.characterPosition
@@ -59,8 +60,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
   const { camera, gl, raycaster, mouse } = useThree();
 
   const profileTexture = useTexture("/images/iska-profile.png");
-  const mapModel = "./models/de_dust_2_with_real_light.glb";
-  // const mapModel = "./models/PUPCampus.glb";
+  const mapModel = "./models/PUPCampus.glb";
 
   // Initialize camera
   useEffect(() => {
@@ -187,7 +187,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
             MAP_BOUNDS.minX,
             MAP_BOUNDS.maxX
           ),
-          2,
+          0.2,
           THREE.MathUtils.clamp(
             intersectionPoint.z,
             MAP_BOUNDS.minZ,
@@ -262,8 +262,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       <ambientLight intensity={0.8} />
       <Environment preset="city" />
       <PerspectiveCamera makeDefault position={[0, currentZoom, 0]} />
-      <Gltf position={[0, 0.1, 0]} src={mapModel} />
-      {/* <Gltf position={[0, 0.1, 0]} src={mapModel} scale={0.5} /> */}
+      <Gltf position={[10, 0.1, 0]} src={mapModel} />
 
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>
@@ -275,7 +274,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
 
       <group ref={character}>
         <mesh renderOrder={1} rotation-x={-Math.PI / 2}>
-          <circleGeometry args={[0.6, 32]} />
+          <circleGeometry args={[1.5, 32]} />
           <meshBasicMaterial
             color="#ffffff"
             depthTest={false}
@@ -283,7 +282,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
           />
         </mesh>
         <mesh position-y={-0.01} rotation-x={-Math.PI / 2}>
-          <circleGeometry args={[0.65, 32]} />
+          <circleGeometry args={[1.6, 32]} />
           <meshBasicMaterial color="red" depthTest={false} />
         </mesh>
       </group>
