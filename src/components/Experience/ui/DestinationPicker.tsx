@@ -20,6 +20,7 @@ export const DestinationPicker = () => {
     [query]
   );
 
+  // Handle Select
   const handleSelect = (destination: any) => {
     setPinPosition(destination.position.clone());
     setIsPinConfirmed(true);
