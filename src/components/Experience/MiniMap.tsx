@@ -18,7 +18,7 @@ interface MiniMapProps {
 
 const tmpVector = new THREE.Vector3();
 
-// Define map boundaries
+// Map boundaries
 const MAP_BOUNDS = {
   minX: -70,
   maxX: 90,
@@ -61,7 +61,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
   const profileTexture = useTexture("/images/iska-profile.png");
   const mapModel = "./models/PUPCampus.glb";
 
-  // Initialize camera
+  // --- Camera updates ---
   useEffect(() => {
     if (!characterPosition) return;
 
@@ -92,7 +92,6 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     }
   }, [showMiniMap, characterPosition]);
 
-  // Update camera height on zoom change
   useEffect(() => {
     if (showMiniMap) {
       setCameraPosition((prev) => {
@@ -107,7 +106,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     }
   }, [currentZoom, showMiniMap]);
 
-  // Drag handlers
+  // --- Dragging handlers ---
   const handlePointerDown = (event: PointerEvent) => {
     if (!showMiniMap) return;
     event.stopPropagation();
@@ -121,7 +120,6 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
 
     const deltaX = event.clientX - dragStart.x;
     const deltaY = event.clientY - dragStart.y;
-
     const dragSensitivity = 0.02 * (currentZoom / defaultZoom);
 
     setCameraPosition((prev) => {
@@ -129,17 +127,8 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       newPos.x -= deltaX * dragSensitivity;
       newPos.z -= deltaY * dragSensitivity;
 
-      // Clamp within map boundaries
-      newPos.x = THREE.MathUtils.clamp(
-        newPos.x,
-        MAP_BOUNDS.minX,
-        MAP_BOUNDS.maxX
-      );
-      newPos.z = THREE.MathUtils.clamp(
-        newPos.z,
-        MAP_BOUNDS.minZ,
-        MAP_BOUNDS.maxZ
-      );
+      newPos.x = THREE.MathUtils.clamp(newPos.x, MAP_BOUNDS.minX, MAP_BOUNDS.maxX);
+      newPos.z = THREE.MathUtils.clamp(newPos.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ);
 
       return newPos;
     });
@@ -162,6 +151,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     if (showMiniMap) gl.domElement.style.cursor = "grab";
   };
 
+  // --- Pin placement ---
   const handleMapClick = (event: PointerEvent) => {
     if (!showMiniMap) return;
     event.stopPropagation();
@@ -181,23 +171,15 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     if (raycaster.ray.intersectPlane(groundPlane, intersectionPoint)) {
       setPinPosition(
         new THREE.Vector3(
-          THREE.MathUtils.clamp(
-            intersectionPoint.x,
-            MAP_BOUNDS.minX,
-            MAP_BOUNDS.maxX
-          ),
+          THREE.MathUtils.clamp(intersectionPoint.x, MAP_BOUNDS.minX, MAP_BOUNDS.maxX),
           0.2,
-          THREE.MathUtils.clamp(
-            intersectionPoint.z,
-            MAP_BOUNDS.minZ,
-            MAP_BOUNDS.maxZ
-          )
+          THREE.MathUtils.clamp(intersectionPoint.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ)
         )
       );
     }
   };
 
-  // Zoom
+  // --- Zoom ---
   const handleWheel = (event: WheelEvent) => {
     if (!showMiniMap) return;
     event.preventDefault();
@@ -229,6 +211,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     };
   }, [showMiniMap, gl, isDragging, dragStart]);
 
+  // --- Frame updates ---
   useFrame(() => {
     if (showMiniMap) {
       camera.position.copy(cameraPosition);
@@ -236,17 +219,9 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       camera.lookAt(tmpVector);
       camera.rotation.z = 0;
     } else if (characterPosition) {
-      tmpVector.set(
-        characterPosition.x,
-        characterPosition.y + defaultZoom,
-        characterPosition.z
-      );
+      tmpVector.set(characterPosition.x, characterPosition.y + defaultZoom, characterPosition.z);
       camera.position.copy(tmpVector);
-      tmpVector.set(
-        characterPosition.x,
-        characterPosition.y,
-        characterPosition.z
-      );
+      tmpVector.set(characterPosition.x, characterPosition.y, characterPosition.z);
       camera.lookAt(tmpVector);
     }
 
@@ -263,10 +238,14 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       <PerspectiveCamera makeDefault position={[0, currentZoom, 0]} />
       <Gltf position={[10, 0.1, 0]} src={mapModel} />
 
+      {/* --- Pin Marker: always rendered if exists --- */}
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>
           <Html center>
-            <IoLocationSharp size={24} color="red" />
+            <IoLocationSharp
+              size={24}
+              color={isPinConfirmed ? "red" : "orange"} // unconfirmed = orange
+            />
           </Html>
         </Billboard>
       )}
@@ -274,11 +253,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       <group ref={character}>
         <mesh renderOrder={1} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.5, 32]} />
-          <meshBasicMaterial
-            color="#ffffff"
-            depthTest={false}
-            map={profileTexture}
-          />
+          <meshBasicMaterial color="#ffffff" depthTest={false} map={profileTexture} />
         </mesh>
         <mesh position-y={-0.01} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.6, 32]} />

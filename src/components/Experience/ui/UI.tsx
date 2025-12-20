@@ -160,7 +160,7 @@ export const UI = () => {
                      rounded-lg bg-black/70 p-3 text-white shadow-lg flex gap-2 justify-center"
         >
           <button
-            onClick={() => setIsPinConfirmed(true)}
+            onClick={() => { setIsPinConfirmed(true), setShowMiniMap(false); }}
             className="rounded-md bg-[#7A0019] px-3 py-1"
           >
             Pin It

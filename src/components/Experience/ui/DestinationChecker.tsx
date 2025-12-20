@@ -11,11 +11,12 @@ export const DestinationChecker = () => {
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
 
   const [showDestinationText, setShowDestinationText] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     if (!isPinConfirmed || !characterPosition || !pinPosition) return;
 
-    const THRESHOLD = 1.5; // meters
+    const THRESHOLD = 1.5; 
     const interval = setInterval(() => {
       const distance = characterPosition.distanceTo(pinPosition);
 
@@ -24,6 +25,12 @@ export const DestinationChecker = () => {
         setIsPinConfirmed(false);
         setShowDestinationText(true);
         audioManager.play("arrived");
+        setTimeout(() => setFadeOut(true), 3000);
+        setTimeout(() => {
+          setShowDestinationText(false);
+          setFadeOut(false);
+        }, 3500);
+
         clearInterval(interval);
       }
     }, 100);
@@ -34,16 +41,15 @@ export const DestinationChecker = () => {
   if (!showDestinationText) return null;
 
   return (
-    <div className="fixed top-[10vh] left-1/2 -translate-x-1/2 z-500
-                    bg-black/75 text-white font-bold flex items-center gap-3 
-                    px-6 py-4 rounded-lg max-w-[90vw] wrap-break-word text-[clamp(1em,2vw,1.2em)]">
+    <div
+      className={`fixed top-[10vh] left-1/2 -translate-x-1/2 z-500
+                  bg-black/75 text-white font-bold flex items-center gap-3 
+                  px-6 py-4 rounded-lg max-w-[90vw] wrap-break-word
+                  text-[clamp(1em,2vw,1.2em)]
+                  transition-opacity duration-500
+                  ${fadeOut ? "opacity-0" : "opacity-100"}`}
+    >
       <span>You have reached your destination!</span>
-      <button
-        onClick={() => setShowDestinationText(false)}
-        className="text-white bg-transparent text-[1.2em] cursor-pointer"
-      >
-        ✖
-      </button>
     </div>
   );
 };
