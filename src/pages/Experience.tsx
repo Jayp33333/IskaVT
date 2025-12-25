@@ -3,6 +3,7 @@ import {
   SimpleCharacter,
   BvhPhysicsBody,
   PrototypeBox,
+  usePointerLockRotateZoomActionBindings,
 } from "@react-three/viverse";
 import useWorld from "../hooks/useWorld";
 import { Suspense, useEffect, useRef } from "react";
@@ -10,6 +11,7 @@ import { useFrame } from "@react-three/fiber";
 import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 
 const Experience = () => {
+  usePointerLockRotateZoomActionBindings({ lockOnClick: true });
   const avatar = useWorld((state: any) => state.avatar);
   const setCharacterPosition = useWorld(
     (state: any) => state.setCharacterPosition
@@ -111,6 +113,7 @@ const Experience = () => {
           actionBindingOptions={{
             screenJoystickDeadZonePx: 10,
             screenJoystickRunDistancePx: 100,
+
           }}
         />
       </Suspense>
