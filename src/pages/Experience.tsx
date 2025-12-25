@@ -110,11 +110,6 @@ const Experience = () => {
                 }
               : undefined
           }
-          actionBindingOptions={{
-            screenJoystickDeadZonePx: 10,
-            screenJoystickRunDistancePx: 100,
-
-          }}
         />
       </Suspense>
 

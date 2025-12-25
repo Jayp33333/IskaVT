@@ -6,37 +6,37 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
   ? [
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/408f3f59f9c088b2e5c1634ffb35fec3ad18ca294ef2e5eb6f418409a3f239ec294c/files?filetype=headicon",
-        id: 184175,
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=headicon",
+        id: 187571,
         vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/408f3f59f9c088b2e5c1634ffb35fec3ad18ca294ef2e5eb6f418409a3f239ec294c/files?filetype=model&lod=original",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=model&lod=original",
       },
 
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/5c6b8578078c8e94f6361db9add7f541556c3dafdf3ff70c5fc99cbdc90116b865c1/files?filetype=headicon",
-        id: 184207,
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=headicon",
+        id: 187572,
         vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/5c6b8578078c8e94f6361db9add7f541556c3dafdf3ff70c5fc99cbdc90116b865c1/files?filetype=model&lod=original",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=model&lod=original",
       },
     ]
   : [
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/408f3f59f9c088b2e5c1634ffb35fec3ad18ca294ef2e5eb6f418409a3f239ec294c/files?filetype=headicon",
-        id: 184175,
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=headicon",
+        id: 187571,
         vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/408f3f59f9c088b2e5c1634ffb35fec3ad18ca294ef2e5eb6f418409a3f239ec294c/files?filetype=model&lod=original",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=model&lod=original",
       },
+
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/5c6b8578078c8e94f6361db9add7f541556c3dafdf3ff70c5fc99cbdc90116b865c1/files?filetype=headicon",
-        id: 184207,
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=headicon",
+        id: 187572,
         vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/5c6b8578078c8e94f6361db9add7f541556c3dafdf3ff70c5fc99cbdc90116b865c1/files?filetype=model&lod=original",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=model&lod=original",
       },
     ];
-
 
 export const DESTINATIONS = [
   // ===== GENERAL FACILITIES =====
@@ -44,7 +44,11 @@ export const DESTINATIONS = [
   // { id: "enrollment", name: "Enrollment", position: new THREE.Vector3(0, 0, 0) },
   // { id: "library", name: "Library", position: new THREE.Vector3(0, 0, 0) },
   // { id: "gymnasium", name: "Gymnasium", position: new THREE.Vector3(-59.93, 0, 20) },
-  { id: "grandstand", name: "Grandstand", position: new THREE.Vector3(-4.93, 0.1, -101.34) },
+  {
+    id: "grandstand",
+    name: "Grandstand",
+    position: new THREE.Vector3(-4.93, 0.1, -101.34),
+  },
   // { id: "eco-park", name: "Eco Park", position: new THREE.Vector3(0, 0, 0) },
   // { id: "comfort-room", name: "Comfort Room", position: new THREE.Vector3(0, 0, 0) },
 
@@ -89,8 +93,16 @@ export const DESTINATIONS = [
   // { id: "room-100", name: "Room 100 (Kitchen Laboratory)", position: new THREE.Vector3(0, 0, 0) },
   // { id: "room-101", name: "Room 101 (Beverage Laboratory)", position: new THREE.Vector3(0, 0, 0) },
   // { id: "room-102", name: "Room 102 (Tissue Laboratory)", position: new THREE.Vector3(0, 0, 0) },
-  { id: "room-103", name: "Room 103 (ICT Laboratory 1)", position: new THREE.Vector3(1.65, 0.1, -6.50) },
-  { id: "room-104", name: "Room 104 (ICT Laboratory 2)", position: new THREE.Vector3(11.56, 0.1, -19.84) },
+  {
+    id: "room-103",
+    name: "Room 103 (ICT Laboratory 1)",
+    position: new THREE.Vector3(1.65, 0.1, -6.5),
+  },
+  {
+    id: "room-104",
+    name: "Room 104 (ICT Laboratory 2)",
+    position: new THREE.Vector3(11.56, 0.1, -19.84),
+  },
   // { id: "room-105", name: "Room 105 (Food Laboratory)", position: new THREE.Vector3(0, 0, 0) },
   // { id: "room-106", name: "Room 106 (Lecture Room)", position: new THREE.Vector3(0, 0, 0) },
   // { id: "room-107", name: "Room 107 (Lecture Room)", position: new THREE.Vector3(0, 0, 0) },

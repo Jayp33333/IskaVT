@@ -48,6 +48,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
   const setCurrentZoom = useWorld((state: any) => state.setCurrentZoom) as (
     zoom: number
   ) => void;
+  const currentAvatar = useWorld((state: any) => state.avatar);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -58,7 +59,11 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
   const character = useRef<THREE.Group>(null);
   const { camera, gl, raycaster, mouse } = useThree();
 
-  const profileTexture = useTexture("/images/iska-profile.png");
+  const girlTexture = useTexture("/images/headIconGirl.png");
+  const boyTexture = useTexture("/images/headIconBoy.png");
+  
+  const profileTexture = currentAvatar.id === 187571 ? girlTexture : boyTexture;
+
   const mapModel = "./models/PUPCampus.glb";
 
   // --- Camera updates ---
@@ -127,8 +132,16 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       newPos.x -= deltaX * dragSensitivity;
       newPos.z -= deltaY * dragSensitivity;
 
-      newPos.x = THREE.MathUtils.clamp(newPos.x, MAP_BOUNDS.minX, MAP_BOUNDS.maxX);
-      newPos.z = THREE.MathUtils.clamp(newPos.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ);
+      newPos.x = THREE.MathUtils.clamp(
+        newPos.x,
+        MAP_BOUNDS.minX,
+        MAP_BOUNDS.maxX
+      );
+      newPos.z = THREE.MathUtils.clamp(
+        newPos.z,
+        MAP_BOUNDS.minZ,
+        MAP_BOUNDS.maxZ
+      );
 
       return newPos;
     });
@@ -171,9 +184,17 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     if (raycaster.ray.intersectPlane(groundPlane, intersectionPoint)) {
       setPinPosition(
         new THREE.Vector3(
-          THREE.MathUtils.clamp(intersectionPoint.x, MAP_BOUNDS.minX, MAP_BOUNDS.maxX),
+          THREE.MathUtils.clamp(
+            intersectionPoint.x,
+            MAP_BOUNDS.minX,
+            MAP_BOUNDS.maxX
+          ),
           0.2,
-          THREE.MathUtils.clamp(intersectionPoint.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ)
+          THREE.MathUtils.clamp(
+            intersectionPoint.z,
+            MAP_BOUNDS.minZ,
+            MAP_BOUNDS.maxZ
+          )
         )
       );
     }
@@ -219,9 +240,17 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       camera.lookAt(tmpVector);
       camera.rotation.z = 0;
     } else if (characterPosition) {
-      tmpVector.set(characterPosition.x, characterPosition.y + defaultZoom, characterPosition.z);
+      tmpVector.set(
+        characterPosition.x,
+        characterPosition.y + defaultZoom,
+        characterPosition.z
+      );
       camera.position.copy(tmpVector);
-      tmpVector.set(characterPosition.x, characterPosition.y, characterPosition.z);
+      tmpVector.set(
+        characterPosition.x,
+        characterPosition.y,
+        characterPosition.z
+      );
       camera.lookAt(tmpVector);
     }
 
@@ -253,7 +282,11 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       <group ref={character}>
         <mesh renderOrder={1} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.5, 32]} />
-          <meshBasicMaterial color="#ffffff" depthTest={false} map={profileTexture} />
+          <meshBasicMaterial
+            color="#ffffff"
+            depthTest={false}
+            map={profileTexture}
+          />
         </mesh>
         <mesh position-y={-0.01} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.6, 32]} />
