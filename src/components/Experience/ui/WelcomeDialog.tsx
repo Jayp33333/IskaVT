@@ -33,13 +33,13 @@ export const WelcomeDialog = ({ open, onClose, portraitSrc }: WelcomeDialogProps
     return () => clearInterval(interval);
   }, [open]);
 
-  // Auto close 3s after typing finishes
+  // Auto close 1s after typing finishes
   useEffect(() => {
     if (!typingDone) return;
 
     const timer = setTimeout(() => {
       onClose();
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [typingDone, onClose]);
