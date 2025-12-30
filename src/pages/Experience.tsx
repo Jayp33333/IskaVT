@@ -62,6 +62,7 @@ const Experience = () => {
 
     // Store camera rotation in state
     setCameraRotation(camera.rotation.clone());
+    console.log("camera rotation", camera.rotation);
 
     // Teleport automatically
     if (pinPosition && isPinTeleported) teleportToPin();
@@ -115,9 +116,7 @@ const Experience = () => {
 
       <BvhPhysicsBody>
         <Gltf
-          // src="./models/de_dust_2_with_real_light.glb"
           src="./models/PUPCampus.glb"
-          // position={[0, 3, 0]}
           position={[10, 0.1, 0]}
           castShadow
           receiveShadow
@@ -141,9 +140,9 @@ const Experience = () => {
             <meshStandardMaterial emissive="red" emissiveIntensity={0.8} />
           </Gltf>
 
-          {/* Circle on the floor */}
+          {/* Red circle on the floor */}
           <mesh
-            position={[pinPosition.x, pinPosition.y, pinPosition.z]} // slightly above ground
+            position={[pinPosition.x, pinPosition.y, pinPosition.z]}
             rotation={[-Math.PI / 2, 0, 0]}
           >
             <circleGeometry args={[1, 64]} />
