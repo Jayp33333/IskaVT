@@ -16,26 +16,30 @@ export const DestinationChecker = () => {
   useEffect(() => {
     if (!isPinConfirmed || !characterPosition || !pinPosition) return;
 
-    const THRESHOLD = 1.5; 
-    const interval = setInterval(() => {
-      const distance = characterPosition.distanceTo(pinPosition);
+    const checkDistance = () => {
+      const charPos = characterPosition.clone();
+      charPos.y = 0; // ignore vertical difference
+      const pinPos = pinPosition.clone();
+      pinPos.y = 0;
 
-      if (distance <= THRESHOLD && !isPinTeleported) {
-        setPinPosition(null);
-        setIsPinConfirmed(false);
+      const distance = charPos.distanceTo(pinPos);
+
+      if (distance <= 1.5 && !isPinTeleported) {
         setShowDestinationText(true);
         audioManager.play("arrived");
+
         setTimeout(() => setFadeOut(true), 3000);
         setTimeout(() => {
           setShowDestinationText(false);
           setFadeOut(false);
         }, 3500);
 
-        clearInterval(interval);
+        setPinPosition(null);
+        setIsPinConfirmed(false);
       }
-    }, 100);
+    };
 
-    return () => clearInterval(interval);
+    checkDistance();
   }, [characterPosition, pinPosition, isPinConfirmed, isPinTeleported]);
 
   if (!showDestinationText) return null;
