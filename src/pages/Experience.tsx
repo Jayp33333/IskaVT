@@ -9,6 +9,7 @@ import useWorld from "../hooks/useWorld";
 import { Suspense, useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
+import { NPC } from "../components/Experience/NPC";
 
 const Experience = () => {
   usePointerLockRotateZoomActionBindings({ lockOnClick: true });
@@ -24,7 +25,9 @@ const Experience = () => {
   const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
   const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
-  const setCharacterPositionOnFloorLabel = useWorld((state: any) => state.setCharacterPositionOnFloorLabel);
+  const setCharacterPositionOnFloorLabel = useWorld(
+    (state: any) => state.setCharacterPositionOnFloorLabel
+  );
 
   const teleportToPin = () => {
     if (characterRef.current && pinPosition && isPinTeleported) {
@@ -73,7 +76,7 @@ const Experience = () => {
 
   return (
     <>
-      <Sky/>
+      <Sky />
       {/* Soft ambient fill */}
       <ambientLight intensity={0.45} />
 
@@ -130,6 +133,17 @@ const Experience = () => {
           color="gray"
         />
       </BvhPhysicsBody>
+
+      {/* NPC Character */}
+      <Suspense>
+        <NPC
+          position={[12, 0, 1]}
+          model="./avatars/guard.glb"
+          name="Guard"
+          scale={1.1}
+          rotation={[0, -90, 0]} // facing backward
+        />
+      </Suspense>
 
       {/* Pin mesh */}
       {pinPosition && isPinConfirmed && (
