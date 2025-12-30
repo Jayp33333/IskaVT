@@ -13,6 +13,7 @@ import { MiniMapEdgePin } from "./MiniMapEdgePin";
 import { DestinationPicker } from "./DestinationPicker";
 import DistanceUpdater from "./DistanceUpdater";
 import { audioManager } from "../../../services/AudioManager";
+import { FloorLabel } from "./FloorLabel";
 
 export const UI = () => {
   const [showMiniMap, setShowMiniMap] = useState(false);
@@ -212,6 +213,7 @@ export const UI = () => {
       )}
 
       <DestinationChecker />
+      <FloorLabel />
     </>
   );
 };

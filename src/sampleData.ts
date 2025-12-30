@@ -149,3 +149,11 @@ export const DESTINATIONS = [
   // ===== AGRI & OTHERS =====
   // { id: "agri", name: "Agri Business Farm", position: new THREE.Vector3(0, 0, 0) },
 ];
+
+
+export const floorZones = [
+  { name: "Main Gate", xMin: 5, xMax: 12, zMin: -3, zMax: 8, yMin: 0, yMax: 3 },
+  { name: "Comlab 1", xMin: -12, xMax: 1.6, zMin: -16.5, zMax: -4.4, yMin: 0, yMax: 3 },
+  { name: "Library", xMin: -10, xMax: 0, zMin: 10, zMax: 20, yMin: 0, yMax: 3 },
+  // add more zones as needed
+];

@@ -57,12 +57,12 @@ const Experience = () => {
   useFrame(({ camera }) => {
     // Sync character position
     if (characterRef.current) {
-      setCharacterPosition(characterRef.current.position);
+      setCharacterPosition(characterRef.current.position.clone());
+      console.log("Character Position: ", characterRef.current.position);
     }
 
     // Store camera rotation in state
     setCameraRotation(camera.rotation.clone());
-    console.log("camera rotation", camera.rotation);
 
     // Teleport automatically
     if (pinPosition && isPinTeleported) teleportToPin();
