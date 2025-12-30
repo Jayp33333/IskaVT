@@ -4,21 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { floorZones } from "../../../sampleData";
 
 export const FloorLabel = () => {
-  const characterPosition = useWorld((state: any) => state.characterPosition);
+  const characterPositionOnFloorLabel = useWorld((state: any) => state.characterPositionOnFloorLabel);
   const [currentZone, setCurrentZone] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!characterPosition) return;
-
+    if (!characterPositionOnFloorLabel) return;
     let zoneFound: string | null = null;
     for (const zone of floorZones) {
       if (
-        characterPosition.x >= zone.xMin &&
-        characterPosition.x <= zone.xMax &&
-        characterPosition.z >= zone.zMin &&
-        characterPosition.z <= zone.zMax &&
-        characterPosition.y >= (zone.yMin || 0) &&
-        characterPosition.y <= (zone.yMax || 10)
+        characterPositionOnFloorLabel.x >= zone.xMin &&
+        characterPositionOnFloorLabel.x <= zone.xMax &&
+        characterPositionOnFloorLabel.z >= zone.zMin &&
+        characterPositionOnFloorLabel.z <= zone.zMax &&
+        characterPositionOnFloorLabel.y >= (zone.yMin || 0) &&
+        characterPositionOnFloorLabel.y <= (zone.yMax || 10)
       ) {
         
         zoneFound = zone.name;
@@ -27,8 +26,7 @@ export const FloorLabel = () => {
     }
 
     setCurrentZone(zoneFound);
-  }, [characterPosition]);
-
+  }, [characterPositionOnFloorLabel]);
   return (
     <AnimatePresence>
       {currentZone && (

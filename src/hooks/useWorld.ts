@@ -5,6 +5,7 @@ import { Vector3 } from "three";
 const useWorld = create((set) => ({
   avatar:  SAMPLE_AVATAR_LIST[0],
   characterPosition: new Vector3(0, 0, 0),
+  characterPositionOnFloorLabel: new Vector3(0, 0, 0),
   pinPosition: null,
   selectPin: true,
   isPinConfirmed: false,
@@ -15,6 +16,8 @@ const useWorld = create((set) => ({
 
   setAvatar: (avatar: any) => set({ avatar }),
   setCharacterPosition: (characterPosition: Vector3) => set({ characterPosition}),
+  setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel: Vector3) =>
+    set({ characterPositionOnFloorLabel }),
   setPinPosition: (pinPosition: Vector3) => set({ pinPosition }),
   setSelectPin: (selectPin: boolean) => set({ selectPin }),
   setIsPinConfirmed: (isPinConfirmed: boolean) => set({ isPinConfirmed }),

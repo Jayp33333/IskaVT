@@ -24,6 +24,7 @@ const Experience = () => {
   const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
   const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
+  const setCharacterPositionOnFloorLabel = useWorld((state: any) => state.setCharacterPositionOnFloorLabel);
 
   const teleportToPin = () => {
     if (characterRef.current && pinPosition && isPinTeleported) {
@@ -57,8 +58,10 @@ const Experience = () => {
   useFrame(({ camera }) => {
     // Sync character position
     if (characterRef.current) {
-      setCharacterPosition(characterRef.current.position.clone());
-      console.log("Character Position: ", characterRef.current.position);
+      // setCharacterPosition(characterRef.current.position.clone());
+      setCharacterPosition(characterRef.current.position);
+      setCharacterPositionOnFloorLabel(characterRef.current.position.clone());
+      // console.log("Character Position: ", characterRef.current.position);
     }
 
     // Store camera rotation in state
