@@ -5,19 +5,36 @@ import LoadingOverlay from "../components/Experience/ui/LoadingOverlay";
 import { UI } from "../components/Experience/ui/UI";
 import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
+import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
+import { useState } from "react";
 
 export default function ExperienceScene() {
-   useAudioPreload();
+  useAudioPreload();
 
-  const playWelcomeAudio = () => {
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  const handleLoadingFinished = () => {
     audioManager.unlock();
     audioManager.play("welcome");
+    setShowWelcome(true);
   };
 
   return (
     <>
-      <LoadingOverlay onFinished={playWelcomeAudio} />
+      {/* Loading */}
+      <LoadingOverlay onFinished={handleLoadingFinished} />
+
+      {/* Welcome Dialog */}
+      <WelcomeDialog
+        open={showWelcome}
+        onClose={() => setShowWelcome(false)}
+        portraitSrc="/images/headIconGirl.png"
+      />
+
+      {/* UI Overlay */}
       <UI />
+
+      {/* 3D Scene */}
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
         <BvhPhysicsWorld>
           <Experience />
