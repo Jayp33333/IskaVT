@@ -33,6 +33,7 @@ export const UI = () => {
     cameraRotation,
     currentZoom,
     distance,
+    cameraMode,
   } = useWorld((s: any) => s);
 
   const MIN_ZOOM = 20;
@@ -59,7 +60,7 @@ export const UI = () => {
 
   return (
     <>
-    <CenterDot/>
+    {cameraMode === 'first' && !showMiniMap && <CenterDot />}
       {!showMiniMap && <MiniMapEdgePin />}
 
       {/* Avatar Picker */}
