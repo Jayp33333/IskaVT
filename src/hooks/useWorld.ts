@@ -13,6 +13,7 @@ const useWorld = create((set) => ({
   distance: 0,
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0), 
+  cameraMode: "first",
 
   setAvatar: (avatar: any) => set({ avatar }),
   setCharacterPosition: (characterPosition: Vector3) => set({ characterPosition}),
@@ -31,7 +32,7 @@ const useWorld = create((set) => ({
     )
   })),
   setCameraRotation: (cameraRotation: Vector3) => set({ cameraRotation }),
-
+  setCameraMode: (mode: any) => set({ cameraMode: mode }),
 }))
 
 export default useWorld;

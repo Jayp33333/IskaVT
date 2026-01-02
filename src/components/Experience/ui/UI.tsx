@@ -14,6 +14,8 @@ import { DestinationPicker } from "./DestinationPicker";
 import DistanceUpdater from "./DistanceUpdater";
 import { audioManager } from "../../../services/AudioManager";
 import { FloorLabel } from "./FloorLabel";
+import { CameraModeToggle } from "./CameraModeToggle";
+import { CenterDot } from "./CenterDot";
 
 export const UI = () => {
   const [showMiniMap, setShowMiniMap] = useState(false);
@@ -57,12 +59,14 @@ export const UI = () => {
 
   return (
     <>
+    <CenterDot/>
       {!showMiniMap && <MiniMapEdgePin />}
 
       {/* Avatar Picker */}
       {!showMiniMap && (
-        <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2 rounded-xl bg-black/35 backdrop-blur-md p-2">
+        <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2 rounded-xlp-2">
           <AvatarPicker />
+          <CameraModeToggle />
         </div>
       )}
 

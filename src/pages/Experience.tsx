@@ -4,6 +4,7 @@ import {
   BvhPhysicsBody,
   PrototypeBox,
   usePointerLockRotateZoomActionBindings,
+  FirstPersonCharacterCameraBehavior,
 } from "@react-three/viverse";
 import useWorld from "../hooks/useWorld";
 import { Suspense, useEffect, useRef } from "react";
@@ -28,6 +29,9 @@ const Experience = () => {
   const setCharacterPositionOnFloorLabel = useWorld(
     (state: any) => state.setCharacterPositionOnFloorLabel
   );
+  const cameraMode = useWorld((state: any) => state.cameraMode);
+
+  const mode = false;
 
   const teleportToPin = () => {
     if (characterRef.current && pinPosition && isPinTeleported) {
@@ -108,6 +112,7 @@ const Experience = () => {
           ref={characterRef}
           position={[10, 3, 0]}
           model={
+           cameraMode === 'third' ?
             avatar
               ? {
                   type: "vrm",
@@ -116,7 +121,9 @@ const Experience = () => {
                   receiveShadow: true,
                 }
               : undefined
-          }
+              : false
+          } 
+          cameraBehavior={cameraMode === 'third' ? undefined : FirstPersonCharacterCameraBehavior}
         />
       </Suspense>
 
