@@ -13,7 +13,7 @@ import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 import { NPC } from "../components/Experience/NPC";
 
 const Experience = () => {
-  usePointerLockRotateZoomActionBindings({ lockOnClick: true });
+  usePointerLockRotateZoomActionBindings({ lockOnClick: true,  rotationSpeed: 0.1, zoomSpeed: 0.1 });
   const avatar = useWorld((state: any) => state.avatar);
   const setCharacterPosition = useWorld(
     (state: any) => state.setCharacterPosition
