@@ -31,8 +31,6 @@ const Experience = () => {
   );
   const cameraMode = useWorld((state: any) => state.cameraMode);
 
-  const mode = false;
-
   const teleportToPin = () => {
     if (characterRef.current && pinPosition && isPinTeleported) {
       const currentY = 10;
