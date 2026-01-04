@@ -55,13 +55,6 @@ const Experience = () => {
     }
   }, []);
 
-  useFrame(() => {
-    if (pinRef.current) {
-      // Rotate around Y-axis
-      pinRef.current.rotation.y += 0.01; // adjust speed here
-    }
-  });
-
   useFrame(({ camera }) => {
     // Sync character position
     if (characterRef.current) {
@@ -69,6 +62,11 @@ const Experience = () => {
       setCharacterPosition(characterRef.current.position);
       setCharacterPositionOnFloorLabel(characterRef.current.position.clone());
       // console.log("Character Position: ", characterRef.current.position);
+    }
+
+     if (pinRef.current) {
+      // Rotate around Y-axis
+      pinRef.current.rotation.y += 0.01; // adjust speed here
     }
 
     // Store camera rotation in state
@@ -81,31 +79,10 @@ const Experience = () => {
   return (
     <>
       <Sky />
-      {/* Soft ambient fill */}
-      <ambientLight intensity={0.45} />
-
-      {/* Main key light */}
-      <directionalLight
-        intensity={1.6}
-        position={[10, 20, 10]}
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-      />
-
-      {/* Rim / Back light (anime glow) */}
-      <directionalLight
-        intensity={2.2}
-        position={[-15, 10, -10]}
-        color={"white"}
-      />
-
-      {/* Light wrapping – gives soft anime bloom effect */}
-      <hemisphereLight
-        intensity={0.6}
-        // skyColor={"#ffffff"}
-        groundColor={"#c4bfbf"}
-      />
+      
+      <ambientLight intensity={0.5} />
+      <directionalLight intensity={1.2} position={[10, 15, 10]} />
+      <hemisphereLight intensity={0.4} />
 
       <Suspense>
         <SimpleCharacter
