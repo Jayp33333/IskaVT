@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -11,29 +11,35 @@ export const ArrowGuide = () => {
 
   const arrowRef = useRef<THREE.Object3D>(null);
 
-  // Load GLB model
-  const { scene: arrowScene } = useGLTF("/models/ArrowGuide.glb");
+  // Load GLB model once and memoize
+  const { scene: arrowScene } = useGLTF("/models/ArrowGuide.glb") as any;
+  const memoizedArrow = useMemo(() => arrowScene.clone(), [arrowScene]);
 
   useFrame(() => {
-    if (!isPinConfirmed || !characterPosition || !pinPosition) return;
+    if (!arrowRef.current) return;
 
-    if (arrowRef.current) {
-      const start = new THREE.Vector3(characterPosition.x, characterPosition.y + 0, characterPosition.z);
-      const end = new THREE.Vector3(pinPosition.x, pinPosition.y, pinPosition.z);
-      const dir = new THREE.Vector3().subVectors(end, start);
-      const length = dir.length();
-      dir.normalize();
+    // Show arrow only if pin is confirmed
+    arrowRef.current.visible = !!pinPosition && isPinConfirmed;
 
-      // place arrow at 10% along the line
-      arrowRef.current.position.copy(start.clone().add(dir.clone().multiplyScalar(length * 0.05)));
+    if (!pinPosition || !characterPosition || !isPinConfirmed) return;
 
-      arrowRef.current.lookAt(end);
-    }
+    const start = new THREE.Vector3(
+      characterPosition.x,
+      characterPosition.y,
+      characterPosition.z
+    );
+    const end = new THREE.Vector3(pinPosition.x, pinPosition.y, pinPosition.z);
+    const dir = new THREE.Vector3().subVectors(end, start);
+    const length = dir.length();
+    dir.normalize();
+
+    // place arrow at 5% along the line
+    arrowRef.current.position.copy(start.clone().add(dir.clone().multiplyScalar(length * 0.05)));
+
+    // make arrow face the destination
+    arrowRef.current.lookAt(end);
   });
 
-  if (!characterPosition || !pinPosition || !isPinConfirmed) return null;
-
-  return (
-    <primitive ref={arrowRef} object={arrowScene} />
-  );
+  // Always render arrow, visibility is handled in useFrame
+  return <primitive ref={arrowRef} object={memoizedArrow} visible={false} />;
 };
