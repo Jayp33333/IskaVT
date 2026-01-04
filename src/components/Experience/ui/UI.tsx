@@ -40,27 +40,41 @@ export const UI = () => {
       {!showMiniMap && <DestinationPicker />}
 
       {/* MiniMap Canvas */}
-      <Canvas
-        onClick={() => !showMiniMap && useWorld.getState().setShowMiniMap(true)}
+      <div
+        className="fixed z-100"
         style={{
-          position: "fixed",
-          width: showMiniMap ? "100vw" : "clamp(100px, 15vw, 120px)",
-          maxWidth: showMiniMap ? "100%" : "200px",
-          height: showMiniMap ? "100vh" : "clamp(100px, 15vw, 120px)",
-          maxHeight: showMiniMap ? "100%" : "200px",
-          border: "2px solid white",
-          borderRadius: showMiniMap ? 0 : "50%",
-          zIndex: 100,
-          top: showMiniMap ? 0 : "2%",
-          right: showMiniMap ? 0 : "2%",
-          overflow: "hidden",
-          touchAction: "none",
+          top: "2%",
+          right: "2%",
+          width: "clamp(100px, 15vw, 120px)",
+          height: "clamp(100px, 15vw, 120px)",
         }}
       >
-        <MiniMap />
-        <DistanceUpdater />
-        <ArrowGuide />
-      </Canvas>
+        <Canvas
+          onClick={() =>
+            !showMiniMap && useWorld.getState().setShowMiniMap(true)
+          }
+          style={{
+            position: "fixed",
+            width: showMiniMap ? "100vw" : "clamp(100px, 15vw, 120px)",
+            maxWidth: showMiniMap ? "100%" : "200px",
+            height: showMiniMap ? "100vh" : "clamp(100px, 15vw, 120px)",
+            maxHeight: showMiniMap ? "100%" : "200px",
+            border: "2px solid white",
+            borderRadius: showMiniMap ? 0 : "50%",
+            zIndex: 100,
+            top: showMiniMap ? 0 : "2%",
+            right: showMiniMap ? 0 : "2%",
+            overflow: "hidden",
+            touchAction: "none",
+          }}
+        >
+          <MiniMap />
+          <DistanceUpdater />
+          <ArrowGuide />
+        </Canvas>
+
+        {!showMiniMap && <FloorLabel />}
+      </div>
 
       {/* Cone Vision */}
       {!showMiniMap && (
@@ -87,7 +101,6 @@ export const UI = () => {
 
       {/* Global Components */}
       <DestinationChecker />
-      <FloorLabel />
     </>
   );
 };

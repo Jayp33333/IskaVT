@@ -32,7 +32,6 @@ export const DestinationPicker = () => {
     setQuery("");
   };
 
-  // Reset selection
   const handleUnpin = () => {
     setPinPosition(null);
     setIsPinConfirmed(false);
@@ -69,16 +68,19 @@ export const DestinationPicker = () => {
             </div>
 
             {selectedDestination ? (
-              <button
-                onClick={handleUnpin}
-                className="p-1 rounded hover:bg-white/10 transition"
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUnpin();
+                }}
+                className="p-1 rounded hover:bg-white/10 transition cursor-pointer"
                 title="Unpin destination"
               >
                 <IoClose
                   className="text-white"
                   style={{ fontSize: "clamp(10px, 1.2vw, 14px)" }}
                 />
-              </button>
+              </span>
             ) : (
               <IoChevronDown
                 className={`transition-transform ${open ? "rotate-180" : ""}`}
@@ -149,16 +151,19 @@ export const DestinationPicker = () => {
             {selectedDestination ?? "Select Destination"}
 
             {selectedDestination ? (
-              <button
-                onClick={handleUnpin}
-                className="p-1 rounded hover:bg-white/10 transition"
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUnpin();
+                }}
+                className="p-1 rounded hover:bg-white/10 transition cursor-pointer"
                 title="Unpin destination"
               >
                 <IoClose
                   className="text-white"
                   style={{ fontSize: "clamp(10px, 1.2vw, 14px)" }}
                 />
-              </button>
+              </span>
             ) : (
               <IoChevronDown
                 className={`transition-transform ${open ? "rotate-180" : ""}`}
