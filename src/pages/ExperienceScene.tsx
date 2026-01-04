@@ -7,6 +7,7 @@ import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
 import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
 import { useState } from "react";
+import { Preload } from "@react-three/drei";
 
 export default function ExperienceScene() {
   useAudioPreload();
@@ -36,6 +37,7 @@ export default function ExperienceScene() {
 
       {/* 3D Scene */}
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
+        <Preload all />
         <BvhPhysicsWorld>
           <Experience />
         </BvhPhysicsWorld>
