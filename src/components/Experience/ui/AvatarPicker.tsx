@@ -15,7 +15,11 @@ export const AvatarPicker = () => {
     <div className="relative">
       {/* Current Avatar Button */}
       <button
-        className="w-16 h-16 rounded-lg border-2 border-white overflow-hidden cursor-pointer focus:outline-none"
+        className="rounded-lg border-2 border-white overflow-hidden cursor-pointer focus:outline-none bg-black/60"
+        style={{
+          width: "clamp(48px, 8vw, 64px)",
+          height: "clamp(48px, 8vw, 64px)",
+        }}
         onClick={() => setOpenMenu(!openMenu)}
       >
         <img
@@ -27,7 +31,13 @@ export const AvatarPicker = () => {
 
       {/* Avatar List Panel */}
       {openMenu && (
-        <div className="absolute top-[75px] left-0 z-999 bg-black/85 p-2.5 rounded-lg grid grid-cols-2 shadow-lg" style={{ gridTemplateColumns: "repeat(2, 64px)", gap: "10px" }}>
+        <div
+          className="absolute top-[75px] left-0 z-999 bg-black/85 p-2.5 rounded-lg grid shadow-lg"
+          style={{
+            gridTemplateColumns: `repeat(2, clamp(48px, 8vw, 64px))`,
+            gap: "clamp(8px, 1.5vw, 10px)",
+          }}
+        >
           {avatarList.map((a) => {
             const isSelected = currentAvatar.id === a.id;
             return (
@@ -37,11 +47,12 @@ export const AvatarPicker = () => {
                   setAvatar(a);
                   setOpenMenu(false);
                 }}
-                className={`w-16 h-16 rounded-md overflow-hidden border transition-colors duration-200 ${
-                  isSelected
-                    ? "border-yellow-400"
-                    : "border-gray-600 hover:border-white"
-                }`}
+                className={`rounded-md overflow-hidden border transition-colors duration-200`}
+                style={{
+                  width: "clamp(36px, 8vw, 48px)",
+                  height: "clamp(36px, 8vw, 48px)",
+                  borderColor: isSelected ? "#facc15" : "#4b5563",
+                }}
               >
                 <img
                   src={a.headIconUrl}

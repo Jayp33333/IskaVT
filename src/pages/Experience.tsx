@@ -5,6 +5,7 @@ import {
   PrototypeBox,
   usePointerLockRotateZoomActionBindings,
   FirstPersonCharacterCameraBehavior,
+  useKeyboardLocomotionActionBindings,
 } from "@react-three/viverse";
 import useWorld from "../hooks/useWorld";
 import { Suspense, useEffect, useRef } from "react";
@@ -13,7 +14,8 @@ import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 import { NPC } from "../components/Experience/NPC";
 
 const Experience = () => {
-  usePointerLockRotateZoomActionBindings({ lockOnClick: true,  rotationSpeed: 0.1, zoomSpeed: 0.1 });
+  usePointerLockRotateZoomActionBindings({ lockOnClick: true,  rotationSpeed: 0.1 });
+  useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
   const avatar = useWorld((state: any) => state.avatar);
   const setCharacterPosition = useWorld(
     (state: any) => state.setCharacterPosition

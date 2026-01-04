@@ -9,6 +9,7 @@ export const DestinationChecker = () => {
   const isPinTeleported = useWorld((state: any) => state.isPinTeleported);
   const setIsPinConfirmed = useWorld((state: any) => state.setIsPinConfirmed);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
+  const setSelectedDestination = useWorld((state: any) => state.setSelectedDestination);
 
   const [showDestinationText, setShowDestinationText] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
@@ -24,6 +25,7 @@ export const DestinationChecker = () => {
         setPinPosition(null);
         setIsPinConfirmed(false);
         setShowDestinationText(true);
+        setSelectedDestination(null);
         audioManager.play("arrived");
         setTimeout(() => setFadeOut(true), 3000);
         setTimeout(() => {

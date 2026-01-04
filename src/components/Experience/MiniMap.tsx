@@ -7,14 +7,10 @@ import {
   Html,
 } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import useWorld from "../../hooks/useWorld";
 import { IoLocationSharp } from "react-icons/io5";
-
-interface MiniMapProps {
-  showMiniMap: boolean;
-}
 
 const tmpVector = new THREE.Vector3();
 
@@ -28,43 +24,48 @@ const MAP_BOUNDS = {
   maxZoom: 100,
 };
 
-export function MiniMap({ showMiniMap }: MiniMapProps) {
+export function MiniMap() {
   const defaultZoom = 24;
 
-  const characterPosition = useWorld(
-    (state: any) => state.characterPosition
-  ) as THREE.Vector3;
-  const pinPosition = useWorld(
-    (state: any) => state.pinPosition
-  ) as THREE.Vector3 | null;
-  const setPinPosition = useWorld((state: any) => state.setPinPosition) as (
-    pos: THREE.Vector3
-  ) => void;
-  const selectPin = useWorld((state: any) => state.selectPin) as boolean;
-  const isPinConfirmed = useWorld(
-    (state: any) => state.isPinConfirmed
-  ) as boolean;
-  const currentZoom = useWorld((state: any) => state.currentZoom) as number;
-  const setCurrentZoom = useWorld((state: any) => state.setCurrentZoom) as (
-    zoom: number
-  ) => void;
-  const currentAvatar = useWorld((state: any) => state.avatar);
+  // --- Zustand state ---
+  const {
+    characterPosition,
+    pinPosition,
+    setPinPosition,
+    selectPin,
+    isPinConfirmed,
+    currentZoom,
+    setCurrentZoom,
+    avatar: currentAvatar,
+    showMiniMap,
+  } = useWorld((state: any) => ({
+    characterPosition: state.characterPosition,
+    pinPosition: state.pinPosition,
+    setPinPosition: state.setPinPosition,
+    selectPin: state.selectPin,
+    isPinConfirmed: state.isPinConfirmed,
+    currentZoom: state.currentZoom,
+    setCurrentZoom: state.setCurrentZoom,
+    avatar: state.avatar,
+    showMiniMap: state.showMiniMap,
+  }));
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [cameraPosition, setCameraPosition] = useState(
-    new THREE.Vector3(0, defaultZoom, 0)
-  );
-
-  const character = useRef<THREE.Group>(null);
   const { camera, gl, raycaster, mouse } = useThree();
+  const character = useRef<THREE.Group>(null);
 
+  // --- Textures ---
   const girlTexture = useTexture("/images/headIconGirl.png");
   const boyTexture = useTexture("/images/headIconBoy.png");
-  
   const profileTexture = currentAvatar.id === 187571 ? girlTexture : boyTexture;
 
   const mapModel = "./models/PUPCampus.glb";
+
+  // --- Local state ---
+  const [cameraPosition, setCameraPosition] = useState(
+    new THREE.Vector3(0, defaultZoom, 0)
+  );
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   // --- Camera updates ---
   useEffect(() => {
@@ -111,150 +112,136 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
     }
   }, [currentZoom, showMiniMap]);
 
-  // --- Dragging handlers ---
-  const handlePointerDown = (event: PointerEvent) => {
+  // --- Drag & Pan ---
+  const onPointerDown = (e: PointerEvent) => {
     if (!showMiniMap) return;
-    event.stopPropagation();
+    e.stopPropagation();
     setIsDragging(true);
-    setDragStart({ x: event.clientX, y: event.clientY });
+    setDragStart({ x: e.clientX, y: e.clientY });
     gl.domElement.style.cursor = "grabbing";
   };
 
-  const handlePointerMove = (event: PointerEvent) => {
+  const onPointerMove = (e: PointerEvent) => {
     if (!showMiniMap || !isDragging) return;
 
-    const deltaX = event.clientX - dragStart.x;
-    const deltaY = event.clientY - dragStart.y;
-    const dragSensitivity = 0.02 * (currentZoom / defaultZoom);
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    const sensitivity = 0.03 * (currentZoom / defaultZoom);
 
     setCameraPosition((prev) => {
-      const newPos = prev.clone();
-      newPos.x -= deltaX * dragSensitivity;
-      newPos.z -= deltaY * dragSensitivity;
-
-      newPos.x = THREE.MathUtils.clamp(
-        newPos.x,
+      const next = prev.clone();
+      next.x = THREE.MathUtils.clamp(
+        prev.x - deltaX * sensitivity,
         MAP_BOUNDS.minX,
         MAP_BOUNDS.maxX
       );
-      newPos.z = THREE.MathUtils.clamp(
-        newPos.z,
+      next.z = THREE.MathUtils.clamp(
+        prev.z - deltaY * sensitivity,
         MAP_BOUNDS.minZ,
         MAP_BOUNDS.maxZ
       );
-
-      return newPos;
+      return next;
     });
 
-    setDragStart({ x: event.clientX, y: event.clientY });
+    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handlePointerUp = (event: PointerEvent) => {
-    const dragDistance = Math.sqrt(
-      Math.pow(event.clientX - dragStart.x, 2) +
-        Math.pow(event.clientY - dragStart.y, 2)
+  const onPointerUp = (e: PointerEvent) => {
+    const dragDistance = Math.hypot(
+      e.clientX - dragStart.x,
+      e.clientY - dragStart.y
     );
-
     setIsDragging(false);
 
     if (showMiniMap && dragDistance < 5 && selectPin && !isPinConfirmed) {
-      handleMapClick(event);
+      placePin(e);
     }
 
     if (showMiniMap) gl.domElement.style.cursor = "grab";
   };
 
   // --- Pin placement ---
-  const handleMapClick = (event: PointerEvent) => {
-    if (!showMiniMap) return;
-    event.stopPropagation();
+  const placePin = useCallback(
+    (event: PointerEvent) => {
+      if (!showMiniMap) return;
+      event.stopPropagation();
 
-    const rect = gl.domElement.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      const rect = gl.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-    mouse.x = x;
-    mouse.y = y;
+      raycaster.setFromCamera(mouse, camera);
 
-    raycaster.setFromCamera(mouse, camera);
+      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      const intersect = new THREE.Vector3();
 
-    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    const intersectionPoint = new THREE.Vector3();
-
-    if (raycaster.ray.intersectPlane(groundPlane, intersectionPoint)) {
-      setPinPosition(
-        new THREE.Vector3(
-          THREE.MathUtils.clamp(
-            intersectionPoint.x,
-            MAP_BOUNDS.minX,
-            MAP_BOUNDS.maxX
-          ),
-          0.2,
-          THREE.MathUtils.clamp(
-            intersectionPoint.z,
-            MAP_BOUNDS.minZ,
-            MAP_BOUNDS.maxZ
+      if (raycaster.ray.intersectPlane(plane, intersect)) {
+        setPinPosition(
+          new THREE.Vector3(
+            THREE.MathUtils.clamp(
+              intersect.x,
+              MAP_BOUNDS.minX,
+              MAP_BOUNDS.maxX
+            ),
+            0.2,
+            THREE.MathUtils.clamp(intersect.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ)
           )
-        )
-      );
-    }
-  };
+        );
+      }
+    },
+    [camera, gl, mouse, raycaster, setPinPosition, showMiniMap]
+  );
 
   // --- Zoom ---
-  const handleWheel = (event: WheelEvent) => {
+  const onWheel = (e: WheelEvent) => {
     if (!showMiniMap) return;
-    event.preventDefault();
-    event.stopPropagation();
-
-    const zoomChange = event.deltaY > 0 ? 1.1 : 0.9;
-    setCurrentZoom(zoomChange);
+    e.preventDefault();
+    e.stopPropagation();
+    const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
+    setCurrentZoom(zoomFactor);
   };
 
+  // --- Event listeners ---
   useEffect(() => {
     const canvas = gl.domElement;
 
     if (showMiniMap) {
       canvas.style.cursor = "grab";
-      canvas.addEventListener("pointerdown", handlePointerDown);
-      canvas.addEventListener("pointermove", handlePointerMove);
-      canvas.addEventListener("pointerup", handlePointerUp);
-      canvas.addEventListener("wheel", handleWheel, { passive: false });
+      canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
+      canvas.addEventListener("pointerup", onPointerUp);
+      canvas.addEventListener("wheel", onWheel, { passive: false });
     } else {
       canvas.style.cursor = "default";
       setCurrentZoom(1);
     }
 
     return () => {
-      canvas.removeEventListener("pointerdown", handlePointerDown);
-      canvas.removeEventListener("pointermove", handlePointerMove);
-      canvas.removeEventListener("pointerup", handlePointerUp);
-      canvas.removeEventListener("wheel", handleWheel);
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("wheel", onWheel);
     };
   }, [showMiniMap, gl, isDragging, dragStart]);
 
   // --- Frame updates ---
   useFrame(() => {
+    if (!characterPosition) return;
+
     if (showMiniMap) {
       camera.position.copy(cameraPosition);
       tmpVector.set(cameraPosition.x, 0, cameraPosition.z);
       camera.lookAt(tmpVector);
       camera.rotation.z = 0;
-    } else if (characterPosition) {
-      tmpVector.set(
-        characterPosition.x,
-        characterPosition.y + defaultZoom,
-        characterPosition.z
-      );
-      camera.position.copy(tmpVector);
-      tmpVector.set(
-        characterPosition.x,
-        characterPosition.y,
-        characterPosition.z
-      );
-      camera.lookAt(tmpVector);
+    } else {
+      const camPos = characterPosition
+        .clone()
+        .add(new THREE.Vector3(0, defaultZoom, 0));
+      camera.position.copy(camPos);
+      camera.lookAt(characterPosition);
     }
 
-    if (character.current && characterPosition) {
+    if (character.current) {
       character.current.position.copy(characterPosition);
     }
   });
@@ -267,13 +254,12 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
       <PerspectiveCamera makeDefault position={[0, currentZoom, 0]} />
       <Gltf position={[10, 0.1, 0]} src={mapModel} />
 
-      {/* --- Pin Marker: always rendered if exists --- */}
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>
           <Html center>
             <IoLocationSharp
               size={24}
-              color={isPinConfirmed ? "red" : "orange"} // unconfirmed = orange
+              color={isPinConfirmed ? "red" : "orange"}
             />
           </Html>
         </Billboard>
@@ -283,7 +269,7 @@ export function MiniMap({ showMiniMap }: MiniMapProps) {
         <mesh renderOrder={1} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.5, 32]} />
           <meshBasicMaterial
-            color="#ffffff"
+            color="#fff"
             depthTest={false}
             map={profileTexture}
           />

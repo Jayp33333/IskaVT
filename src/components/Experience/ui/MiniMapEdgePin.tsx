@@ -23,8 +23,7 @@ export const MiniMapEdgePin = () => {
     if (distance < threshold) return;
 
     const rect = mapRef.current.getBoundingClientRect();
-
-    const radius = Math.min(rect.width, rect.height) / 2 - 14;
+    const radius = Math.min(rect.width, rect.height) / 2 - 14; // responsive radius
 
     const angleToPin = Math.atan2(dz, dx);
 
@@ -48,7 +47,13 @@ export const MiniMapEdgePin = () => {
   return (
     <div
       ref={mapRef}
-      className="fixed top-[2%] right-[2%] z-500 w-[30vh] max-w-[200px] h-[30vh] max-h-[200px] pointer-events-none rounded-full"
+      className="fixed top-[2%] right-[2%] z-500 pointer-events-none rounded-full"
+      style={{
+        width: "clamp(100px, 15vw, 120px)",
+        height: "clamp(100px, 15vw, 120px)",
+        maxWidth: "200px",
+        maxHeight: "200px",
+      }}
     >
       <IoLocationSharp
         className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-red-600 drop-shadow-lg"

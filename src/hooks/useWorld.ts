@@ -2,8 +2,39 @@ import { create } from "zustand";
 import { SAMPLE_AVATAR_LIST } from "../sampleData";
 import { Vector3 } from "three";
 
-const useWorld = create((set) => ({
-  avatar:  SAMPLE_AVATAR_LIST[0],
+interface WorldState {
+  avatar: any;
+  characterPosition: Vector3;
+  characterPositionOnFloorLabel: Vector3;
+  pinPosition: Vector3 | null;
+  selectPin: boolean;
+  isPinConfirmed: boolean;
+  isPinTeleported: boolean;
+  distance: number;
+  currentZoom: number;
+  cameraRotation: Vector3;
+  cameraMode: "first" | "third";
+  selectedDestination: any;
+  showMiniMap: boolean;
+
+  setAvatar: (avatar: any) => void;
+  setCharacterPosition: (position: Vector3) => void;
+  setCharacterPositionOnFloorLabel: (position: Vector3) => void;
+  setPinPosition: (position: Vector3 | null) => void;
+  setSelectPin: (value: boolean) => void;
+  setIsPinConfirmed: (value: boolean) => void;
+  setIsPinTeleported: (value: boolean) => void;
+  setDistance: (distance: number) => void;
+  setCurrentZoom: (zoomChange: number) => void;
+  setCameraRotation: (rotation: Vector3) => void;
+  setCameraMode: (mode: "first" | "third") => void;
+  setSelectedDestination: (destination: any) => void;
+  setShowMiniMap: (value: boolean) => void;
+}
+
+const useWorld = create<WorldState>((set) => ({
+  // ===== State =====
+  avatar: SAMPLE_AVATAR_LIST[0],
   characterPosition: new Vector3(0, 0, 0),
   characterPositionOnFloorLabel: new Vector3(0, 0, 0),
   pinPosition: null,
@@ -12,27 +43,29 @@ const useWorld = create((set) => ({
   isPinTeleported: false,
   distance: 0,
   currentZoom: 100,
-  cameraRotation: new Vector3(0, 0, 0), 
+  cameraRotation: new Vector3(0, 0, 0),
   cameraMode: "first",
+  selectedDestination: null,
+  showMiniMap: false,
 
-  setAvatar: (avatar: any) => set({ avatar }),
-  setCharacterPosition: (characterPosition: Vector3) => set({ characterPosition}),
-  setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel: Vector3) =>
+  // ===== Actions =====
+  setAvatar: (avatar) => set({ avatar }),
+  setCharacterPosition: (characterPosition) => set({ characterPosition }),
+  setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel) =>
     set({ characterPositionOnFloorLabel }),
-  setPinPosition: (pinPosition: Vector3) => set({ pinPosition }),
-  setSelectPin: (selectPin: boolean) => set({ selectPin }),
-  setIsPinConfirmed: (isPinConfirmed: boolean) => set({ isPinConfirmed }),
-  setIsPinTeleported: (isPinTeleported: boolean) => set({ isPinTeleported }),
-  setDistance: (distance: number) => set({ distance }),
-  setCurrentZoom: (zoomChange: number) =>
-  set((state: any) => ({
-    currentZoom: Math.max(
-      19,
-      Math.min(100, state.currentZoom * zoomChange)
-    )
-  })),
-  setCameraRotation: (cameraRotation: Vector3) => set({ cameraRotation }),
-  setCameraMode: (mode: any) => set({ cameraMode: mode }),
-}))
+  setPinPosition: (pinPosition) => set({ pinPosition }),
+  setSelectPin: (selectPin) => set({ selectPin }),
+  setIsPinConfirmed: (isPinConfirmed) => set({ isPinConfirmed }),
+  setIsPinTeleported: (isPinTeleported) => set({ isPinTeleported }),
+  setDistance: (distance) => set({ distance }),
+  setCurrentZoom: (zoomChange) =>
+    set((state) => ({
+      currentZoom: Math.max(19, Math.min(100, state.currentZoom * zoomChange)),
+    })),
+  setCameraRotation: (cameraRotation) => set({ cameraRotation }),
+  setCameraMode: (cameraMode) => set({ cameraMode }),
+  setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
+  setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
+}));
 
 export default useWorld;
