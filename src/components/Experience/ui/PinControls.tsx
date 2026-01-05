@@ -13,6 +13,8 @@ export const PinControls = () => {
     setIsPinConfirmed,
     setCharacterPosition,
     setIsPinTeleported,
+    setSelectedDestination,
+    setQuery,
   } = useWorld((s: any) => s);
 
   const teleportToPin = () => {
@@ -26,6 +28,15 @@ export const PinControls = () => {
 
   const handlePinModeToggle = () => {
     setSelectPin(!selectPin);
+  };
+
+  const handleUnpin = () => {
+    setPinPosition(null);
+    setIsPinConfirmed(false);
+    setSelectedDestination(null);
+    setSelectPin(true);
+    setIsPinTeleported(false);
+    setQuery("");
   };
 
   return (
@@ -54,7 +65,10 @@ export const PinControls = () => {
           >
             Pin It
           </button>
-          <button onClick={teleportToPin} className="rounded-md bg-[#7A0019] px-3 py-1">
+          <button
+            onClick={teleportToPin}
+            className="rounded-md bg-[#7A0019] px-3 py-1"
+          >
             Teleport
           </button>
         </div>
@@ -69,10 +83,7 @@ export const PinControls = () => {
             <span>Z: {pinPosition.z.toFixed(2)}</span>
           </div>
           <button
-            onClick={() => {
-              setPinPosition(null);
-              setIsPinConfirmed(false);
-            }}
+            onClick={handleUnpin}
             className="mt-2 rounded-md bg-[#7A0019] px-3 py-1"
           >
             Unpin

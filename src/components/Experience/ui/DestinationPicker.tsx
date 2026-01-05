@@ -5,14 +5,15 @@ import { IoChevronDown, IoLocationSharp, IoClose } from "react-icons/io5";
 
 export const DestinationPicker = () => {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
 
+  const query = useWorld((s: any) => s.query);
+  const selectedDestination = useWorld((s: any) => s.selectedDestination);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
   const setIsPinConfirmed = useWorld((s: any) => s.setIsPinConfirmed);
   const setSelectPin = useWorld((s: any) => s.setSelectPin);
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
   const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
-  const selectedDestination = useWorld((s: any) => s.selectedDestination);
+  const setQuery = useWorld((s: any) => s.setQuery);
 
   const filteredDestinations = useMemo(
     () =>

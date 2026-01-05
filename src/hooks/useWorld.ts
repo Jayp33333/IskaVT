@@ -16,6 +16,7 @@ interface WorldState {
   cameraMode: "first" | "third";
   selectedDestination: any;
   showMiniMap: boolean;
+  query: string;
 
   setAvatar: (avatar: any) => void;
   setCharacterPosition: (position: Vector3) => void;
@@ -30,10 +31,10 @@ interface WorldState {
   setCameraMode: (mode: "first" | "third") => void;
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
+  setQuery: (query: string) => void;
 }
 
 const useWorld = create<WorldState>((set) => ({
-  // ===== State =====
   avatar: SAMPLE_AVATAR_LIST[0],
   characterPosition: new Vector3(0, 0, 0),
   characterPositionOnFloorLabel: new Vector3(0, 0, 0),
@@ -47,8 +48,8 @@ const useWorld = create<WorldState>((set) => ({
   cameraMode: "first",
   selectedDestination: null,
   showMiniMap: false,
+  query: "",
 
-  // ===== Actions =====
   setAvatar: (avatar) => set({ avatar }),
   setCharacterPosition: (characterPosition) => set({ characterPosition }),
   setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel) =>
@@ -66,6 +67,7 @@ const useWorld = create<WorldState>((set) => ({
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
+  setQuery: (query) => set({ query }),
 }));
 
 export default useWorld;
