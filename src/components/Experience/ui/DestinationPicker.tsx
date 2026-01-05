@@ -90,17 +90,28 @@ export const DestinationPicker = () => {
           </button>
 
           {open && !selectedDestination && (
-            <div className="border-t border-white/10">
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search location..."
-                className="w-full bg-black/60 text-white outline-none"
-                style={{
-                  fontSize: "clamp(10px, 1.5vw, 12px)",
-                  padding: "clamp(6px, 1vw, 10px)",
-                }}
-              />
+            <div className="border-t border-white/10 p-2">
+              <div className="relative">
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search location..."
+                  className="w-full bg-black/60 text-white outline-none pr-8 rounded"
+                  style={{
+                    fontSize: "clamp(10px, 1.5vw, 12px)",
+                    padding: "clamp(6px, 1vw, 10px)",
+                  }}
+                />
+                {query && (
+                  <button
+                    onClick={() => setQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white p-1 hover:bg-white/10 rounded"
+                    title="Clear search"
+                  >
+                    <IoClose style={{ fontSize: "clamp(10px, 1.2vw, 14px)" }} />
+                  </button>
+                )}
+              </div>
 
               <div
                 style={{
@@ -196,17 +207,26 @@ export const DestinationPicker = () => {
               </button>
             </div>
 
-            <div className="p-4">
+            <div className="p-4 relative">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search location..."
-                className="w-full rounded-lg bg-black/60 text-white outline-none"
+                className="w-full rounded-lg bg-black/60 text-white outline-none pr-10"
                 style={{
                   padding: "clamp(8px, 2vw, 12px)",
                   fontSize: "clamp(14px, 2.5vw, 18px)",
                 }}
               />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-white p-1 hover:bg-white/10 rounded"
+                  title="Clear search"
+                >
+                  <IoClose style={{ fontSize: "clamp(16px, 3vw, 20px)" }} />
+                </button>
+              )}
             </div>
 
             <div
