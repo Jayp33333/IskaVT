@@ -36,6 +36,7 @@ export function MiniMap() {
     setCurrentZoom,
     avatar: currentAvatar,
     showMiniMap,
+    isPinConfirmed,
   } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
     pinPosition: state.pinPosition,
@@ -44,6 +45,7 @@ export function MiniMap() {
     setCurrentZoom: state.setCurrentZoom,
     avatar: state.avatar,
     showMiniMap: state.showMiniMap,
+    isPinConfirmed: state.isPinConfirmed,
   }));
 
   const { camera, gl, raycaster, mouse } = useThree();
@@ -115,7 +117,7 @@ export function MiniMap() {
     e.stopPropagation();
 
     const now = Date.now();
-    if (now - lastTap < 300) {
+    if (now - lastTap < 300 && !isPinConfirmed) {
       // Double-tap detected → place pin
       placePin(e);
     } else {
