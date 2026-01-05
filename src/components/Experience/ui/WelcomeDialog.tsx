@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 interface WelcomeDialogProps {
   open: boolean;
   onClose: () => void;
-  portraitSrc?: string; // optional character image
+  portraitSrc?: string;
 }
 
 export const WelcomeDialog = ({ open, onClose, portraitSrc }: WelcomeDialogProps) => {
@@ -12,7 +12,7 @@ export const WelcomeDialog = ({ open, onClose, portraitSrc }: WelcomeDialogProps
   const [displayedText, setDisplayedText] = useState("");
   const [typingDone, setTypingDone] = useState(false);
 
-  const indexRef = useRef(0);        // track current character
+  const indexRef = useRef(0);       
   const intervalRef = useRef<number | null>(null);
 
   // Typewriter effect
@@ -26,11 +26,12 @@ export const WelcomeDialog = ({ open, onClose, portraitSrc }: WelcomeDialogProps
       return;
     }
 
-    intervalRef.current = setInterval(() => {
-      if (indexRef.current < fullMessage.length) {
-        setDisplayedText((prev) => prev + fullMessage[indexRef.current]);
-        indexRef.current++;
-      } else {
+    intervalRef.current = window.setInterval(() => {
+      const nextIndex = indexRef.current + 1;
+      setDisplayedText(fullMessage.slice(0, nextIndex)); 
+      indexRef.current = nextIndex;
+
+      if (nextIndex >= fullMessage.length) {
         clearInterval(intervalRef.current!);
         intervalRef.current = null;
         setTypingDone(true);
@@ -80,7 +81,7 @@ export const WelcomeDialog = ({ open, onClose, portraitSrc }: WelcomeDialogProps
           {/* Text */}
           <p className="text-white text-base font-medium leading-relaxed wrap-break-word">
             {displayedText}
-            <span className="animate-pulse">|</span>
+            <span className={`animate-pulse ${typingDone ? "opacity-0" : ""}`}>|</span>
           </p>
         </motion.div>
       )}
