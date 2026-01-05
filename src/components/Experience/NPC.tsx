@@ -24,8 +24,11 @@ export const NPC = ({
   const npcRef = useRef<THREE.Group>(null);
   const [canTalk, setCanTalk] = useState(false);
 
-  const characterPosition = useWorld(
-    (state: any) => state.characterPosition
+  const { characterPosition, showMiniMap } = useWorld(
+    (state: any) => ({
+      characterPosition: state.characterPosition,
+      showMiniMap: state.showMiniMap,
+    })
   );
 
   const npcWorldPos = useRef(new THREE.Vector3());
@@ -55,8 +58,8 @@ export const NPC = ({
     >
       <Gltf src={model} castShadow receiveShadow />
 
-      {canTalk && (
-        <Html position={[0, 2.2, 0]} center>
+      {canTalk && !showMiniMap && (
+        <Html position={[0, 1.2, 0]} center>
           <div
             style={{
               background: "rgba(0,0,0,0.75)",
@@ -66,6 +69,7 @@ export const NPC = ({
               fontSize: "13px",
               cursor: "pointer",
               whiteSpace: "nowrap",
+
             }}
             onClick={handleTalk}
           >
