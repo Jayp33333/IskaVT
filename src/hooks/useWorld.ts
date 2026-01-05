@@ -7,7 +7,6 @@ interface WorldState {
   characterPosition: Vector3;
   characterPositionOnFloorLabel: Vector3;
   pinPosition: Vector3 | null;
-  selectPin: boolean;
   isPinConfirmed: boolean;
   isPinTeleported: boolean;
   distance: number;
@@ -22,7 +21,6 @@ interface WorldState {
   setCharacterPosition: (position: Vector3) => void;
   setCharacterPositionOnFloorLabel: (position: Vector3) => void;
   setPinPosition: (position: Vector3 | null) => void;
-  setSelectPin: (value: boolean) => void;
   setIsPinConfirmed: (value: boolean) => void;
   setIsPinTeleported: (value: boolean) => void;
   setDistance: (distance: number) => void;
@@ -42,7 +40,6 @@ const useWorld = create<WorldState>((set) => ({
   characterPosition: new Vector3(0, 0, 0),
   characterPositionOnFloorLabel: new Vector3(0, 0, 0),
   pinPosition: null,
-  selectPin: true,
   isPinConfirmed: false,
   isPinTeleported: false,
   distance: 0,
@@ -60,7 +57,6 @@ const useWorld = create<WorldState>((set) => ({
   setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel) =>
     set({ characterPositionOnFloorLabel }),
   setPinPosition: (pinPosition) => set({ pinPosition }),
-  setSelectPin: (selectPin) => set({ selectPin }),
   setIsPinConfirmed: (isPinConfirmed) => set({ isPinConfirmed }),
   setIsPinTeleported: (isPinTeleported) => set({ isPinTeleported }),
   setDistance: (distance) => set({ distance }),

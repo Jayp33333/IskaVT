@@ -32,8 +32,6 @@ export function MiniMap() {
     characterPosition,
     pinPosition,
     setPinPosition,
-    selectPin,
-    isPinConfirmed,
     currentZoom,
     setCurrentZoom,
     avatar: currentAvatar,
@@ -42,8 +40,6 @@ export function MiniMap() {
     characterPosition: state.characterPosition,
     pinPosition: state.pinPosition,
     setPinPosition: state.setPinPosition,
-    selectPin: state.selectPin,
-    isPinConfirmed: state.isPinConfirmed,
     currentZoom: state.currentZoom,
     setCurrentZoom: state.setCurrentZoom,
     avatar: state.avatar,
@@ -66,6 +62,7 @@ export function MiniMap() {
   );
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [lastTap, setLastTap] = useState(0);
 
   // --- Camera updates ---
   useEffect(() => {
@@ -112,16 +109,26 @@ export function MiniMap() {
     }
   }, [currentZoom, showMiniMap]);
 
-  // --- Drag & Pan ---
-  const onPointerDown = (e: PointerEvent) => {
+  // --- Drag & double-tap pin ---
+  const handlePointerDown = (e: PointerEvent) => {
     if (!showMiniMap) return;
     e.stopPropagation();
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      // Double-tap detected → place pin
+      placePin(e);
+    } else {
+      // Start drag
+      setIsDragging(true);
+      setDragStart({ x: e.clientX, y: e.clientY });
+    }
+    setLastTap(now);
+
     gl.domElement.style.cursor = "grabbing";
   };
 
-  const onPointerMove = (e: PointerEvent) => {
+  const handlePointerMove = (e: PointerEvent) => {
     if (!showMiniMap || !isDragging) return;
 
     const deltaX = e.clientX - dragStart.x;
@@ -146,18 +153,9 @@ export function MiniMap() {
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const onPointerUp = (e: PointerEvent) => {
-    const dragDistance = Math.hypot(
-      e.clientX - dragStart.x,
-      e.clientY - dragStart.y
-    );
+  const handlePointerUp = () => {
     setIsDragging(false);
-
-    if (showMiniMap && dragDistance < 5 && selectPin && !isPinConfirmed) {
-      placePin(e);
-    }
-
-    if (showMiniMap) gl.domElement.style.cursor = "grab";
+    gl.domElement.style.cursor = "grab";
   };
 
   // --- Pin placement ---
@@ -178,11 +176,7 @@ export function MiniMap() {
       if (raycaster.ray.intersectPlane(plane, intersect)) {
         setPinPosition(
           new THREE.Vector3(
-            THREE.MathUtils.clamp(
-              intersect.x,
-              MAP_BOUNDS.minX,
-              MAP_BOUNDS.maxX
-            ),
+            THREE.MathUtils.clamp(intersect.x, MAP_BOUNDS.minX, MAP_BOUNDS.maxX),
             0.2,
             THREE.MathUtils.clamp(intersect.z, MAP_BOUNDS.minZ, MAP_BOUNDS.maxZ)
           )
@@ -193,10 +187,11 @@ export function MiniMap() {
   );
 
   // --- Zoom ---
-  const onWheel = (e: WheelEvent) => {
+  const handleWheel = (e: WheelEvent) => {
     if (!showMiniMap) return;
     e.preventDefault();
     e.stopPropagation();
+
     const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
     setCurrentZoom(zoomFactor);
   };
@@ -207,22 +202,22 @@ export function MiniMap() {
 
     if (showMiniMap) {
       canvas.style.cursor = "grab";
-      canvas.addEventListener("pointerdown", onPointerDown);
-      canvas.addEventListener("pointermove", onPointerMove);
-      canvas.addEventListener("pointerup", onPointerUp);
-      canvas.addEventListener("wheel", onWheel, { passive: false });
+      canvas.addEventListener("pointerdown", handlePointerDown);
+      canvas.addEventListener("pointermove", handlePointerMove);
+      canvas.addEventListener("pointerup", handlePointerUp);
+      canvas.addEventListener("wheel", handleWheel, { passive: false });
     } else {
       canvas.style.cursor = "default";
-      setCurrentZoom(1);
+      setCurrentZoom(defaultZoom);
     }
 
     return () => {
-      canvas.removeEventListener("pointerdown", onPointerDown);
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerup", onPointerUp);
-      canvas.removeEventListener("wheel", onWheel);
+      canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("pointermove", handlePointerMove);
+      canvas.removeEventListener("pointerup", handlePointerUp);
+      canvas.removeEventListener("wheel", handleWheel);
     };
-  }, [showMiniMap, gl, isDragging, dragStart]);
+  }, [showMiniMap, isDragging, dragStart, lastTap]);
 
   // --- Frame updates ---
   useFrame(() => {
@@ -234,9 +229,7 @@ export function MiniMap() {
       camera.lookAt(tmpVector);
       camera.rotation.z = 0;
     } else {
-      const camPos = characterPosition
-        .clone()
-        .add(new THREE.Vector3(0, defaultZoom, 0));
+      const camPos = characterPosition.clone().add(new THREE.Vector3(0, defaultZoom, 0));
       camera.position.copy(camPos);
       camera.lookAt(characterPosition);
     }
@@ -257,10 +250,7 @@ export function MiniMap() {
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>
           <Html center>
-            <IoLocationSharp
-              size={24}
-              color={isPinConfirmed ? "red" : "orange"}
-            />
+            <IoLocationSharp size={24} color="red" />
           </Html>
         </Billboard>
       )}
@@ -268,11 +258,7 @@ export function MiniMap() {
       <group ref={character}>
         <mesh renderOrder={1} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.5, 32]} />
-          <meshBasicMaterial
-            color="#fff"
-            depthTest={false}
-            map={profileTexture}
-          />
+          <meshBasicMaterial color="#fff" depthTest={false} map={profileTexture} />
         </mesh>
         <mesh position-y={-0.01} rotation-x={-Math.PI / 2}>
           <circleGeometry args={[1.6, 32]} />

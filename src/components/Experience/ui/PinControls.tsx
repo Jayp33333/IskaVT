@@ -1,12 +1,8 @@
-import { IoLocation } from "react-icons/io5";
-import { AiOutlineDrag } from "react-icons/ai";
 import useWorld from "../../../hooks/useWorld";
 import { audioManager } from "../../../services/AudioManager";
 
 export const PinControls = () => {
   const {
-    selectPin,
-    setSelectPin,
     pinPosition,
     setPinPosition,
     isPinConfirmed,
@@ -17,6 +13,7 @@ export const PinControls = () => {
     setQuery,
   } = useWorld((s: any) => s);
 
+  // Teleport player to pinned location
   const teleportToPin = () => {
     if (!pinPosition) return;
     setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z });
@@ -26,30 +23,17 @@ export const PinControls = () => {
     audioManager.play("teleported");
   };
 
-  const handlePinModeToggle = () => {
-    setSelectPin(!selectPin);
-  };
-
+  // Remove pin
   const handleUnpin = () => {
     setPinPosition(null);
     setIsPinConfirmed(false);
     setSelectedDestination(null);
-    setSelectPin(true);
     setIsPinTeleported(false);
     setQuery("");
   };
 
   return (
     <>
-      {/* Pin Mode / Drag Mode Toggle - Always Visible */}
-      <button
-        onClick={handlePinModeToggle}
-        className="absolute top-4 left-4 z-101 flex min-w-16 flex-col items-center justify-center gap-1 rounded-md bg-black/70 p-2 text-white"
-      >
-        {selectPin ? <IoLocation size={28} /> : <AiOutlineDrag size={28} />}
-        <span className="text-xs">{selectPin ? "Pin Mode" : "Drag Mode"}</span>
-      </button>
-
       {/* Pin Confirmation Panel */}
       {pinPosition && !isPinConfirmed && (
         <div
