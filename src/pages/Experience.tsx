@@ -9,11 +9,14 @@ import {
 } from "@react-three/viverse";
 import { Suspense, useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+
 import useWorld from "../hooks/useWorld";
 import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 import { NPC } from "../components/Experience/NPC";
 
 const Experience = () => {
+
   usePointerLockRotateZoomActionBindings({
     lockOnClick: true,
     rotationSpeed: 0.1,
@@ -23,28 +26,34 @@ const Experience = () => {
     requiresPointerLock: false,
   });
 
-  const avatar = useWorld((state: any) => state.avatar);
-  const cameraMode = useWorld((state: any) => state.cameraMode);
-  const pinPosition = useWorld((state: any) => state.pinPosition);
-  const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
-  const isPinTeleported = useWorld((state: any) => state.isPinTeleported);
-  const setPinPosition = useWorld((state: any) => state.setPinPosition);
-  const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
-  const setCharacterPosition = useWorld(
-    (state: any) => state.setCharacterPosition
-  );
+  const avatar = useWorld((s: any) => s.avatar);
+  const cameraMode = useWorld((s: any) => s.cameraMode);
+
+  const pinPosition = useWorld((s: any) => s.pinPosition);
+  const isPinConfirmed = useWorld((s: any) => s.isPinConfirmed);
+  const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
+
+  const setPinPosition = useWorld((s: any) => s.setPinPosition);
+  const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
+  const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
   const setCharacterPositionOnFloorLabel = useWorld(
-    (state: any) => state.setCharacterPositionOnFloorLabel
+    (s: any) => s.setCharacterPositionOnFloorLabel
   );
-  const setCameraRotation = useWorld((state: any) => state.setCameraRotation);
+  const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
 
   const characterRef = useRef<any>(null);
   const pinRef = useRef<any>(null);
 
+  const introAnimating = useRef(true);
+  const introProgress = useRef(0);
+
+  const CAMERA_START = new THREE.Vector3(10, 10, 10); // top view
+  const CAMERA_TARGET_OFFSET = new THREE.Vector3(0, 2, 5); // behind character
+
   const handleTeleport = () => {
     if (!characterRef.current || !pinPosition || !isPinTeleported) return;
 
-    characterRef.current.position.set(pinPosition.x, 10, pinPosition.z);
+    characterRef.current.position.set(pinPosition.x, 3, pinPosition.z);
 
     setCharacterPosition(characterRef.current.position);
     setIsPinTeleported(false);
@@ -61,19 +70,48 @@ const Experience = () => {
     });
   }, []);
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera }, delta) => {
     const character = characterRef.current;
+    if (!character) return;
 
-    if (character) {
-      setCharacterPosition(character.position);
-      setCharacterPositionOnFloorLabel(character.position.clone());
+    /* ---------- INTRO CAMERA ---------- */
+    if (introAnimating.current) {
+      introProgress.current += delta * 0.25; // speed
+      const t = Math.min(introProgress.current, 1);
+
+      // Smoothstep easing (game-quality)
+      const eased = t * t * (3 - 2 * t);
+
+      const targetPos = character.position.clone().add(CAMERA_TARGET_OFFSET);
+
+      camera.position.lerpVectors(CAMERA_START, targetPos, eased);
+
+      camera.lookAt(
+        character.position.x,
+        character.position.y + 1.5,
+        character.position.z
+      );
+
+      // Optional cinematic zoom
+      if (camera instanceof THREE.PerspectiveCamera) {
+        camera.fov = THREE.MathUtils.lerp(75, 60, eased);
+        camera.updateProjectionMatrix();
+      }
+
+      if (t >= 1) {
+        introAnimating.current = false;
+      }
+
+      return; 
     }
+
+    setCharacterPosition(character.position);
+    setCharacterPositionOnFloorLabel(character.position.clone());
+    setCameraRotation(camera.rotation.clone());
 
     if (pinRef.current) {
-      pinRef.current.rotation.y += 0.01;
+      pinRef.current.rotation.y += delta;
     }
-
-    setCameraRotation(camera.rotation.clone());
 
     if (isPinTeleported) handleTeleport();
   });
@@ -89,8 +127,6 @@ const Experience = () => {
         intensity={1.8}
         color="#fff1e0"
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
       />
 
       <directionalLight
@@ -116,10 +152,13 @@ const Experience = () => {
               : false
           }
           cameraBehavior={
-            cameraMode === "third"
+            introAnimating.current
+              ? undefined
+              : cameraMode === "third"
               ? undefined
               : FirstPersonCharacterCameraBehavior
           }
+          actionBindings={introAnimating.current ? [] : undefined} // disable input during intro
         />
       </Suspense>
 
@@ -144,7 +183,7 @@ const Experience = () => {
           model="./avatars/guard.glb"
           name="Guard"
           scale={1.1}
-          rotation={[0, -90, 0]}
+          rotation={[0, -Math.PI / 2, 0]}
         />
       </Suspense>
 

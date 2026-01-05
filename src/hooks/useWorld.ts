@@ -48,7 +48,7 @@ const useWorld = create<WorldState>((set) => ({
   distance: 0,
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0),
-  cameraMode: "first",
+  cameraMode: "third",
   selectedDestination: null,
   showMiniMap: false,
   query: "",
