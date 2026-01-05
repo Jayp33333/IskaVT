@@ -7,6 +7,7 @@ import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
 import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
 import { useState } from "react";
+import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 
 export default function ExperienceScene() {
   useAudioPreload();
@@ -22,6 +23,8 @@ export default function ExperienceScene() {
   return (
     <>
       <LoadingOverlay onFinished={handleLoadingFinished} />
+
+      <GlobalLoadingOverlay />
 
       <WelcomeDialog
         open={showWelcome}

@@ -32,6 +32,9 @@ interface WorldState {
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
   setQuery: (query: string) => void;
+  setLoading: (isLoading: boolean, message?: string) => void;
+  isLoading: boolean;
+  loadingMessage: string;
 }
 
 const useWorld = create<WorldState>((set) => ({
@@ -49,6 +52,8 @@ const useWorld = create<WorldState>((set) => ({
   selectedDestination: null,
   showMiniMap: false,
   query: "",
+  isLoading: false,
+  loadingMessage: "",
 
   setAvatar: (avatar) => set({ avatar }),
   setCharacterPosition: (characterPosition) => set({ characterPosition }),
@@ -68,6 +73,8 @@ const useWorld = create<WorldState>((set) => ({
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setQuery: (query) => set({ query }),
+  setLoading: (v, msg = "") =>
+  set({ isLoading: v, loadingMessage: msg }),
 }));
 
 export default useWorld;

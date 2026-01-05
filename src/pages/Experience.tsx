@@ -101,7 +101,7 @@ const Experience = () => {
 
       <hemisphereLight intensity={0.5} groundColor="#b0c4de" />
 
-      <Suspense>
+      <Suspense fallback={null}>
         <SimpleCharacter
           ref={characterRef}
           position={[10, 3, 0]}

@@ -1,33 +1,28 @@
-import { useRef, useMemo } from "react";
+import { Suspense, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import useWorld from "../../../hooks/useWorld";
 
-export const ArrowGuide = () => {
+const ArrowModel = () => {
   const characterPosition = useWorld((state: any) => state.characterPosition);
   const pinPosition = useWorld((state: any) => state.pinPosition);
   const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
 
   const arrowRef = useRef<THREE.Object3D>(null);
 
-  // Load GLB model once and memoize
+  // Suspense will wait until the model is loaded
   const { scene: arrowScene } = useGLTF("/models/ArrowGuide.glb") as any;
   const memoizedArrow = useMemo(() => arrowScene.clone(), [arrowScene]);
 
   useFrame(() => {
     if (!arrowRef.current) return;
 
-    // Show arrow only if pin is confirmed
     arrowRef.current.visible = !!pinPosition && isPinConfirmed;
 
     if (!pinPosition || !characterPosition || !isPinConfirmed) return;
 
-    const start = new THREE.Vector3(
-      characterPosition.x,
-      characterPosition.y,
-      characterPosition.z
-    );
+    const start = new THREE.Vector3(characterPosition.x, characterPosition.y, characterPosition.z);
     const end = new THREE.Vector3(pinPosition.x, pinPosition.y, pinPosition.z);
     const dir = new THREE.Vector3().subVectors(end, start);
     const length = dir.length();
@@ -40,6 +35,14 @@ export const ArrowGuide = () => {
     arrowRef.current.lookAt(end);
   });
 
-  // Always render arrow, visibility is handled in useFrame
   return <primitive ref={arrowRef} object={memoizedArrow} visible={false} />;
+};
+
+// Wrap with Suspense in parent component or in Canvas
+export const ArrowGuide = () => {
+  return (
+    <Suspense fallback={null}>
+      <ArrowModel />
+    </Suspense>
+  );
 };

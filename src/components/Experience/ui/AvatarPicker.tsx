@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useViverseAvatarList } from "@react-three/viverse";
 import useWorld from "../../../hooks/useWorld";
 import { SAMPLE_AVATAR_LIST } from "../../../sampleData";
+import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
 
 export const AvatarPicker = () => {
   const avatarList = useViverseAvatarList() || SAMPLE_AVATAR_LIST;
@@ -9,7 +10,20 @@ export const AvatarPicker = () => {
   const currentAvatar = useWorld((state: any) => state.avatar);
   const setAvatar = useWorld((state: any) => state.setAvatar);
 
+  const { withLoading } = useGlobalLoading();
+
   const [openMenu, setOpenMenu] = useState(false);
+
+  const handleSelectAvatar = (avatar: any) => {
+    // Wrap the avatar switch in global loading
+    withLoading(async () => {
+      setAvatar(avatar);
+      // optional delay to allow avatar rendering
+      await new Promise((r) => setTimeout(r, 300));
+    }, "Switching avatar…");
+
+    setOpenMenu(false);
+  };
 
   return (
     <div className="relative">
@@ -32,7 +46,7 @@ export const AvatarPicker = () => {
       {/* Avatar List Panel */}
       {openMenu && (
         <div
-          className="absolute top-[75px] left-0 z-999 bg-black/85 p-2.5 rounded-lg grid shadow-lg"
+          className="absolute top-[75px] left-0 z-50 bg-black/85 p-2.5 rounded-lg grid shadow-lg"
           style={{
             gridTemplateColumns: `repeat(2, clamp(48px, 8vw, 64px))`,
             gap: "clamp(8px, 1.5vw, 10px)",
@@ -43,10 +57,7 @@ export const AvatarPicker = () => {
             return (
               <button
                 key={a.id}
-                onClick={() => {
-                  setAvatar(a);
-                  setOpenMenu(false);
-                }}
+                onClick={() => handleSelectAvatar(a)}
                 className={`rounded-md overflow-hidden border transition-colors duration-200`}
                 style={{
                   width: "clamp(36px, 8vw, 48px)",
