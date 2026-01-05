@@ -13,7 +13,6 @@ import useWorld from "../hooks/useWorld";
 import { ArrowGuide } from "../components/Experience/ui/ArrowGuide";
 import { NPC } from "../components/Experience/NPC";
 
-
 const Experience = () => {
   usePointerLockRotateZoomActionBindings({
     lockOnClick: true,
@@ -24,29 +23,20 @@ const Experience = () => {
     requiresPointerLock: false,
   });
 
-  const {
-    avatar,
-    cameraMode,
-    pinPosition,
-    isPinConfirmed,
-    isPinTeleported,
-    setPinPosition,
-    setIsPinTeleported,
-    setCharacterPosition,
-    setCharacterPositionOnFloorLabel,
-    setCameraRotation,
-  } = useWorld((s: any) => ({
-    avatar: s.avatar,
-    cameraMode: s.cameraMode,
-    pinPosition: s.pinPosition,
-    isPinConfirmed: s.isPinConfirmed,
-    isPinTeleported: s.isPinTeleported,
-    setPinPosition: s.setPinPosition,
-    setIsPinTeleported: s.setIsPinTeleported,
-    setCharacterPosition: s.setCharacterPosition,
-    setCharacterPositionOnFloorLabel: s.setCharacterPositionOnFloorLabel,
-    setCameraRotation: s.setCameraRotation,
-  }));
+  const avatar = useWorld((state: any) => state.avatar);
+  const cameraMode = useWorld((state: any) => state.cameraMode);
+  const pinPosition = useWorld((state: any) => state.pinPosition);
+  const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
+  const isPinTeleported = useWorld((state: any) => state.isPinTeleported);
+  const setPinPosition = useWorld((state: any) => state.setPinPosition);
+  const setIsPinTeleported = useWorld((state: any) => state.setIsPinTeleported);
+  const setCharacterPosition = useWorld(
+    (state: any) => state.setCharacterPosition
+  );
+  const setCharacterPositionOnFloorLabel = useWorld(
+    (state: any) => state.setCharacterPositionOnFloorLabel
+  );
+  const setCameraRotation = useWorld((state: any) => state.setCameraRotation);
 
   const characterRef = useRef<any>(null);
   const pinRef = useRef<any>(null);
@@ -54,11 +44,7 @@ const Experience = () => {
   const handleTeleport = () => {
     if (!characterRef.current || !pinPosition || !isPinTeleported) return;
 
-    characterRef.current.position.set(
-      pinPosition.x,
-      10,
-      pinPosition.z
-    );
+    characterRef.current.position.set(pinPosition.x, 10, pinPosition.z);
 
     setCharacterPosition(characterRef.current.position);
     setIsPinTeleported(false);
@@ -113,10 +99,7 @@ const Experience = () => {
         color="#e6f0ff"
       />
 
-      <hemisphereLight
-        intensity={0.5}
-        groundColor="#b0c4de"
-      />
+      <hemisphereLight intensity={0.5} groundColor="#b0c4de" />
 
       <Suspense>
         <SimpleCharacter
@@ -179,11 +162,7 @@ const Experience = () => {
             rotation={[-Math.PI / 2, 0, 0]}
           >
             <circleGeometry args={[1, 64]} />
-            <meshStandardMaterial
-              color="red"
-              transparent
-              opacity={0.5}
-            />
+            <meshStandardMaterial color="red" transparent opacity={0.5} />
           </mesh>
 
           <ArrowGuide />

@@ -21,20 +21,16 @@ export default function ExperienceScene() {
 
   return (
     <>
-      {/* Loading */}
       <LoadingOverlay onFinished={handleLoadingFinished} />
 
-      {/* Welcome Dialog */}
       <WelcomeDialog
         open={showWelcome}
         onClose={() => setShowWelcome(false)}
         portraitSrc="/images/headIconGirl.png"
       />
 
-      {/* UI Overlay */}
       <UI />
 
-      {/* 3D Scene */}
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
         <BvhPhysicsWorld>
           <Experience />
