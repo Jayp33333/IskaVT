@@ -34,6 +34,18 @@ export const PinControls = () => {
 
   return (
     <>
+      {/* Game-style instructions panel (top-left) */}
+      <div className="absolute top-4 left-4 z-200 max-w-xs rounded-lg bg-black/70 p-3 text-white text-sm font-medium shadow-md">
+        <p className="font-semibold text-yellow-300">Guide Tip</p>
+        <p>Double-tap anywhere on the map to pin your location.</p>
+        <p>Once pinned, you can:</p>
+        <ul className="list-disc list-inside text-xs mt-1">
+          <li>Confirm the pin for reference</li>
+          <li>Teleport to the pinned location instantly</li>
+          <li>Remove the pin anytime using the 'Unpin' button</li>
+        </ul>
+      </div>
+
       {/* Pin Confirmation Panel */}
       {pinPosition && !isPinConfirmed && (
         <div
