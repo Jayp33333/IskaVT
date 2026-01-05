@@ -237,7 +237,7 @@ export function MiniMap() {
     if (e.touches.length === 1 && isDragging) {
       const deltaX = e.touches[0].clientX - dragStart.x;
       const deltaY = e.touches[0].clientY - dragStart.y;
-      const sensitivity = 0.03 * (currentZoom / defaultZoom);
+      const sensitivity = 0.01 * (currentZoom / defaultZoom);
 
       setCameraPosition((prev) => {
         const next = prev.clone();
