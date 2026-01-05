@@ -10,7 +10,6 @@ export const DestinationPicker = () => {
   const selectedDestination = useWorld((s: any) => s.selectedDestination);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
   const setIsPinConfirmed = useWorld((s: any) => s.setIsPinConfirmed);
-  const setSelectPin = useWorld((s: any) => s.setSelectPin);
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
   const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
   const setQuery = useWorld((s: any) => s.setQuery);
@@ -26,7 +25,6 @@ export const DestinationPicker = () => {
   const handleSelect = (destination: any) => {
     setPinPosition(destination.position.clone());
     setIsPinConfirmed(true);
-    setSelectPin(false);
     setIsPinTeleported(false);
     setSelectedDestination(destination.name);
     setOpen(false);
@@ -37,7 +35,6 @@ export const DestinationPicker = () => {
     setPinPosition(null);
     setIsPinConfirmed(false);
     setSelectedDestination(null);
-    setSelectPin(true);
     setIsPinTeleported(false);
     setQuery("");
   };
