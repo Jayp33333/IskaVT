@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
