@@ -1,5 +1,6 @@
 import { Hero } from "../components/Home/Hero";
 import { Features } from "../components/Home/Features";
+import { NavBar } from "../components/Home/NavBar";
 
 export default function HomePage() {
   return (
@@ -11,6 +12,7 @@ export default function HomePage() {
         inset: 0,
       }}
     >
+      <NavBar />
       {/* Hero Section */}
       <Hero />
       {/* Feature Section */}

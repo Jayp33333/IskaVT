@@ -35,7 +35,7 @@ export const PinControls = () => {
   return (
     <>
       {/* Game-style instructions panel (top-left) */}
-      <div className="absolute top-4 left-4 z-200 max-w-xs rounded-lg bg-black/70 p-3 text-white text-sm font-medium shadow-md">
+      <div className="absolute bottom-4 left-4 z-200 max-w-xs rounded-lg bg-black/70 p-3 text-white text-sm font-medium shadow-md">
         <p className="font-semibold text-yellow-300">Guide Tip</p>
         <p>Double-tap anywhere on the map to pin your location.</p>
         <p>Once pinned, you can:</p>
