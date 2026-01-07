@@ -24,8 +24,7 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
         headIconUrl:
           "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=headicon",
         id: 187571,
-        vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=model&lod=original",
+        vrmUrl: "/avatars/iska.vrm",
       },
 
       {
