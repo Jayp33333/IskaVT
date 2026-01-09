@@ -92,7 +92,7 @@ export const UI = () => {
       )`,
           }}
         />
-      )}
+      )}  
 
       {/* Modular Components */}
       {showMiniMap && <MiniMapOverlay />}

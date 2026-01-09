@@ -8,6 +8,7 @@ import {
   FirstPersonCharacterCameraBehavior,
 } from "@react-three/viverse";
 import useWorld from "../../hooks/useWorld";
+import { socket } from "../../services/SocketManager";
 
 const CAMERA_START = new THREE.Vector3(10, 10, 10);
 const CAMERA_TARGET_OFFSET = new THREE.Vector3(0, 2, 5);
@@ -30,7 +31,10 @@ const Character = () => {
   const introAnimating = useRef(true);
   const introProgress = useRef(0);
 
-  usePointerLockRotateZoomActionBindings({ lockOnClick: true, rotationSpeed: 0.1 });
+  usePointerLockRotateZoomActionBindings({
+    lockOnClick: true,
+    rotationSpeed: 0.1
+  });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
 
   const handleTeleport = useCallback(() => {
@@ -46,6 +50,13 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
+    const position = character.position.toArray();
+    const rotation = [camera.rotation.x, camera.rotation.y, camera.rotation.z];
+    console.log("position", position);
+    console.log("rotation", rotation);
+
+    socket.emit("player:move", { position, rotation });
+
     // Intro camera animation
     if (introAnimating.current) {
       introProgress.current += delta * INTRO_SPEED;
@@ -54,7 +65,11 @@ const Character = () => {
 
       const targetPos = character.position.clone().add(CAMERA_TARGET_OFFSET);
       camera.position.lerpVectors(CAMERA_START, targetPos, eased);
-      camera.lookAt(character.position.x, character.position.y + 1.5, character.position.z);
+      camera.lookAt(
+        character.position.x,
+        character.position.y + 1.5,
+        character.position.z
+      );
 
       if (camera instanceof THREE.PerspectiveCamera) {
         camera.fov = THREE.MathUtils.lerp(75, 60, eased);
@@ -78,7 +93,12 @@ const Character = () => {
       position={[10, 3, 0]}
       model={
         cameraMode === "third" && avatar
-          ? { type: "vrm", url: avatar.vrmUrl, castShadow: true, receiveShadow: true }
+          ? {
+              type: "vrm",
+              url: avatar.vrmUrl,
+              castShadow: true,
+              receiveShadow: true,
+            }
           : false
       }
       cameraBehavior={
