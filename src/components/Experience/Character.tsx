@@ -14,17 +14,17 @@ const CAMERA_TARGET_OFFSET = new THREE.Vector3(0, 2, 5);
 const INTRO_SPEED = 0.25;
 
 const Character = () => {
-  const {
-    avatar,
-    cameraMode,
-    setCharacterPosition,
-    setCharacterPositionOnFloorLabel,
-    setCameraRotation,
-    pinPosition,
-    isPinTeleported,
-    setIsPinTeleported,
-    setPinPosition,
-  } = useWorld((s: any) => s);
+  const avatar = useWorld((s: any) => s.avatar);
+  const cameraMode = useWorld((s: any) => s.cameraMode);
+  const pinPosition = useWorld((s: any) => s.pinPosition);
+  const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
+  const setPinPosition = useWorld((s: any) => s.setPinPosition);
+  const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
+  const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
+  const setCharacterPositionOnFloorLabel = useWorld(
+    (s: any) => s.setCharacterPositionOnFloorLabel
+  );
+  const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
 
   const characterRef = useRef<any>(null);
   const introAnimating = useRef(true);
@@ -65,7 +65,6 @@ const Character = () => {
       return;
     }
 
-    // Runtime updates
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
     setCameraRotation(camera.rotation.clone());

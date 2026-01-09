@@ -9,7 +9,8 @@ import Lights from "../components/Experience/Lights";
 import useWorld from "../hooks/useWorld";
 
 const Experience = () => {
-  const { pinPosition, isPinConfirmed } = useWorld((s: any) => s);
+  const pinPosition = useWorld((s: any) => s.pinPosition);
+  const isPinConfirmed = useWorld((s: any) => s.isPinConfirmed);
 
   return (
     <>
