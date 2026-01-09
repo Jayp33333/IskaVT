@@ -54,7 +54,7 @@ export function MiniMap() {
   // --- Textures ---
   const girlTexture = useTexture("/images/headIconGirl.png");
   const boyTexture = useTexture("/images/headIconBoy.png");
-  const profileTexture = currentAvatar.id === 187571 ? girlTexture : boyTexture;
+  const profileTexture = currentAvatar.id === 189084? girlTexture : boyTexture;
 
   const mapModel = "./models/PUPCampus.glb";
 

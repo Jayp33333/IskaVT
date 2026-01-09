@@ -6,9 +6,10 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
   ? [
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=headicon",
-        id: 187571,
-        vrmUrl: "/avatars/iska.vrm",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=headicon",
+        id: 189084,
+        vrmUrl:
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=model&lod=original",
       },
 
       {
@@ -22,9 +23,10 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
   : [
       {
         headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/be4fc24783d85203852c516f8f0ec858a2b7118712f256cc194c4297140ac86762c9/files?filetype=headicon",
-        id: 187571,
-        vrmUrl: "/avatars/iska.vrm",
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=headicon",
+        id: 189084,
+        vrmUrl:
+          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=model&lod=original",
       },
 
       {
@@ -148,10 +150,17 @@ export const DESTINATIONS = [
   // { id: "agri", name: "Agri Business Farm", position: new THREE.Vector3(0, 0, 0) },
 ];
 
-
 export const floorZones = [
   { name: "Main Gate", xMin: 5, xMax: 12, zMin: -3, zMax: 8, yMin: 0, yMax: 3 },
-  { name: "Comlab 1", xMin: -12, xMax: 1.6, zMin: -16.5, zMax: -4.4, yMin: 0, yMax: 3 },
+  {
+    name: "Comlab 1",
+    xMin: -12,
+    xMax: 1.6,
+    zMin: -16.5,
+    zMax: -4.4,
+    yMin: 0,
+    yMax: 3,
+  },
   { name: "Library", xMin: -10, xMax: 0, zMin: 10, zMax: 20, yMin: 0, yMax: 3 },
   // add more zones as needed
 ];
