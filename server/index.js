@@ -13,7 +13,6 @@ const randomPosition = () => [Math.random() * 5, 0, Math.random() * 5];
 io.on("connection", (socket) => {
   console.log("🟢 Connected:", socket.id);
 
-  // Add new player
   players[socket.id] = { id: socket.id, position: randomPosition(), rotation: [0, 0, 0], avatar: null };
 
   // Log total connected players
