@@ -51,7 +51,7 @@ const Character = () => {
     if (!character) return;
 
     const position = character.position.toArray();
-    const rotation = [camera.rotation.x, camera.rotation.y, camera.rotation.z];
+    const rotation = camera.rotation.toArray();
     console.log("position", position);
     console.log("rotation", rotation);
 
