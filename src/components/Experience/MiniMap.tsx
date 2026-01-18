@@ -161,7 +161,6 @@ export function MiniMap() {
     [camera, gl, mouse, raycaster, setPinPosition, showMiniMap]
   );
 
-  // --- Mouse / pointer handlers ---
   const handlePointerDown = (e: PointerEvent) => {
     if (!showMiniMap) return;
     e.stopPropagation();
