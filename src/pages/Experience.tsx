@@ -7,7 +7,6 @@ import NPCs from "../components/Experience/NPCs";
 import Pin from "../components/Experience/Pin";
 import Lights from "../components/Experience/Lights";
 import useWorld from "../hooks/useWorld";
-import RemoteCharacters from "../components/Experience/RemoteCharacters";
 
 const Experience = () => {
   const pinPosition = useWorld((s: any) => s.pinPosition);
@@ -21,10 +20,6 @@ const Experience = () => {
       <Suspense fallback={null}>
         <Character />
       </Suspense>
-      <Suspense fallback={null}>
-        <RemoteCharacters />
-      </Suspense>
-
       <Suspense fallback={null}>
         <NPCs />
       </Suspense>

@@ -8,7 +8,6 @@ import useAudioPreload from "../hooks/useAudioPreload";
 import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
 import { useState } from "react";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
-import { SocketManager } from "../services/SocketManager";
 
 export default function ExperienceScene() {
   useAudioPreload();
@@ -34,8 +33,6 @@ export default function ExperienceScene() {
       />
 
       <UI />
-
-      <SocketManager />
 
       <Canvas style={{ position: "absolute", inset: 0, touchAction: "none" }}>
         <BvhPhysicsWorld>

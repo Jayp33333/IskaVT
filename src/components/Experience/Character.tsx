@@ -8,7 +8,6 @@ import {
   FirstPersonCharacterCameraBehavior,
 } from "@react-three/viverse";
 import useWorld from "../../hooks/useWorld";
-import { socket } from "../../services/SocketManager";
 
 const CAMERA_START = new THREE.Vector3(10, 10, 10);
 const CAMERA_TARGET_OFFSET = new THREE.Vector3(0, 2, 5);
@@ -54,8 +53,6 @@ const Character = () => {
     const rotation = camera.rotation.toArray();
     console.log("position", position);
     console.log("rotation", rotation);
-
-    socket.emit("player:move", { position, rotation });
 
     // Intro camera animation
     if (introAnimating.current) {
