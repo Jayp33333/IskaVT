@@ -49,11 +49,6 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
-    const position = character.position.toArray();
-    const rotation = camera.rotation.toArray();
-    console.log("position", position);
-    console.log("rotation", rotation);
-
     // Intro camera animation
     if (introAnimating.current) {
       introProgress.current += delta * INTRO_SPEED;
