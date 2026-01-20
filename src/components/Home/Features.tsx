@@ -1,13 +1,37 @@
-import { MapPin, UserCircle, Navigation, Info, Map, Compass } from "lucide-react";
+import { MapPin, UserCircle, Map, Navigation, Info, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
-  { icon: MapPin, title: "Interactive 3D Campus", description: "Explore the campus in full 3D for a realistic experience." },
-  { icon: UserCircle, title: "Character Tour Guide", description: "A virtual guide to walk you through key locations." },
-  { icon: Navigation, title: "Choose Your Destination", description: "Select any location and teleport instantly." },
-  { icon: Info, title: "Information on Landmarks", description: "Get details about landmarks and facilities." },
-  { icon: Map, title: "Mini-Map Navigation", description: "Easily navigate using a handy mini-map." },
-  { icon: Compass, title: "Free Exploration Mode", description: "Wander around freely and discover hidden spots." },
+  { 
+    icon: MapPin, 
+    title: "Interactive 3D Campus", 
+    description: "The system provides a fully modeled and interactive 3D representation of the PUP Lopez Campus. Users can freely explore buildings, walk around the campus, and view facilities within an immersive environment." 
+  },
+  { 
+    icon: UserCircle, 
+    title: "Playable Character (Tour Guide)", 
+    description: "Users control a character that serves as their tour guide. The character can be male or female, and users can toggle between first-person and third-person views to explore the campus interactively." 
+  },
+  { 
+    icon: Map, 
+    title: "Mini-Map Navigation", 
+    description: "A mini-map displays the entire 3D campus with real-time position. Clickable icons allow teleportation, and destinations can be pinned for guided navigation." 
+  },
+  { 
+    icon: Navigation, 
+    title: "Choose Destination & Pin Location", 
+    description: "Users can select a destination via the mini-map or destination picker. The system pins the location and provides an arrow guide with a distance meter to help users navigate." 
+  },
+  { 
+    icon: Info, 
+    title: "Building Area Detection & Name Display", 
+    description: "When entering a building or area, the system automatically detects the location and displays the building name, making it easy to identify landmarks and facilities." 
+  },
+  { 
+    icon: MessageSquare, 
+    title: "NPC Interaction with Dialog System", 
+    description: "Users can interact with non-player characters (NPCs) around the campus. NPCs provide helpful information, instructions, or descriptions via dialog boxes." 
+  },
 ];
 
 export function Features() {

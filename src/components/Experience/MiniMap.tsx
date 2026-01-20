@@ -16,9 +16,9 @@ const tmpVector = new THREE.Vector3();
 
 // Map boundaries
 const MAP_BOUNDS = {
-  minX: -70,
-  maxX: 90,
-  minZ: -145,
+  minX: -120,
+  maxX: 60,
+  minZ: -220,
   maxZ: 20,
   minZoom: 10,
   maxZoom: 100,
