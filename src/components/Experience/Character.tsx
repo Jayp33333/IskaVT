@@ -49,6 +49,8 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
+    console.log('Character Position:', character.position);
+
     // Intro camera animation
     if (introAnimating.current) {
       introProgress.current += delta * INTRO_SPEED;
