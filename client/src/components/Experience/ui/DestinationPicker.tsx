@@ -5,6 +5,7 @@ import { IoChevronDown, IoLocationSharp, IoClose } from "react-icons/io5";
 
 export const DestinationPicker = () => {
   const [open, setOpen] = useState(false);
+  const showLogHistory = useWorld((state: any) => state.showLogHistory);
 
   const query = useWorld((s: any) => s.query);
   const selectedDestination = useWorld((s: any) => s.selectedDestination);
@@ -43,7 +44,9 @@ export const DestinationPicker = () => {
     <>
       {/* ================= DESKTOP ================= */}
       <div
-        className="hidden md:block fixed top-6 left-1/2 z-300 pointer-events-auto"
+        className={`hidden md:block fixed top-6 left-1/2 z-300 pointer-events-auto transition-all ${
+          showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""
+        }`}
         style={{
           width: "clamp(250px, 30vw, 350px)",
           transform: "translateX(-50%)",
@@ -141,7 +144,9 @@ export const DestinationPicker = () => {
 
       {/* ================= MOBILE ================= */}
       <div
-        className="md:hidden fixed top-6 left-1/2 z-300 pointer-events-auto"
+        className={`md:hidden fixed top-6 left-1/2 z-300 pointer-events-auto transition-all ${
+          showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""
+        }`}
         style={{ transform: "translateX(-50%)" }}
       >
         <div className="flex items-center gap-2">

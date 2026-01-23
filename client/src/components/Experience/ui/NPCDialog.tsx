@@ -1,4 +1,5 @@
 import { Html } from "@react-three/drei";
+import useWorld from "../../../hooks/useWorld";
 
 export type DialogOption = {
   label: string;
@@ -22,7 +23,12 @@ export const NPCDialog = ({
   onClose,
   position = [0, 2, 0],
 }: NPCDialogProps) => {
+  const showLogHistory = useWorld((state: any) => state.showLogHistory);
+  
   if (!open) return null;
+  
+  // Hide dialog when log history is open
+  if (showLogHistory) return null;
 
   return (
     <Html position={position} center>

@@ -15,6 +15,7 @@ interface WorldState {
   cameraMode: "first" | "third";
   selectedDestination: any;
   showMiniMap: boolean;
+  showLogHistory: boolean;
   query: string;
 
   setAvatar: (avatar: any) => void;
@@ -29,6 +30,7 @@ interface WorldState {
   setCameraMode: (mode: "first" | "third") => void;
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
+  setShowLogHistory: (value: boolean) => void;
   setQuery: (query: string) => void;
   setLoading: (isLoading: boolean, message?: string) => void;
   isLoading: boolean;
@@ -48,6 +50,7 @@ const useWorld = create<WorldState>((set) => ({
   cameraMode: "third",
   selectedDestination: null,
   showMiniMap: false,
+  showLogHistory: false,
   query: "",
   isLoading: false,
   loadingMessage: "",
@@ -68,6 +71,7 @@ const useWorld = create<WorldState>((set) => ({
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
+  setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
   setQuery: (query) => set({ query }),
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),

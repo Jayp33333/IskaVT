@@ -15,6 +15,8 @@ import DistanceUpdater from "./DistanceUpdater";
 import { ArrowGuide } from "./ArrowGuide";
 import { MiniMap } from "../MiniMap";
 import { CameraModeToggle } from "./CameraModeToggle";
+import { ExitTourButton } from "./ExitTourButton";
+import { LogHistory } from "./LogHistory";
 
 export const UI = () => {
   const { cameraMode, showMiniMap, pinPosition, isPinConfirmed } = useWorld(
@@ -33,6 +35,7 @@ export const UI = () => {
         <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
           <AvatarPicker />
           <CameraModeToggle />
+          <LogHistory />
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
       )}
@@ -101,6 +104,9 @@ export const UI = () => {
 
       {/* Global Components */}
       <DestinationChecker />
+      
+      {/* Exit Tour Button */}
+      <ExitTourButton />
     </>
   );
 };

@@ -34,9 +34,10 @@ export const NPC = ({
   const [showDialog, setShowDialog] = useState(false);
   const [dialogStep, setDialogStep] = useState<number | null>(0);
 
-  const { characterPosition, showMiniMap } = useWorld((state: any) => ({
+  const { characterPosition, showMiniMap, showLogHistory } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
     showMiniMap: state.showMiniMap,
+    showLogHistory: state.showLogHistory,
   }));
 
   const npcWorldPos = useRef(new THREE.Vector3());
@@ -82,7 +83,7 @@ export const NPC = ({
     >
       <Gltf src={model} castShadow receiveShadow />
 
-      {canTalk && !showMiniMap && !showDialog && (
+      {canTalk && !showMiniMap && !showDialog && !showLogHistory && (
         <Html position={[0, 1.2, 0]} center>
           <div
             style={{
