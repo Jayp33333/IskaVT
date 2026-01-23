@@ -17,6 +17,7 @@ import { MiniMap } from "../MiniMap";
 import { CameraModeToggle } from "./CameraModeToggle";
 import { ExitTourButton } from "./ExitTourButton";
 import { LogHistory } from "./LogHistory";
+import { FullscreenToggleButton } from "./FullscreenToggleButton";
 
 export const UI = () => {
   const { cameraMode, showMiniMap, pinPosition, isPinConfirmed } = useWorld(
@@ -36,6 +37,7 @@ export const UI = () => {
           <AvatarPicker />
           <CameraModeToggle />
           <LogHistory />
+          <FullscreenToggleButton />
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
       )}
