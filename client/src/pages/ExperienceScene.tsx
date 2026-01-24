@@ -10,6 +10,8 @@ import useAudioPreload from "../hooks/useAudioPreload";
 import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
+import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
+import { enterKioskLandscape } from "../utils/kiosk";
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
@@ -30,12 +32,8 @@ export default function ExperienceScene() {
   useLogbookTimeout();
 
   useEffect(() => {
-    // Enter fullscreen when Experience page loads
-    const element = document.documentElement;
-
-    if (!document.fullscreenElement) {
-      element.requestFullscreen?.();
-    }
+    // Attempt fullscreen + landscape lock on load (may require a user gesture in some browsers)
+    void enterKioskLandscape();
   }, []);
 
   // Keyboard shortcut for fullscreen (F key)
@@ -77,6 +75,7 @@ export default function ExperienceScene() {
 
   return (
     <>
+      <OrientationGuard />
       <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
 

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
+import { enterKioskLandscape } from "../../utils/kiosk";
 
 interface LogbookFormDialogProps {
   open: boolean;
@@ -60,6 +61,9 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
     setIsSubmitting(true);
 
     try {
+      // Run on the user's "Start Tour" gesture: best chance for fullscreen + landscape lock.
+      void enterKioskLandscape();
+
       const now = new Date();
       const entryData: LogbookEntry = {
         ...formData,
