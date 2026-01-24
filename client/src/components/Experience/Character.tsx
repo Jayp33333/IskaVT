@@ -16,6 +16,7 @@ const INTRO_SPEED = 0.25;
 const Character = () => {
   const avatar = useWorld((s: any) => s.avatar);
   const cameraMode = useWorld((s: any) => s.cameraMode);
+  const cameraSensitivity = useWorld((s: any) => s.cameraSensitivity);
   const pinPosition = useWorld((s: any) => s.pinPosition);
   const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
@@ -32,7 +33,7 @@ const Character = () => {
 
   usePointerLockRotateZoomActionBindings({
     lockOnClick: true,
-    rotationSpeed: 0.1
+    rotationSpeed: 0.1 * cameraSensitivity,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
 

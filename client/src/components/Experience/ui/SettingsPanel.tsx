@@ -9,6 +9,8 @@ export const SettingsPanel = () => {
   const setShowSettings = useWorld((s: any) => s.setShowSettings);
   const cameraMode = useWorld((s: any) => s.cameraMode);
   const setCameraMode = useWorld((s: any) => s.setCameraMode);
+  const cameraSensitivity = useWorld((s: any) => s.cameraSensitivity);
+  const setCameraSensitivity = useWorld((s: any) => s.setCameraSensitivity);
   const { withLoading } = useGlobalLoading();
   const { updateTimeout } = useLogbookTimeout();
 
@@ -108,6 +110,29 @@ export const SettingsPanel = () => {
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
+              </div>
+            </div>
+
+            {/* Camera Sensitivity */}
+            <div className="flex items-center justify-between py-3 px-2 gap-6">
+              <div className="flex flex-col">
+                <span className="text-gray-300 text-sm">Camera Sensitivity</span>
+                <span className="text-gray-500 text-xs">Adjust mouse/trackpad look speed</span>
+              </div>
+              <div className="flex items-center gap-3 w-[260px]">
+                <input
+                  type="range"
+                  min={0.2}
+                  max={3}
+                  step={0.1}
+                  value={cameraSensitivity}
+                  onChange={(e) => setCameraSensitivity(Number(e.target.value))}
+                  className="w-full accent-white"
+                  aria-label="Camera sensitivity"
+                />
+                <span className="text-white text-sm tabular-nums min-w-[52px] text-right">
+                  {cameraSensitivity.toFixed(1)}x
+                </span>
               </div>
             </div>
           </div>

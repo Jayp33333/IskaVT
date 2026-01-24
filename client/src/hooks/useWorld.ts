@@ -2,6 +2,18 @@ import { create } from "zustand";
 import { SAMPLE_AVATAR_LIST } from "../sampleData";
 import { Vector3 } from "three";
 
+const CAMERA_SENSITIVITY_KEY = "cameraSensitivity";
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+const getInitialCameraSensitivity = () => {
+  if (typeof window === "undefined") return 1;
+  const raw = window.localStorage.getItem(CAMERA_SENSITIVITY_KEY);
+  const parsed = raw == null ? NaN : Number.parseFloat(raw);
+  if (!Number.isFinite(parsed)) return 1;
+  return clamp(parsed, 0.2, 3);
+};
+
 interface WorldState {
   avatar: any;
   characterPosition: Vector3;
@@ -13,6 +25,7 @@ interface WorldState {
   currentZoom: number;
   cameraRotation: Vector3;
   cameraMode: "first" | "third";
+  cameraSensitivity: number;
   selectedDestination: any;
   showMiniMap: boolean;
   showLogHistory: boolean;
@@ -29,6 +42,7 @@ interface WorldState {
   setCurrentZoom: (zoomChange: number) => void;
   setCameraRotation: (rotation: Vector3) => void;
   setCameraMode: (mode: "first" | "third") => void;
+  setCameraSensitivity: (value: number) => void;
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
@@ -50,6 +64,7 @@ const useWorld = create<WorldState>((set) => ({
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0),
   cameraMode: "third",
+  cameraSensitivity: getInitialCameraSensitivity(),
   selectedDestination: null,
   showMiniMap: false,
   showLogHistory: false,
@@ -72,6 +87,13 @@ const useWorld = create<WorldState>((set) => ({
     })),
   setCameraRotation: (cameraRotation) => set({ cameraRotation }),
   setCameraMode: (cameraMode) => set({ cameraMode }),
+  setCameraSensitivity: (value) => {
+    const next = clamp(value, 0.2, 3);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(CAMERA_SENSITIVITY_KEY, String(next));
+    }
+    set({ cameraSensitivity: next });
+  },
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
