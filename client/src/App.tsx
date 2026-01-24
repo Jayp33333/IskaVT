@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ExperienceScene from "./pages/ExperienceScene";
+import AdminDashboard from "./pages/AdminDashboard";
 import HomePage from "./pages/HomePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -16,6 +17,7 @@ export default function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

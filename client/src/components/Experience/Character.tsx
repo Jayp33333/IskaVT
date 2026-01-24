@@ -39,7 +39,7 @@ const Character = () => {
   const handleTeleport = useCallback(() => {
     if (!characterRef.current || !pinPosition) return;
 
-    characterRef.current.position.set(pinPosition.x, 3, pinPosition.z);
+    characterRef.current.position.set(pinPosition.x, pinPosition.y, pinPosition.z);
     setCharacterPosition(characterRef.current.position);
     setPinPosition(null);
     setIsPinTeleported(false);

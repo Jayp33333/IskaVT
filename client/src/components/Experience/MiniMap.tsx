@@ -11,6 +11,8 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import useWorld from "../../hooks/useWorld";
 import { IoLocationSharp } from "react-icons/io5";
+import { LocationPin } from "./LocationPin";
+import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
 
 const tmpVector = new THREE.Vector3();
 
@@ -24,7 +26,11 @@ const MAP_BOUNDS = {
   maxZoom: 100,
 };
 
-export function MiniMap() {
+type MiniMapProps = {
+  onFixedPinClick?: (pin: FixedLocationPin) => void;
+};
+
+export function MiniMap({ onFixedPinClick }: MiniMapProps) {
   const defaultZoom = 24;
 
   // --- Zustand state ---
@@ -379,6 +385,20 @@ export function MiniMap() {
       <Environment preset="city" />
       <PerspectiveCamera makeDefault position={[0, currentZoom, 0]} />
       <Gltf position={[10, 0.1, 0]} src={mapModel} />
+
+      {/* Fixed location pins */}
+      {showMiniMap &&
+        FIXED_LOCATION_PINS.map((pin) => (
+          <LocationPin
+            key={pin.id}
+            position={pin.position}
+            label={pin.name}
+            highlighted={pin.highlighted}
+            onClick={() => {
+              onFixedPinClick?.(pin);
+            }}
+          />
+        ))}
 
       {pinPosition && (
         <Billboard position={[pinPosition.x, pinPosition.y, pinPosition.z]}>

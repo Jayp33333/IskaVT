@@ -16,6 +16,7 @@ interface WorldState {
   selectedDestination: any;
   showMiniMap: boolean;
   showLogHistory: boolean;
+  showSettings: boolean;
   query: string;
 
   setAvatar: (avatar: any) => void;
@@ -31,6 +32,7 @@ interface WorldState {
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
+  setShowSettings: (value: boolean) => void;
   setQuery: (query: string) => void;
   setLoading: (isLoading: boolean, message?: string) => void;
   isLoading: boolean;
@@ -51,6 +53,7 @@ const useWorld = create<WorldState>((set) => ({
   selectedDestination: null,
   showMiniMap: false,
   showLogHistory: false,
+  showSettings: false,
   query: "",
   isLoading: false,
   loadingMessage: "",
@@ -72,6 +75,7 @@ const useWorld = create<WorldState>((set) => ({
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
+  setShowSettings: (showSettings) => set({ showSettings }),
   setQuery: (query) => set({ query }),
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),

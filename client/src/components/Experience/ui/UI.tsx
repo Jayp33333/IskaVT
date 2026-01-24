@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import useWorld from "../../../hooks/useWorld";
+import type { FixedLocationPin } from "../../../sampleData";
 
 import { AvatarPicker } from "./AvatarPicker";
 import { DestinationPicker } from "./DestinationPicker";
@@ -14,15 +16,19 @@ import { MiniMapEdgePin } from "./MiniMapEdgePin";
 import DistanceUpdater from "./DistanceUpdater";
 import { ArrowGuide } from "./ArrowGuide";
 import { MiniMap } from "../MiniMap";
-import { CameraModeToggle } from "./CameraModeToggle";
-import { ExitTourButton } from "./ExitTourButton";
 import { LogHistory } from "./LogHistory";
-import { FullscreenToggleButton } from "./FullscreenToggleButton";
+import { SettingsButton } from "./SettingsButton";
+import { SettingsPanel } from "./SettingsPanel";
+import { FixedLocationModal } from "./FixedLocationModal";
+import { audioManager } from "../../../services/AudioManager";
 
 export const UI = () => {
   const { cameraMode, showMiniMap, pinPosition, isPinConfirmed } = useWorld(
     (s: any) => s
   );
+
+  const [selectedFixedPin, setSelectedFixedPin] =
+    useState<FixedLocationPin | null>(null);
 
   return (
     <>
@@ -35,9 +41,8 @@ export const UI = () => {
       {!showMiniMap && (
         <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
           <AvatarPicker />
-          <CameraModeToggle />
+          <SettingsButton />
           <LogHistory />
-          <FullscreenToggleButton />
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
       )}
@@ -73,7 +78,7 @@ export const UI = () => {
             touchAction: "none",
           }}
         >
-          <MiniMap />
+          <MiniMap onFixedPinClick={(pin) => setSelectedFixedPin(pin)} />
           <DistanceUpdater />
           <ArrowGuide />
         </Canvas>
@@ -106,9 +111,29 @@ export const UI = () => {
 
       {/* Global Components */}
       <DestinationChecker />
-      
-      {/* Exit Tour Button */}
-      <ExitTourButton />
+
+      {/* Settings Panel */}
+      <SettingsPanel />
+
+      <FixedLocationModal
+        pin={selectedFixedPin}
+        onClose={() => setSelectedFixedPin(null)}
+        onVisit={(target) => {
+          // Teleport behavior (matches PinControls)
+          useWorld.getState().setCharacterPosition({
+            x: target.position.x,
+            y: target.position.y,
+            z: target.position.z,
+          } as any);
+          useWorld.getState().setPinPosition(target.position.clone());
+          useWorld.getState().setIsPinConfirmed(true);
+          useWorld.getState().setSelectedDestination(target.name);
+          useWorld.getState().setIsPinTeleported(true);
+          useWorld.getState().setShowMiniMap(false);
+          audioManager.play("teleported");
+          setSelectedFixedPin(null);
+        }}
+      />
     </>
   );
 };

@@ -38,6 +38,37 @@ export default function ExperienceScene() {
     }
   }, []);
 
+  // Keyboard shortcut for fullscreen (F key)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if not typing in an input field
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
+      // Press F to toggle fullscreen
+      if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        const toggleFullscreen = async () => {
+          try {
+            if (!document.fullscreenElement) {
+              await document.documentElement.requestFullscreen();
+            } else {
+              await document.exitFullscreen();
+            }
+          } catch (err) {
+            console.error("Fullscreen toggle failed:", err);
+          }
+        };
+        toggleFullscreen();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleLoadingFinished = () => {
     audioManager.unlock();
     audioManager.play("welcome");
