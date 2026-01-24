@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
@@ -12,19 +12,8 @@ export const SettingsPanel = () => {
   const { withLoading } = useGlobalLoading();
   const { updateTimeout } = useLogbookTimeout();
 
-  const [fullscreen, setFullscreen] = useState<"On" | "Off">("On");
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-
-  // Check fullscreen state
-  useEffect(() => {
-    const checkFullscreen = () => {
-      setFullscreen(!!document.fullscreenElement ? "On" : "Off");
-    };
-    document.addEventListener("fullscreenchange", checkFullscreen);
-    checkFullscreen();
-    return () => document.removeEventListener("fullscreenchange", checkFullscreen);
-  }, []);
 
   // Handle ESC key to close settings
   useEffect(() => {
@@ -47,18 +36,6 @@ export const SettingsPanel = () => {
       await new Promise((r) => setTimeout(r, 300));
     }, "Switching camera…");
   };
-
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch (err) {
-      console.error("Fullscreen toggle failed:", err);
-    }
-  }, []);
 
   const handleExitTour = async () => {
     if (!showExitConfirm) {
@@ -126,28 +103,6 @@ export const SettingsPanel = () => {
                 <span className="text-white text-sm min-w-[100px] text-center">{getCameraModeLabel()}</span>
                 <button
                   onClick={() => switchCamera(cameraMode === "first" ? "third" : "first")}
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Next option"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Fullscreen */}
-            <div className="flex items-center justify-between py-3 px-2">
-              <span className="text-gray-300 text-sm">Fullscreen</span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={toggleFullscreen}
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Previous option"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="text-white text-sm min-w-10 text-center">{fullscreen}</span>
-                <button
-                  onClick={toggleFullscreen}
                   className="text-gray-400 hover:text-white transition-colors"
                   aria-label="Next option"
                 >
