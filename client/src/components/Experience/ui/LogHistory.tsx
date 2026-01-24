@@ -20,6 +20,7 @@ interface LogbookEntryData {
 export const LogHistory = () => {
   const [isOpen, setIsOpen] = useState(false);
   const setShowLogHistory = useWorld((state: any) => state.setShowLogHistory);
+  const showSettings = useWorld((state: any) => state.showSettings);
   const [entries, setEntries] = useState<LogbookEntryData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,24 +92,14 @@ export const LogHistory = () => {
           setIsOpen(true);
           setShowLogHistory(true);
         }}
-        className="
-          flex items-center justify-center gap-2
-          px-3 py-2
-          bg-black/60 hover:bg-black/80
-          border-2 border-white/30 hover:border-white/50
-          rounded-lg
-          text-white text-xs font-semibold
-          transition-all duration-200
-          cursor-pointer
-          focus:outline-none
-          shadow-lg hover:shadow-xl
-        "
-        style={{
-          width: "clamp(48px, 8vw, 64px)",
-        }}
+        className={`w-10 h-10 rounded-xl bg-white/95 backdrop-blur-sm border border-gray-200 shadow-sm hover:shadow-md transition-all flex items-center justify-center ${
+          showSettings ? "blur-sm opacity-50 pointer-events-none" : ""
+        }`}
         aria-label="View Log History"
+        title="Logbook"
+        type="button"
       >
-        <FileText className="w-4 h-4" />
+        <FileText className="w-4 h-4 text-[#660B05]" />
       </button>
 
       {/* Notebook Modal */}

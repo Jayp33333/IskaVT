@@ -83,7 +83,7 @@ const useWorld = create<WorldState>((set) => ({
   setDistance: (distance) => set({ distance }),
   setCurrentZoom: (zoomChange) =>
     set((state) => ({
-      currentZoom: Math.max(19, Math.min(100, state.currentZoom * zoomChange)),
+      currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),
     })),
   setCameraRotation: (cameraRotation) => set({ cameraRotation }),
   setCameraMode: (cameraMode) => set({ cameraMode }),

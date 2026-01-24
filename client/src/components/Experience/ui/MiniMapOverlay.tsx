@@ -6,7 +6,7 @@ export const MiniMapOverlay = () => {
   const { setShowMiniMap, currentZoom, setCurrentZoom } = useWorld((s: any) => s);
 
   const MIN_ZOOM = 20;
-  const MAX_ZOOM = 100;
+  const MAX_ZOOM = 160;
   const STEP = (MAX_ZOOM - MIN_ZOOM) / 10;
   const zoomPercent = Math.round((currentZoom - MIN_ZOOM) / STEP) * 10;
 

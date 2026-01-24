@@ -23,7 +23,7 @@ const MAP_BOUNDS = {
   minZ: -220,
   maxZ: 20,
   minZoom: 10,
-  maxZoom: 100,
+  maxZoom: 160,
 };
 
 type MiniMapProps = {

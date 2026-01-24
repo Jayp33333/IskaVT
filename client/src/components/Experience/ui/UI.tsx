@@ -40,9 +40,11 @@ export const UI = () => {
       {/* Top-left Controls */}
       {!showMiniMap && (
         <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
-          <AvatarPicker />
-          <SettingsButton />
-          <LogHistory />
+          <div className="flex items-start gap-2">
+            <AvatarPicker />
+            <SettingsButton />
+            <LogHistory />
+          </div>
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
       )}
