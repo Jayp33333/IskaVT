@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineZoomIn, MdOutlineZoomOut } from "react-icons/md";
 import { Vector3 } from "three";
@@ -10,10 +10,10 @@ import { FixedLocationModal } from "./FixedLocationModal";
 // Reuse the old minimap bounds so the image aligns to world coordinates.
 // If your map image uses different bounds, update these values.
 const MAP_BOUNDS = {
-  minX: -120,
-  maxX: 60,
-  minZ: -220,
-  maxZ: 20,
+  minX: -170,
+  maxX: 150,
+  minZ: -230,
+  maxZ: 30,
 };
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
@@ -23,14 +23,14 @@ function worldToMapPercent(pos: { x: number; z: number }) {
   const v = (pos.z - MAP_BOUNDS.minZ) / (MAP_BOUNDS.maxZ - MAP_BOUNDS.minZ);
   return {
     xPct: clamp(u, 0, 1) * 100,
-    // CSS "top" grows downward; invert so higher Z doesn't always go down.
-    yPct: (1 - clamp(v, 0, 1)) * 100,
+    // Map Z directly to CSS top (so higher Z is lower on the image).
+    yPct: clamp(v, 0, 1) * 100,
   };
 }
 
 function mapPercentToWorld(u: number, vTop: number) {
   const uu = clamp(u, 0, 1);
-  const vv = clamp(1 - vTop, 0, 1); // invert back to world space
+  const vv = clamp(vTop, 0, 1);
   const x = MAP_BOUNDS.minX + uu * (MAP_BOUNDS.maxX - MAP_BOUNDS.minX);
   const z = MAP_BOUNDS.minZ + vv * (MAP_BOUNDS.maxZ - MAP_BOUNDS.minZ);
   return { x, z };
@@ -52,6 +52,8 @@ export function Map2D() {
   const [selectedFixedPin, setSelectedFixedPin] = useState<FixedLocationPin | null>(null);
   const [zoom, setZoom] = useState(1); // 1..3
   const [offset, setOffset] = useState({ x: 0, y: 0 }); // px pan when zoomed
+  const [viewport, setViewport] = useState({ w: 0, h: 0 });
+  const [imageAspect, setImageAspect] = useState(1); // width/height
 
   const dragRef = useRef<{
     active: boolean;
@@ -62,6 +64,27 @@ export function Map2D() {
   }>({ active: false, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0 });
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInnerRef = useRef<HTMLDivElement>(null);
+
+  // Multi-touch pinch support (pointer events).
+  const activePointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const pinchRef = useRef<{
+    active: boolean;
+    startDistance: number;
+    startZoom: number;
+    startOffset: { x: number; y: number };
+    startInnerW: number;
+    startInnerH: number;
+    startCenterLocal: { x: number; y: number };
+  }>({
+    active: false,
+    startDistance: 0,
+    startZoom: 1,
+    startOffset: { x: 0, y: 0 },
+    startInnerW: 0,
+    startInnerH: 0,
+    startCenterLocal: { x: 0, y: 0 },
+  });
 
   const characterMarker = useMemo(() => {
     if (!characterPosition) return null;
@@ -103,7 +126,7 @@ export function Map2D() {
   }, []);
 
   const placePinFromPointer = (clientX: number, clientY: number) => {
-    const el = mapContainerRef.current;
+    const el = mapInnerRef.current ?? mapContainerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const u = (clientX - rect.left) / rect.width;
@@ -131,16 +154,84 @@ export function Map2D() {
   };
 
   const handleZoom = (factor: number) => {
-    setZoom((z) => {
-      const next = clamp(z * factor, 1, 3);
-      if (next === 1) setOffset({ x: 0, y: 0 });
-      return next;
-    });
+    setZoom((z) => clamp(z * factor, 1, 3));
   };
 
   // Your 2D map image (placed in client/public/images/)
   // Note: file name is case-sensitive on many deploy hosts.
   const mapImageSrc = "/images/2DMap.png";
+
+  // Load the image dimensions so we can preserve aspect ratio (no stretching).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const img = new Image();
+    img.src = mapImageSrc;
+    img.onload = () => {
+      if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+        setImageAspect(img.naturalWidth / img.naturalHeight);
+      }
+    };
+  }, [mapImageSrc]);
+
+  // Measure viewport size when the full map is open (for mobile drag bounds).
+  useEffect(() => {
+    if (!open) return;
+    const measure = () => {
+      const el = mapContainerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setViewport({ w: rect.width, h: rect.height });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [open]);
+
+  // Size of the inner map (at zoom=1) that "covers" the viewport while keeping image aspect ratio.
+  const baseSize = useMemo(() => {
+    const w = viewport.w;
+    const h = viewport.h;
+    if (w <= 0 || h <= 0) return { baseW: 0, baseH: 0 };
+
+    const viewportAspect = w / h;
+    if (viewportAspect >= imageAspect) {
+      return { baseW: w, baseH: w / imageAspect };
+    }
+    return { baseW: h * imageAspect, baseH: h };
+  }, [viewport.w, viewport.h, imageAspect]);
+
+  const panBounds = useMemo(() => {
+    const innerW = baseSize.baseW * zoom;
+    const innerH = baseSize.baseH * zoom;
+    const maxX = Math.max(0, (innerW - viewport.w) / 2);
+    const maxY = Math.max(0, (innerH - viewport.h) / 2);
+    return { innerW, innerH, maxX, maxY };
+  }, [baseSize.baseW, baseSize.baseH, zoom, viewport.w, viewport.h]);
+
+  const clampOffsetToBounds = (next: { x: number; y: number }) => {
+    return {
+      x: clamp(next.x, -panBounds.maxX, panBounds.maxX),
+      y: clamp(next.y, -panBounds.maxY, panBounds.maxY),
+    };
+  };
+
+  const clampOffsetForZoom = (next: { x: number; y: number }, nextZoom: number) => {
+    const innerW = baseSize.baseW * nextZoom;
+    const innerH = baseSize.baseH * nextZoom;
+    const maxX = Math.max(0, (innerW - viewport.w) / 2);
+    const maxY = Math.max(0, (innerH - viewport.h) / 2);
+    return {
+      x: clamp(next.x, -maxX, maxX),
+      y: clamp(next.y, -maxY, maxY),
+    };
+  };
+
+  // Keep offset valid when zoom/viewport changes.
+  useEffect(() => {
+    if (!open) return;
+    setOffset((o) => clampOffsetToBounds(o));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, zoom, viewport.w, viewport.h, baseSize.baseW, baseSize.baseH]);
 
   const visitFixedLocation = (target: { name: string; position: Vector3 }) => {
     setCharacterPosition({ x: target.position.x, y: target.position.y, z: target.position.z } as any);
@@ -363,43 +454,132 @@ export function Map2D() {
       </div>
 
       {/* Map surface */}
-      <div className="absolute inset-0 flex items-center justify-center p-6">
+      <div className="absolute inset-0 flex items-center justify-center p-2">
         <div
           ref={mapContainerRef}
-          className="relative w-full h-full max-w-5xl max-h-[85vh] rounded-2xl overflow-hidden border border-white/20 bg-black/30"
+          className="relative w-full h-full rounded-2xl overflow-hidden border border-white/20 bg-black/30"
           style={{ touchAction: "none" }}
           onDoubleClick={(e) => {
             e.preventDefault();
             placePinFromPointer(e.clientX, e.clientY);
           }}
           onPointerDown={(e) => {
-            if (zoom <= 1) return;
+            if (e.pointerType === "touch") e.preventDefault();
+
+            activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+
+            const pointers = Array.from(activePointersRef.current.values());
+            if (pointers.length >= 2) {
+              // Start pinch
+              dragRef.current.active = false;
+              pinchRef.current.active = true;
+              pinchRef.current.startZoom = zoom;
+              pinchRef.current.startOffset = { x: offset.x, y: offset.y };
+              pinchRef.current.startInnerW = baseSize.baseW * zoom;
+              pinchRef.current.startInnerH = baseSize.baseH * zoom;
+
+              const dx = pointers[0].x - pointers[1].x;
+              const dy = pointers[0].y - pointers[1].y;
+              pinchRef.current.startDistance = Math.max(1, Math.hypot(dx, dy));
+
+              const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+              pinchRef.current.startCenterLocal = {
+                x: (pointers[0].x + pointers[1].x) / 2 - rect.left,
+                y: (pointers[0].y + pointers[1].y) / 2 - rect.top,
+              };
+              return;
+            }
+
+            // Start drag (single pointer)
             dragRef.current.active = true;
             dragRef.current.startX = e.clientX;
             dragRef.current.startY = e.clientY;
             dragRef.current.startOffsetX = offset.x;
             dragRef.current.startOffsetY = offset.y;
-            (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
           }}
           onPointerMove={(e) => {
+            if (e.pointerType === "touch") e.preventDefault();
+
+            if (activePointersRef.current.has(e.pointerId)) {
+              activePointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            }
+
+            const pointers = Array.from(activePointersRef.current.values());
+            if (pinchRef.current.active && pointers.length >= 2) {
+              const dx = pointers[0].x - pointers[1].x;
+              const dy = pointers[0].y - pointers[1].y;
+              const dist = Math.max(1, Math.hypot(dx, dy));
+
+              const rawZoom = pinchRef.current.startZoom * (dist / pinchRef.current.startDistance);
+              const nextZoom = clamp(rawZoom, 1, 3);
+
+              // Keep content under pinch center stable while zooming.
+              const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+              const centerLocal = {
+                x: (pointers[0].x + pointers[1].x) / 2 - rect.left,
+                y: (pointers[0].y + pointers[1].y) / 2 - rect.top,
+              };
+
+              const startInnerW = pinchRef.current.startInnerW;
+              const startInnerH = pinchRef.current.startInnerH;
+              const nextInnerW = baseSize.baseW * nextZoom;
+              const nextInnerH = baseSize.baseH * nextZoom;
+
+              const scaleX = nextInnerW / Math.max(1, startInnerW);
+              const scaleY = nextInnerH / Math.max(1, startInnerH);
+
+              const startLeft = (viewport.w - startInnerW) / 2 + pinchRef.current.startOffset.x;
+              const startTop = (viewport.h - startInnerH) / 2 + pinchRef.current.startOffset.y;
+
+              const nextLeft = centerLocal.x - (centerLocal.x - startLeft) * scaleX;
+              const nextTop = centerLocal.y - (centerLocal.y - startTop) * scaleY;
+
+              const nextOffset = {
+                x: nextLeft - (viewport.w - nextInnerW) / 2,
+                y: nextTop - (viewport.h - nextInnerH) / 2,
+              };
+
+              setZoom(nextZoom);
+              setOffset(clampOffsetForZoom(nextOffset, nextZoom));
+              return;
+            }
+
             if (!dragRef.current.active) return;
-            const dx = e.clientX - dragRef.current.startX;
-            const dy = e.clientY - dragRef.current.startY;
-            setOffset({ x: dragRef.current.startOffsetX + dx, y: dragRef.current.startOffsetY + dy });
+            const ddx = e.clientX - dragRef.current.startX;
+            const ddy = e.clientY - dragRef.current.startY;
+            setOffset(
+              clampOffsetToBounds({
+                x: dragRef.current.startOffsetX + ddx,
+                y: dragRef.current.startOffsetY + ddy,
+              })
+            );
           }}
           onPointerUp={(e) => {
+            activePointersRef.current.delete(e.pointerId);
+            pinchRef.current.active = activePointersRef.current.size >= 2;
             dragRef.current.active = false;
             (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
           }}
-          onPointerCancel={() => {
+          onPointerCancel={(e) => {
+            activePointersRef.current.delete(e.pointerId);
+            pinchRef.current.active = false;
             dragRef.current.active = false;
+          }}
+          onWheel={(e) => {
+            e.preventDefault();
+            const factor = e.deltaY > 0 ? 0.92 : 1.08;
+            setZoom((z) => clamp(z * factor, 1, 3));
           }}
         >
           <div
-            className="absolute inset-0"
+            ref={mapInnerRef}
+            className="absolute"
             style={{
-              transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
-              transformOrigin: "center center",
+              width: `${panBounds.innerW}px`,
+              height: `${panBounds.innerH}px`,
+              left: `${(viewport.w - panBounds.innerW) / 2 + offset.x}px`,
+              top: `${(viewport.h - panBounds.innerH) / 2 + offset.y}px`,
             }}
           >
             <img
