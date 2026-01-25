@@ -2,12 +2,8 @@ import { Settings } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 
 export const SettingsButton = () => {
-  const showMiniMap = useWorld((s: any) => s.showMiniMap);
   const showLogHistory = useWorld((s: any) => s.showLogHistory);
   const setShowSettings = useWorld((s: any) => s.setShowSettings);
-
-  // Hide when minimap is open
-  if (showMiniMap) return null;
 
   return (
     <button

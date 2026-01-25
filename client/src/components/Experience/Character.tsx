@@ -20,7 +20,6 @@ const Character = () => {
   const setCharacterPositionOnFloorLabel = useWorld(
     (s: any) => s.setCharacterPositionOnFloorLabel
   );
-  const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
 
   const characterRef = useRef<any>(null);
 
@@ -39,13 +38,12 @@ const Character = () => {
     setIsPinTeleported(false);
   }, [pinPosition]);
 
-  useFrame(({ camera }) => {
+  useFrame(() => {
     const character = characterRef.current;
     if (!character) return;
 
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
-    setCameraRotation(camera.rotation.clone());
 
     if (isPinTeleported) handleTeleport();
   });

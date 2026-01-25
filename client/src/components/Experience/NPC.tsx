@@ -34,9 +34,8 @@ export const NPC = ({
   const [showDialog, setShowDialog] = useState(false);
   const [dialogStep, setDialogStep] = useState<number | null>(0);
 
-  const { characterPosition, showMiniMap, showLogHistory } = useWorld((state: any) => ({
+  const { characterPosition, showLogHistory } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
-    showMiniMap: state.showMiniMap,
     showLogHistory: state.showLogHistory,
   }));
 
@@ -83,7 +82,7 @@ export const NPC = ({
     >
       <Gltf src={model} castShadow receiveShadow />
 
-      {canTalk && !showMiniMap && !showDialog && !showLogHistory && (
+      {canTalk && !showDialog && !showLogHistory && (
         <Html position={[0, 1.2, 0]} center>
           <div
             style={{

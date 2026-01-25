@@ -22,12 +22,9 @@ interface WorldState {
   isPinConfirmed: boolean;
   isPinTeleported: boolean;
   distance: number;
-  currentZoom: number;
-  cameraRotation: Vector3;
   cameraMode: "first" | "third";
   cameraSensitivity: number;
   selectedDestination: any;
-  showMiniMap: boolean;
   showLogHistory: boolean;
   showSettings: boolean;
   query: string;
@@ -39,12 +36,9 @@ interface WorldState {
   setIsPinConfirmed: (value: boolean) => void;
   setIsPinTeleported: (value: boolean) => void;
   setDistance: (distance: number) => void;
-  setCurrentZoom: (zoomChange: number) => void;
-  setCameraRotation: (rotation: Vector3) => void;
   setCameraMode: (mode: "first" | "third") => void;
   setCameraSensitivity: (value: number) => void;
   setSelectedDestination: (destination: any) => void;
-  setShowMiniMap: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
   setShowSettings: (value: boolean) => void;
   setQuery: (query: string) => void;
@@ -61,12 +55,9 @@ const useWorld = create<WorldState>((set) => ({
   isPinConfirmed: false,
   isPinTeleported: false,
   distance: 0,
-  currentZoom: 100,
-  cameraRotation: new Vector3(0, 0, 0),
   cameraMode: "first",
   cameraSensitivity: getInitialCameraSensitivity(),
   selectedDestination: null,
-  showMiniMap: false,
   showLogHistory: false,
   showSettings: false,
   query: "",
@@ -81,11 +72,6 @@ const useWorld = create<WorldState>((set) => ({
   setIsPinConfirmed: (isPinConfirmed) => set({ isPinConfirmed }),
   setIsPinTeleported: (isPinTeleported) => set({ isPinTeleported }),
   setDistance: (distance) => set({ distance }),
-  setCurrentZoom: (zoomChange) =>
-    set((state) => ({
-      currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),
-    })),
-  setCameraRotation: (cameraRotation) => set({ cameraRotation }),
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setCameraSensitivity: (value) => {
     const next = clamp(value, 0.2, 3);
@@ -95,7 +81,6 @@ const useWorld = create<WorldState>((set) => ({
     set({ cameraSensitivity: next });
   },
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
-  setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
   setShowSettings: (showSettings) => set({ showSettings }),
   setQuery: (query) => set({ query }),
