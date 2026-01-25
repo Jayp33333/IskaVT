@@ -7,9 +7,14 @@ interface LogbookFormDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  /**
+   * If true, the dialog cannot be dismissed (used to gate the tour).
+   * The user must submit the form successfully.
+   */
+  required?: boolean;
 }
 
-export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialogProps) => {
+export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }: LogbookFormDialogProps) => {
   const [formData, setFormData] = useState<LogbookEntry>({
     fullName: "",
     visitorType: "",
@@ -96,6 +101,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
   };
 
   const handleClose = () => {
+    if (required) return;
     if (!isSubmitting) {
       setFormData({
         fullName: "",
@@ -114,7 +120,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/60 z-40"
+            className="fixed inset-0 bg-black/60 z-[5000]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -123,7 +129,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
 
           {/* Dialog */}
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[5001] flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -147,14 +153,16 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
                       Please fill in your information to start the tour
                     </p>
                   </div>
-                  <button
-                    onClick={handleClose}
-                    disabled={isSubmitting}
-                    className="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none disabled:opacity-50 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
-                    aria-label="Close dialog"
-                  >
-                    ×
-                  </button>
+                  {!required && (
+                    <button
+                      onClick={handleClose}
+                      disabled={isSubmitting}
+                      className="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none disabled:opacity-50 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                      aria-label="Close dialog"
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
 
                 {/* Form */}
@@ -259,14 +267,16 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess }: LogbookFormDialo
 
                   {/* Submit Button */}
                   <div className="flex gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                      Cancel
-                    </button>
+                    {!required && (
+                      <button
+                        type="button"
+                        onClick={handleClose}
+                        disabled={isSubmitting}
+                        className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      >
+                        Cancel
+                      </button>
+                    )}
                     <button
                       type="submit"
                       disabled={isSubmitting}

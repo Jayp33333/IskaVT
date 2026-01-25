@@ -1,19 +1,11 @@
 import { BsArrowRight } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { LogbookFormDialog } from "./LogbookFormDialog";
 
 export function Hero() {
   const navigate = useNavigate();
-  const [showLogbookForm, setShowLogbookForm] = useState(false);
   const PUPLogo = "/images/pup-logo.png";
 
   const handleStartTour = () => {
-    setShowLogbookForm(true);
-  };
-
-  const handleFormSuccess = () => {
-    // Navigate to experience after successful form submission
     navigate("/experience");
   };
 
@@ -69,13 +61,6 @@ export function Hero() {
           </div>
         </div>
       </section>
-
-      {/* Logbook Form Dialog */}
-      <LogbookFormDialog
-        open={showLogbookForm}
-        onClose={() => setShowLogbookForm(false)}
-        onSuccess={handleFormSuccess}
-      />
     </>
   );
 }
