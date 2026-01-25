@@ -63,7 +63,7 @@ const useWorld = create<WorldState>((set) => ({
   distance: 0,
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0),
-  cameraMode: "third",
+  cameraMode: "first",
   cameraSensitivity: getInitialCameraSensitivity(),
   selectedDestination: null,
   showMiniMap: false,
