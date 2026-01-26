@@ -1,43 +1,141 @@
+import { useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import useWorld from "../../../hooks/useWorld";
+import type { FixedLocationPin } from "../../../sampleData";
 
 import { AvatarPicker } from "./AvatarPicker";
 import { DestinationPicker } from "./DestinationPicker";
 import { DestinationChecker } from "./DestinationChecker";
+import { FloorLabel } from "./FloorLabel";
 import { CenterDot } from "./CenterDot";
 import { DistanceHUD } from "./DistanceHUD";
 
+import { MiniMapOverlay } from "./MiniMapOverlay";
+import { PinControls } from "./PinControls";
+import { MiniMapEdgePin } from "./MiniMapEdgePin";
+import DistanceUpdater from "./DistanceUpdater";
+import { ArrowGuide } from "./ArrowGuide";
+import { MiniMap } from "../MiniMap";
 import { LogHistory } from "./LogHistory";
 import { SettingsButton } from "./SettingsButton";
 import { SettingsPanel } from "./SettingsPanel";
-import { Map2D } from "./Map2D";
+import { FixedLocationModal } from "./FixedLocationModal";
+import { audioManager } from "../../../services/AudioManager";
 
 export const UI = () => {
-  const { cameraMode, pinPosition, isPinConfirmed } = useWorld((s: any) => s);
+  const { cameraMode, showMiniMap, pinPosition, isPinConfirmed } = useWorld(
+    (s: any) => s
+  );
+
+  const [selectedFixedPin, setSelectedFixedPin] =
+    useState<FixedLocationPin | null>(null);
 
   return (
     <>
       {/* First-Person Center Dot */}
-      {cameraMode === "first" && <CenterDot />}
+      {cameraMode === "first" && !showMiniMap && <CenterDot />}
 
-      <Map2D />
+      {!showMiniMap && <MiniMapEdgePin />}
 
       {/* Top-left Controls */}
-      <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
-        <div className="flex items-start gap-2">
-          <AvatarPicker />
-          <SettingsButton />
-          <LogHistory />
+      {!showMiniMap && (
+        <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <AvatarPicker />
+            <SettingsButton />
+            <LogHistory />
+          </div>
+          {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
-        {pinPosition && isPinConfirmed && <DistanceHUD />}
+      )}
+
+      {!showMiniMap && <DestinationPicker />}
+
+      {/* MiniMap Canvas */}
+      <div
+        className="fixed z-100"
+        style={{
+          top: "2%",
+          right: "2%",
+          width: "clamp(100px, 15vw, 120px)",
+          height: "clamp(100px, 15vw, 120px)",
+        }}
+      >
+        <Canvas
+          onClick={() =>
+            !showMiniMap && useWorld.getState().setShowMiniMap(true)
+          }
+          style={{
+            position: "fixed",
+            width: showMiniMap ? "100vw" : "clamp(100px, 15vw, 120px)",
+            maxWidth: showMiniMap ? "100%" : "200px",
+            height: showMiniMap ? "100vh" : "clamp(100px, 15vw, 120px)",
+            maxHeight: showMiniMap ? "100%" : "200px",
+            border: "2px solid white",
+            borderRadius: showMiniMap ? 0 : "50%",
+            zIndex: 100,
+            top: showMiniMap ? 0 : "2%",
+            right: showMiniMap ? 0 : "2%",
+            overflow: "hidden",
+            touchAction: "none",
+          }}
+        >
+          <MiniMap onFixedPinClick={(pin) => setSelectedFixedPin(pin)} />
+          <DistanceUpdater />
+          <ArrowGuide />
+        </Canvas>
+
+        {!showMiniMap && <FloorLabel />}
       </div>
 
-      <DestinationPicker />
+      {/* Cone Vision */}
+      {!showMiniMap && (
+        <div
+          className="fixed top-[2%] right-[2%] z-101 pointer-events-none rounded-full border-2 border-white"
+          style={{
+            width: "clamp(100px, 15vw, 120px)",
+            height: "clamp(100px, 15vw, 120px)",
+            maxWidth: "200px",
+            maxHeight: "200px",
+            background: `conic-gradient(
+        from ${-useWorld.getState().cameraRotation.y}rad, 
+        rgba(255,255,255,0.3) 0deg 60deg, 
+        transparent 60deg 360deg
+      )`,
+          }}
+        />
+      )}  
+
+      {/* Modular Components */}
+      {showMiniMap && <MiniMapOverlay />}
+      {showMiniMap && <PinControls />}
+      {!showMiniMap && pinPosition && isPinConfirmed && <DistanceHUD />}
 
       {/* Global Components */}
       <DestinationChecker />
 
       {/* Settings Panel */}
       <SettingsPanel />
+
+      <FixedLocationModal
+        pin={selectedFixedPin}
+        onClose={() => setSelectedFixedPin(null)}
+        onVisit={(target) => {
+          // Teleport behavior (matches PinControls)
+          useWorld.getState().setCharacterPosition({
+            x: target.position.x,
+            y: target.position.y,
+            z: target.position.z,
+          } as any);
+          useWorld.getState().setPinPosition(target.position.clone());
+          useWorld.getState().setIsPinConfirmed(true);
+          useWorld.getState().setSelectedDestination(target.name);
+          useWorld.getState().setIsPinTeleported(true);
+          useWorld.getState().setShowMiniMap(false);
+          audioManager.play("teleported");
+          setSelectedFixedPin(null);
+        }}
+      />
     </>
   );
 };

@@ -4,7 +4,6 @@ import { BvhPhysicsWorld } from "@react-three/viverse";
 import Experience from "./Experience";
 import LoadingOverlay from "../components/Experience/ui/LoadingOverlay";
 import { UI } from "../components/Experience/ui/UI";
-// import DistanceUpdater from "../components/Experience/ui/DistanceUpdater";
 import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
 import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
@@ -160,7 +159,6 @@ export default function ExperienceScene() {
       >
         <BvhPhysicsWorld>
           <Experience />
-          {/* <DistanceUpdater /> */}
         </BvhPhysicsWorld>
       </Canvas>
     </>

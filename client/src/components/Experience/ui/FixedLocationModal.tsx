@@ -8,7 +8,11 @@ type FixedLocationModalProps = {
   onVisit: (target: { name: string; position: Vector3 }) => void;
 };
 
-export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModalProps) {
+export function FixedLocationModal({
+  pin,
+  onClose,
+  onVisit,
+}: FixedLocationModalProps) {
   if (!pin) return null;
 
   const rooms: FixedLocationRoom[] = pin.kind === "building" ? pin.rooms ?? [] : [];
@@ -23,7 +27,7 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
 
   return (
     <div
-      className="fixed inset-0 z-1100 bg-black/60 backdrop-blur-sm pointer-events-auto flex items-center justify-center p-4"
+      className="fixed inset-0 z-1000 bg-black/60 backdrop-blur-sm pointer-events-auto flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div
@@ -36,7 +40,6 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
             onClick={onClose}
             className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition"
             aria-label="Close"
-            type="button"
           >
             <IoClose className="w-5 h-5" />
           </button>
@@ -54,7 +57,9 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
 
           {rooms.length > 0 ? (
             <>
-              <div className="text-white/80 text-sm">Select a room to visit:</div>
+              <div className="text-white/80 text-sm">
+                Select a room to visit:
+              </div>
               <div className="max-h-72 overflow-y-auto rounded-xl border border-white/10">
                 {roomsByFloor ? (
                   <div className="divide-y divide-white/10">
@@ -70,9 +75,10 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
                               key={room.id}
                               onClick={() => onVisit(room)}
                               className="w-full flex items-center justify-between px-3 py-3 text-left hover:bg-white/10 transition"
-                              type="button"
                             >
-                              <span className="text-white font-medium">{room.name}</span>
+                              <span className="text-white font-medium">
+                                {room.name}
+                              </span>
                               <span className="rounded-md px-3 py-1 text-black font-semibold bg-yellow-400 hover:bg-yellow-300 transition">
                                 Visit
                               </span>
@@ -88,7 +94,6 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
                         key={room.id}
                         onClick={() => onVisit(room)}
                         className="w-full flex items-center justify-between px-3 py-3 text-left hover:bg-white/10 transition"
-                        type="button"
                       >
                         <span className="text-white font-medium">{room.name}</span>
                         <span className="rounded-md px-3 py-1 text-black font-semibold bg-yellow-400 hover:bg-yellow-300 transition">
@@ -103,7 +108,6 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
                 <button
                   onClick={onClose}
                   className="rounded-lg px-4 py-2 text-white/90 bg-white/10 hover:bg-white/15 transition"
-                  type="button"
                 >
                   Close
                 </button>
@@ -114,14 +118,12 @@ export function FixedLocationModal({ pin, onClose, onVisit }: FixedLocationModal
               <button
                 onClick={onClose}
                 className="rounded-lg px-4 py-2 text-white/90 bg-white/10 hover:bg-white/15 transition"
-                type="button"
               >
                 Close
               </button>
               <button
                 onClick={() => onVisit(pin)}
                 className="rounded-lg px-4 py-2 text-black font-semibold bg-yellow-400 hover:bg-yellow-300 transition"
-                type="button"
               >
                 Visit
               </button>
