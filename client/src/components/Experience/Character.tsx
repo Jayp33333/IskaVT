@@ -1,5 +1,7 @@
-import { useRef, useCallback } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, 
+  // useCallback 
+} from "react";
+// import { useFrame } from "@react-three/fiber";
 import {
   SimpleCharacter,
   usePointerLockRotateZoomActionBindings,
