@@ -33,6 +33,11 @@ export default function ExperienceScene() {
   const experienceReady =
     loadingFinished && !logbookOpen && !showWelcome;
 
+  const isTouchDevice = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia?.("(pointer: coarse)").matches ?? false;
+  }, []);
+
   // Initialize logbook timeout handling (automatic cleanup on unmount)
   useLogbookTimeout();
 
@@ -45,8 +50,9 @@ export default function ExperienceScene() {
   const getMainCanvas = () =>
     sceneContainerRef.current?.querySelector("canvas") ?? null;
 
-  // Alt key: show cursor (exit pointer lock) when Alt held, re-lock when Alt released
+  // Alt key: show cursor (exit pointer lock) when Alt held, re-lock when released. Skip on mobile (no cursor).
   useEffect(() => {
+    if (isTouchDevice) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey) {
         e.preventDefault();
@@ -60,7 +66,7 @@ export default function ExperienceScene() {
         const canvas = getMainCanvas();
         if (canvas && experienceReady && !document.pointerLockElement) {
           canvas.requestPointerLock();
-          canvas.focus(); // Restore focus so WASD works again
+          canvas.focus();
         }
       }
     };
@@ -70,10 +76,14 @@ export default function ExperienceScene() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [experienceReady]);
+  }, [experienceReady, isTouchDevice]);
 
-  // Track pointer lock state; only show "Click to enter" before first lock (so Alt doesn't block UI)
+  // Track pointer lock state. On mobile: skip "Click to enter" overlay so joystick works immediately.
   useEffect(() => {
+    if (isTouchDevice) {
+      setHasPointerLockedOnce(true); // Don't block mobile with overlay
+      return;
+    }
     const handleChange = () => {
       const locked = !!document.pointerLockElement;
       setPointerLocked(locked);
@@ -81,24 +91,22 @@ export default function ExperienceScene() {
     };
     document.addEventListener("pointerlockchange", handleChange);
     return () => document.removeEventListener("pointerlockchange", handleChange);
-  }, []);
+  }, [isTouchDevice]);
 
-  // When NPC dialog opens: exit pointer lock so cursor is visible for clicking options.
-  // When dialog closes: auto re-lock after a short delay so control returns to the game.
+  // When NPC dialog opens: exit pointer lock so cursor is visible (desktop only). On mobile, skip (touch works without cursor).
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
   const prevNPCDialogRef = useRef(activeNPCDialog);
   useEffect(() => {
     if (activeNPCDialog) {
       prevNPCDialogRef.current = activeNPCDialog;
-      if (document.pointerLockElement) {
-        document.exitPointerLock(); // Show cursor for clickable options
+      if (!isTouchDevice && document.pointerLockElement) {
+        document.exitPointerLock();
       }
       return;
     }
-    // Dialog just closed: re-lock after dialog UI has finished closing (so click isn't stolen)
     const wasOpen = !!prevNPCDialogRef.current;
     prevNPCDialogRef.current = null;
-    if (!wasOpen) return;
+    if (!wasOpen || isTouchDevice) return;
 
     const t = setTimeout(() => {
       const canvas = getMainCanvas();
@@ -108,7 +116,7 @@ export default function ExperienceScene() {
       }
     }, 100);
     return () => clearTimeout(t);
-  }, [activeNPCDialog, experienceReady]);
+  }, [activeNPCDialog, experienceReady, isTouchDevice]);
 
   // F key: talk to nearest NPC when in range
   useEffect(() => {
@@ -213,8 +221,8 @@ export default function ExperienceScene() {
 
       <UI />
 
-      {/* Click-to-enter overlay: only before first lock; when Alt is held, UI stays clickable */}
-      {experienceReady && !pointerLocked && !hasPointerLockedOnce && (
+      {/* Click-to-enter overlay: desktop only; skip on mobile so joystick works immediately */}
+      {!isTouchDevice && experienceReady && !pointerLocked && !hasPointerLockedOnce && (
         <div
           role="button"
           tabIndex={0}
