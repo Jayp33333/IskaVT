@@ -50,8 +50,9 @@ export const TourGuideDialog = ({
         >
           <motion.div
             className="
-              w-[90%] max-w-xl rounded-md bg-[#1c1c1c] text-white shadow-2xl
-              border border-white/15 overflow-hidden
+              w-[94%] max-w-xl rounded-md bg-[#1c1c1c] text-white shadow-2xl
+              border border-white/15
+              flex flex-col max-h-[85vh]
             "
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -69,7 +70,12 @@ export const TourGuideDialog = ({
             </div>
 
             {/* Content */}
-            <div className="px-4 py-4 space-y-4 text-sm leading-relaxed">
+            <div
+              className="
+                flex-1 px-3 py-3 sm:px-4 sm:py-4 space-y-4
+                text-sm leading-relaxed overflow-y-auto
+              "
+            >
               {page === 0 && (
                 <>
                   <p className="text-gray-100">
@@ -215,7 +221,14 @@ export const TourGuideDialog = ({
             </div>
 
             {/* Footer with controls */}
-            <div className="flex items-center justify-between border-t border-white/10 bg-black/50 px-4 py-2 text-xs text-gray-300">
+            <div
+              className="
+                flex items-center justify-between
+                border-t border-white/10 bg-black/50
+                px-3 py-2 sm:px-4
+                text-xs text-gray-300
+              "
+            >
               <div className="flex items-center gap-2">
                 <button
                   type="button"
