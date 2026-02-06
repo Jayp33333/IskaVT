@@ -12,6 +12,7 @@ import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
+import useWorld from "../hooks/useWorld";
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
@@ -34,7 +35,8 @@ export default function ExperienceScene() {
     void enterKioskLandscape();
   }, []);
 
-  // Keyboard shortcut for fullscreen (F key)
+  // Keyboard shortcut:
+  // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only trigger if not typing in an input field
@@ -43,24 +45,30 @@ export default function ExperienceScene() {
         return;
       }   
 
-      // Press F to toggle fullscreen
+      // Press F to interact with NPCs or toggle fullscreen
       if (e.key === 'f' || e.key === 'F') {
-        e.preventDefault();
-        const toggleFullscreen = async () => {
-          try {
-            if (!document.fullscreenElement) {
-              await document.documentElement.requestFullscreen();
-            } else {
-              await document.exitFullscreen();
-            }
-          } catch (err) {
-            console.error("Fullscreen toggle failed:", err);
-          }
-        };
-        toggleFullscreen();
+        const {
+          showMiniMap,
+          showLogHistory,
+          activeNPCDialog,
+          npcsInRange,
+          triggerNearestNPCTalk,
+        } = useWorld.getState() as any;
+
+        // If an NPC is in range and no conflicting overlays are open, use F to talk.
+        if (
+          !showMiniMap &&
+          !showLogHistory &&
+          !activeNPCDialog &&
+          npcsInRange &&
+          npcsInRange.size > 0
+        ) {
+          e.preventDefault();
+          triggerNearestNPCTalk();
+          return;
+        }
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
