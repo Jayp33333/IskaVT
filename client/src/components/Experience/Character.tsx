@@ -18,6 +18,8 @@ const Character = () => {
   const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
+  const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
+  const setQuery = useWorld((s: any) => s.setQuery);
   const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
   const setCharacterPositionOnFloorLabel = useWorld(
     (s: any) => s.setCharacterPositionOnFloorLabel
@@ -54,6 +56,8 @@ const Character = () => {
     setCharacterPosition(characterRef.current.position);
     setPinPosition(null);
     setIsPinTeleported(false);
+    setSelectedDestination(null);
+    setQuery("");
   }, [pinPosition]);
 
   useFrame(({ camera }) => {

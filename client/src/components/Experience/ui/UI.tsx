@@ -146,15 +146,13 @@ export const UI = ({ overlayBlocked = false }: UIProps) => {
         pin={selectedFixedPin}
         onClose={() => setSelectedFixedPin(null)}
         onVisit={(target) => {
-          // Teleport behavior (matches PinControls)
+          // Teleport only - no pin or destination picker display (those show only when user chooses destination or pins on map)
           useWorld.getState().setCharacterPosition({
             x: target.position.x,
             y: target.position.y,
             z: target.position.z,
           } as any);
           useWorld.getState().setPinPosition(target.position.clone());
-          useWorld.getState().setIsPinConfirmed(true);
-          useWorld.getState().setSelectedDestination(target.name);
           useWorld.getState().setIsPinTeleported(true);
           useWorld.getState().setShowMiniMap(false);
           audioManager.play("teleported");
