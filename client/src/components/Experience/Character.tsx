@@ -5,10 +5,12 @@ import {
   usePointerLockRotateZoomActionBindings,
   useKeyboardLocomotionActionBindings,
   FirstPersonCharacterCameraBehavior,
+  useIsMobile,
 } from "@react-three/viverse";
 import useWorld from "../../hooks/useWorld";
 
 const Character = () => {
+  const isMobile = useIsMobile();
   const avatar = useWorld((s: any) => s.avatar);
   const cameraMode = useWorld((s: any) => s.cameraMode);
   const cameraSensitivity = useWorld((s: any) => s.cameraSensitivity);
@@ -25,7 +27,7 @@ const Character = () => {
   const characterRef = useRef<any>(null);
 
   usePointerLockRotateZoomActionBindings({
-    lockOnClick: true,
+    lockOnClick: !isMobile,
     rotationSpeed: 0.1 * cameraSensitivity,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
