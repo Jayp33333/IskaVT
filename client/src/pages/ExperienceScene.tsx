@@ -45,34 +45,7 @@ export default function ExperienceScene() {
   const getMainCanvas = () =>
     sceneContainerRef.current?.querySelector("canvas") ?? null;
 
-  // Alt key: show cursor (exit pointer lock) when Alt held, re-lock when Alt released
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey) {
-        e.preventDefault();
-        if (document.pointerLockElement) {
-          document.exitPointerLock();
-        }
-      }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.altKey) {
-        const canvas = getMainCanvas();
-        if (canvas && experienceReady && !document.pointerLockElement) {
-          canvas.requestPointerLock();
-          canvas.focus(); // Restore focus so WASD works again
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [experienceReady]);
-
-  // Track pointer lock state; only show "Click to enter" before first lock (so Alt doesn't block UI)
+  // Track pointer lock state; only show "Click to enter" before first lock
   useEffect(() => {
     const handleChange = () => {
       const locked = !!document.pointerLockElement;
@@ -184,7 +157,7 @@ export default function ExperienceScene() {
 
       <UI />
 
-      {/* Click-to-enter overlay: only before first lock; when Alt is held, UI stays clickable */}
+      {/* Click-to-enter overlay: only before first lock */}
       {experienceReady && !pointerLocked && !hasPointerLockedOnce && (
         <div
           role="button"
