@@ -12,6 +12,7 @@ import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
+import useWorld from "../hooks/useWorld";
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
@@ -20,6 +21,14 @@ export default function ExperienceScene() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
+
+  const { triggerNearestNPCTalk, showMiniMap, showLogHistory, activeNPCDialog } =
+    useWorld((state: any) => ({
+      triggerNearestNPCTalk: state.triggerNearestNPCTalk,
+      showMiniMap: state.showMiniMap,
+      showLogHistory: state.showLogHistory,
+      activeNPCDialog: state.activeNPCDialog,
+    }));
 
   const hasLogbookEntry = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -34,7 +43,7 @@ export default function ExperienceScene() {
     void enterKioskLandscape();
   }, []);
 
-  // Keyboard shortcut for fullscreen (F key)
+  // Keyboard shortcut for talking to NPCs (F key)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only trigger if not typing in an input field
@@ -43,27 +52,19 @@ export default function ExperienceScene() {
         return;
       }   
 
-      // Press F to toggle fullscreen
+      // Press F to talk to the nearest NPC in range
       if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
-        const toggleFullscreen = async () => {
-          try {
-            if (!document.fullscreenElement) {
-              await document.documentElement.requestFullscreen();
-            } else {
-              await document.exitFullscreen();
-            }
-          } catch (err) {
-            console.error("Fullscreen toggle failed:", err);
-          }
-        };
-        toggleFullscreen();
+        // Don't trigger while UI overlays like mini map, log history, or an NPC dialog are open
+        if (!showMiniMap && !showLogHistory && !activeNPCDialog) {
+          triggerNearestNPCTalk();
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [triggerNearestNPCTalk, showMiniMap, showLogHistory, activeNPCDialog]);
 
   // While logbook is required, block movement keys so the user can't "tour" early.
   useEffect(() => {
