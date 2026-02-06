@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import useWorld from "../../../hooks/useWorld";
 import type { FixedLocationPin } from "../../../sampleData";
@@ -37,16 +37,6 @@ export const UI = () => {
 
   const [selectedFixedPin, setSelectedFixedPin] =
     useState<FixedLocationPin | null>(null);
-
-  // Hide mobile joystick while NPC dialog is open; show again after talking
-  useEffect(() => {
-    if (activeNPCDialog) {
-      document.body.classList.add("npc-dialog-open");
-    } else {
-      document.body.classList.remove("npc-dialog-open");
-    }
-    return () => document.body.classList.remove("npc-dialog-open");
-  }, [activeNPCDialog]);
 
   return (
     <>
