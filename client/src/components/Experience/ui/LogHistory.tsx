@@ -167,7 +167,14 @@ export const LogHistory = () => {
                 </div>
 
                 {/* Notebook Pages with Table Layout */}
-                <div className="relative bg-[#fefefe] flex-1 overflow-hidden" style={{ minHeight: '450px', maxHeight: '600px' }}>
+                <div
+                  className="relative bg-[#fefefe] flex-1 overflow-hidden"
+                  style={{
+                    // Make the notebook height responsive to device size
+                    minHeight: "40vh",
+                    maxHeight: "70vh",
+                  }}
+                >
                   {/* Lined Paper Background */}
                   <div 
                     className="absolute inset-0 opacity-30 pointer-events-none"
