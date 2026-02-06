@@ -41,7 +41,7 @@ export default function ExperienceScene() {
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return;
-      }
+      }   
 
       // Press F to toggle fullscreen
       if (e.key === 'f' || e.key === 'F') {

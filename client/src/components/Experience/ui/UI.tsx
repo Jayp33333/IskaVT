@@ -90,7 +90,7 @@ export const UI = () => {
           <ArrowGuide />
         </Canvas>
 
-        {!showMiniMap && <FloorLabel />}
+        {!showMiniMap && !activeNPCDialog && <FloorLabel />}
       </div>
 
       {/* Cone Vision */}
