@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { BvhPhysicsWorld } from "@react-three/viverse";
 import Experience from "./Experience";
@@ -12,7 +12,6 @@ import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
-import useWorld from "../hooks/useWorld";
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
@@ -21,13 +20,12 @@ export default function ExperienceScene() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
-  const sceneContainerRef = useRef<HTMLDivElement>(null);
 
   const hasLogbookEntry = useMemo(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(LOGBOOK_ENTRY_ID_KEY) !== null;
   }, [logbookOpen]);
-
+  
   // Initialize logbook timeout handling (automatic cleanup on unmount)
   useLogbookTimeout();
 
@@ -36,18 +34,33 @@ export default function ExperienceScene() {
     void enterKioskLandscape();
   }, []);
 
-  // F key: talk to nearest NPC when in range
+  // Keyboard shortcut for fullscreen (F key)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if not typing in an input field
       const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return;
       }
-      if (e.key === "f" || e.key === "F") {
+
+      // Press F to toggle fullscreen
+      if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
-        useWorld.getState().triggerNearestNPCTalk();
+        const toggleFullscreen = async () => {
+          try {
+            if (!document.fullscreenElement) {
+              await document.documentElement.requestFullscreen();
+            } else {
+              await document.exitFullscreen();
+            }
+          } catch (err) {
+            console.error("Fullscreen toggle failed:", err);
+          }
+        };
+        toggleFullscreen();
       }
     };
+
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
@@ -137,23 +150,17 @@ export default function ExperienceScene() {
 
       <UI />
 
-      <div
-        ref={sceneContainerRef}
-        className="absolute inset-0"
-        style={{ touchAction: "none" }}
+      <Canvas
+        style={{
+          position: "absolute",
+          inset: 0,
+          touchAction: "none",
+        }}
       >
-        <Canvas
-          style={{
-            position: "absolute",
-            inset: 0,
-            touchAction: "none",
-          }}
-        >
-          <BvhPhysicsWorld>
-            <Experience />
-          </BvhPhysicsWorld>
-        </Canvas>
-      </div>
+        <BvhPhysicsWorld>
+          <Experience />
+        </BvhPhysicsWorld>
+      </Canvas>
     </>
   );
 }
