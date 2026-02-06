@@ -119,16 +119,7 @@ export const UI = () => {
       {/* Global Components */}
       <DestinationChecker />
 
-      {/* NPC Dialog - fixed at bottom like WelcomeDialog */}
-      {activeNPCDialog && (
-        <NPCDialog
-          open
-          title={activeNPCDialog.title}
-          message={activeNPCDialog.message}
-          options={activeNPCDialog.options}
-          onClose={activeNPCDialog.onClose}
-        />
-      )}
+    
 
       {/* Settings Panel */}
       <SettingsPanel />

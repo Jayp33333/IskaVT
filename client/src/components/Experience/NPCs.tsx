@@ -69,7 +69,6 @@ const NPCs = () => (
     {npcData.map((npc, idx) => (
       <NPC
         key={idx}
-        id={`npc-${idx}`}
         position={npc.position}
         model={npc.model}
         name={npc.name || "NPC"}

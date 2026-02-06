@@ -1,8 +1,9 @@
 import { Gltf, Html } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import useWorld from "../../hooks/useWorld";
+import { NPCDialog } from "./ui/NPCDialog"; // Your dialog component
 
 type DialogStep = {
   message: string;
@@ -10,7 +11,6 @@ type DialogStep = {
 };
 
 type NPCProps = {
-  id: string;
   position: [number, number, number];
   model: string;
   name?: string;
@@ -22,7 +22,6 @@ type NPCProps = {
 const INTERACT_DISTANCE = 3;
 
 export const NPC = ({
-  id,
   position,
   model,
   name = "NPC",
@@ -35,44 +34,30 @@ export const NPC = ({
   const [showDialog, setShowDialog] = useState(false);
   const [dialogStep, setDialogStep] = useState<number | null>(0);
 
-  const {
-    characterPosition,
-    showMiniMap,
-    showLogHistory,
-    registerNPCInRange,
-    unregisterNPCInRange,
-    setActiveNPCDialog,
-  } = useWorld((state: any) => ({
+  const { characterPosition, showMiniMap, showLogHistory } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
     showMiniMap: state.showMiniMap,
     showLogHistory: state.showLogHistory,
-    registerNPCInRange: state.registerNPCInRange,
-    unregisterNPCInRange: state.unregisterNPCInRange,
-    setActiveNPCDialog: state.setActiveNPCDialog,
   }));
 
   const npcWorldPos = useRef(new THREE.Vector3());
-  const handleTalk = () => setShowDialog(true);
 
   useFrame(() => {
     if (!npcRef.current || !characterPosition) return;
     npcRef.current.getWorldPosition(npcWorldPos.current);
     const distance = npcWorldPos.current.distanceTo(characterPosition);
-    const inRange = distance < INTERACT_DISTANCE;
-    setCanTalk(inRange);
+    setCanTalk(distance < INTERACT_DISTANCE);
 
-    if (inRange) {
-      registerNPCInRange(id, npcWorldPos.current.clone(), handleTalk);
-    } else {
-      unregisterNPCInRange(id);
+    if (distance >= INTERACT_DISTANCE) {
       setShowDialog(false);
       setDialogStep(0); // reset when you walk away
     }
   });
+
+  const handleTalk = () => setShowDialog(true);
   const handleCloseDialog = () => {
     setShowDialog(false);
     setDialogStep(0);
-    setActiveNPCDialog(null);
   };
 
   const handleOptionClick = (nextStep: number | null) => {
@@ -84,24 +69,6 @@ export const NPC = ({
   };
 
   const currentDialog = dialogStep !== null ? dialogs[dialogStep] : null;
-
-  // Sync dialog to global overlay (fixed at bottom like WelcomeDialog)
-  useEffect(() => {
-    if (showDialog && currentDialog) {
-      setActiveNPCDialog({
-        title: name,
-        message: currentDialog.message,
-        options: currentDialog.options?.map((opt) => ({
-          label: opt.label,
-          onClick: () => handleOptionClick(opt.next),
-        })),
-        onClose: handleCloseDialog,
-      });
-    } else {
-      setActiveNPCDialog(null);
-    }
-    return () => setActiveNPCDialog(null);
-  }, [showDialog, currentDialog, name]);
 
   return (
     <group
@@ -130,11 +97,23 @@ export const NPC = ({
             }}
             onClick={handleTalk}
           >
-            💬 Talk (F)
+            💬 Talk
           </div>
         </Html>
       )}
 
+      {showDialog && currentDialog && (
+        <NPCDialog
+          open={showDialog}
+          title={name}
+          message={currentDialog.message}
+          options={currentDialog.options?.map((opt) => ({
+            label: opt.label,
+            onClick: () => handleOptionClick(opt.next),
+          }))}
+          onClose={handleCloseDialog}
+        />
+      )}
     </group>
   );
 };
