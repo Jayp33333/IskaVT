@@ -129,12 +129,13 @@ export const LogHistory = () => {
               <motion.div
                 className="
                   relative
-                  w-full max-w-[95vw] max-h-[90vh]
+                  w-full max-w-[95vw] max-h-[90vh] h-full
                   bg-white
                   rounded-xl
                   shadow-2xl
                   flex flex-col
                   border-2 border-gray-200
+                  overflow-hidden
                 "
                 initial={{ scale: 0.95, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
@@ -167,14 +168,7 @@ export const LogHistory = () => {
                 </div>
 
                 {/* Notebook Pages with Table Layout */}
-                <div
-                  className="relative bg-[#fefefe] flex-1 overflow-hidden"
-                  style={{
-                    // Make the notebook height responsive to device size
-                    minHeight: "40vh",
-                    maxHeight: "70vh",
-                  }}
-                >
+                <div className="relative bg-[#fefefe] flex-1 min-h-0 overflow-hidden">
                   {/* Lined Paper Background */}
                   <div 
                     className="absolute inset-0 opacity-30 pointer-events-none"
