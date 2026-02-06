@@ -168,7 +168,7 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
   );
 
   // --- Mouse / pointer handlers ---
-  const handlePointerDown = (e: PointerEvent) => {
+  const handlePointerDown = useCallback((e: PointerEvent) => {
     if (!showMiniMap) return;
     e.stopPropagation();
 
@@ -182,9 +182,9 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
     setLastTap(now);
 
     gl.domElement.style.cursor = "grabbing";
-  };
+  }, [gl, isPinConfirmed, lastTap, placePin, showMiniMap]);
 
-  const handlePointerMove = (e: PointerEvent) => {
+  const handlePointerMove = useCallback((e: PointerEvent) => {
     if (!showMiniMap || !isDragging) return;
 
     const deltaX = e.clientX - dragStart.x;
@@ -210,24 +210,36 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
     setVelocity({ x: -deltaX * sensitivity, z: -deltaY * sensitivity });
 
     setDragStart({ x: e.clientX, y: e.clientY });
-  };
+  }, [currentZoom, defaultZoom, dragStart.x, dragStart.y, isDragging, showMiniMap]);
 
-  const handlePointerUp = () => {
+  const handlePointerUp = useCallback(() => {
     setIsDragging(false);
     gl.domElement.style.cursor = "grab";
-  };
+  }, [gl]);
 
-  const handleWheel = (e: WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent) => {
     if (!showMiniMap) return;
     e.preventDefault();
      e.stopPropagation();
     const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
     setCurrentZoom(zoomFactor);
-  };
+  }, [setCurrentZoom, showMiniMap]);
 
   // --- Touch handlers ---
-  const handleTouchStart = (e: TouchEvent) => {
+  const handleTouchStart = useCallback((e: TouchEvent) => {
     if (!showMiniMap) return;
+    e.stopPropagation();
+
+    const now = Date.now();
+    // Double-tap to place a pin on touch-only devices that don't emit pointer events reliably.
+    if (e.touches.length === 1 && now - lastTap < 300 && !isPinConfirmed) {
+      e.preventDefault();
+      placePin(e);
+      setLastTap(now);
+      return;
+    }
+    setLastTap(now);
+
     if (e.touches.length === 1) {
       setIsDragging(true);
       setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -235,10 +247,11 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
       setPinchStartDistance(getTouchDistance(e.touches));
       setIsDragging(false);
     }
-  };
+  }, [isPinConfirmed, lastTap, placePin, showMiniMap]);
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!showMiniMap) return;
+    e.stopPropagation();
 
     if (e.touches.length === 1 && isDragging) {
       const deltaX = e.touches[0].clientX - dragStart.x;
@@ -268,14 +281,14 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
       setCurrentZoom(zoomFactor);
       setPinchStartDistance(newDistance);
     }
-  };
+  }, [currentZoom, defaultZoom, dragStart.x, dragStart.y, isDragging, pinchStartDistance, setCurrentZoom, showMiniMap]);
 
-  const handleTouchEnd = (e: TouchEvent) => {
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
     if (e.touches.length === 0) {
       setIsDragging(false);
       setPinchStartDistance(null);
     }
-  };
+  }, []);
 
   // --- Event listeners ---
   useEffect(() => {
@@ -311,7 +324,18 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
       canvas.removeEventListener("touchend", handleTouchEnd);
       canvas.removeEventListener("touchcancel", handleTouchEnd);
     };
-  }, [showMiniMap, isDragging, dragStart, pinchStartDistance, lastTap]);
+  }, [
+    gl,
+    showMiniMap,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handleWheel,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    setCurrentZoom,
+  ]);
 
   // --- Frame updates ---
   useFrame(() => {

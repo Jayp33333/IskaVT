@@ -16,7 +16,9 @@ export const PinControls = () => {
   // Teleport player to pinned location
   const teleportToPin = () => {
     if (!pinPosition) return;
-    setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z });
+    // Character actually teleports inside `Character.tsx` when `isPinTeleported` flips true.
+    // We still update the store position to keep UI in sync immediately.
+    setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
     setIsPinConfirmed(false);
     useWorld.getState().setShowMiniMap(false);
     setIsPinTeleported(true);
@@ -62,7 +64,21 @@ export const PinControls = () => {
             Pin It
           </button>
           <button
-            onClick={teleportToPin}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              teleportToPin();
+            }}
+            onPointerUp={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              teleportToPin();
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              teleportToPin();
+            }}
             className="rounded-md bg-[#7A0019] px-3 py-1"
           >
             Teleport
