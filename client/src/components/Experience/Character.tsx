@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   SimpleCharacter,
@@ -23,14 +23,29 @@ const Character = () => {
     (s: any) => s.setCharacterPositionOnFloorLabel
   );
   const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
+  const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
+
+  const interactionLocked = !!activeNPCDialog;
 
   const characterRef = useRef<any>(null);
 
   usePointerLockRotateZoomActionBindings({
-    lockOnClick: !isMobile,
-    rotationSpeed: 0.1 * cameraSensitivity,
+    // While talking to an NPC, do not allow acquiring pointer lock
+    lockOnClick: !isMobile && !interactionLocked,
+    // Also effectively freeze camera rotation while in dialog
+    rotationSpeed: interactionLocked ? 0 : 0.1 * cameraSensitivity,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
+
+  // When an NPC dialog opens, immediately release pointer lock so the user
+  // regains the cursor and cannot rotate the camera by moving the mouse.
+  useEffect(() => {
+    if (interactionLocked && typeof document !== "undefined") {
+      if (document.pointerLockElement) {
+        document.exitPointerLock?.();
+      }
+    }
+  }, [interactionLocked]);
 
   const handleTeleport = useCallback(() => {
     if (!characterRef.current || !pinPosition) return;

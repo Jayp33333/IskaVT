@@ -22,6 +22,9 @@ export default function ExperienceScene() {
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
 
+  // Global NPC dialog state – used to temporarily lock movement/camera
+  const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
+
   const hasLogbookEntry = useMemo(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(LOGBOOK_ENTRY_ID_KEY) !== null;
@@ -115,6 +118,55 @@ export default function ExperienceScene() {
       window.removeEventListener("keyup", handler, true);
     };
   }, [logbookOpen]);
+
+  // While an NPC dialog is open, block movement keys (WASD, arrows, jump, sprint)
+  // so the player can't move or use joystick-style controls while talking.
+  useEffect(() => {
+    if (!activeNPCDialog) return;
+
+    const blockedCodes = new Set([
+      "KeyW",
+      "KeyA",
+      "KeyS",
+      "KeyD",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "Space",
+      "ShiftLeft",
+      "ShiftRight",
+    ]);
+
+    const shouldIgnoreTarget = (target: EventTarget | null) => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      const tag = el.tagName;
+      return (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        el.isContentEditable
+      );
+    };
+
+    const handler = (e: KeyboardEvent) => {
+      if (shouldIgnoreTarget(e.target)) return;
+      if (!blockedCodes.has(e.code)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      // Some libs listen on document/window; stop them as well.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (e as any).stopImmediatePropagation?.();
+    };
+
+    window.addEventListener("keydown", handler, true);
+    window.addEventListener("keyup", handler, true);
+    return () => {
+      window.removeEventListener("keydown", handler, true);
+      window.removeEventListener("keyup", handler, true);
+    };
+  }, [activeNPCDialog]);
 
   const handleLoadingFinished = () => {
     setLoadingFinished(true);
