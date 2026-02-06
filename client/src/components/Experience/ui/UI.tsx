@@ -22,7 +22,12 @@ import { FixedLocationModal } from "./FixedLocationModal";
 import { NPCDialog } from "./NPCDialog";
 import { audioManager } from "../../../services/AudioManager";
 
-export const UI = () => {
+interface UIProps {
+  /** When true, hide main HUD controls (avatar, settings, logbook, destination picker, minimap) */
+  overlayBlocked?: boolean;
+}
+
+export const UI = ({ overlayBlocked = false }: UIProps) => {
   const {
     showMiniMap,
     pinPosition,
@@ -40,10 +45,10 @@ export const UI = () => {
 
   return (
     <>
-      {!showMiniMap && <MiniMapEdgePin />}
+      {!showMiniMap && !overlayBlocked && <MiniMapEdgePin />}
 
       {/* Top-left Controls */}
-      {!showMiniMap && (
+      {!showMiniMap && !overlayBlocked && (
         <div className="fixed top-[1.5vh] left-[1.5vw] z-300 flex flex-col gap-2">
           <div className="flex items-start gap-2">
             <AvatarPicker />
@@ -54,47 +59,49 @@ export const UI = () => {
         </div>
       )}
 
-      {!showMiniMap && <DestinationPicker />}
+      {!showMiniMap && !overlayBlocked && <DestinationPicker />}
 
       {/* MiniMap Canvas */}
-      <div
-        className="fixed z-100"
-        style={{
-          top: "2%",
-          right: "2%",
-          width: "clamp(100px, 15vw, 120px)",
-          height: "clamp(100px, 15vw, 120px)",
-        }}
-      >
-        <Canvas
-          onClick={() =>
-            !showMiniMap && useWorld.getState().setShowMiniMap(true)
-          }
+      {!overlayBlocked && (
+        <div
+          className="fixed z-100"
           style={{
-            position: "fixed",
-            width: showMiniMap ? "100vw" : "clamp(100px, 15vw, 120px)",
-            maxWidth: showMiniMap ? "100%" : "200px",
-            height: showMiniMap ? "100vh" : "clamp(100px, 15vw, 120px)",
-            maxHeight: showMiniMap ? "100%" : "200px",
-            border: "2px solid white",
-            borderRadius: showMiniMap ? 0 : "50%",
-            zIndex: 100,
-            top: showMiniMap ? 0 : "2%",
-            right: showMiniMap ? 0 : "2%",
-            overflow: "hidden",
-            touchAction: "none",
+            top: "2%",
+            right: "2%",
+            width: "clamp(100px, 15vw, 120px)",
+            height: "clamp(100px, 15vw, 120px)",
           }}
         >
-          <MiniMap onFixedPinClick={(pin) => setSelectedFixedPin(pin)} />
-          <DistanceUpdater />
-          <ArrowGuide />
-        </Canvas>
+          <Canvas
+            onClick={() =>
+              !showMiniMap && useWorld.getState().setShowMiniMap(true)
+            }
+            style={{
+              position: "fixed",
+              width: showMiniMap ? "100vw" : "clamp(100px, 15vw, 120px)",
+              maxWidth: showMiniMap ? "100%" : "200px",
+              height: showMiniMap ? "100vh" : "clamp(100px, 15vw, 120px)",
+              maxHeight: showMiniMap ? "100%" : "200px",
+              border: "2px solid white",
+              borderRadius: showMiniMap ? 0 : "50%",
+              zIndex: 100,
+              top: showMiniMap ? 0 : "2%",
+              right: showMiniMap ? 0 : "2%",
+              overflow: "hidden",
+              touchAction: "none",
+            }}
+          >
+            <MiniMap onFixedPinClick={(pin) => setSelectedFixedPin(pin)} />
+            <DistanceUpdater />
+            <ArrowGuide />
+          </Canvas>
 
-        {!showMiniMap && !activeNPCDialog && <FloorLabel />}
-      </div>
+          {!showMiniMap && !activeNPCDialog && <FloorLabel />}
+        </div>
+      )}
 
       {/* Cone Vision */}
-      {!showMiniMap && (
+      {!showMiniMap && !overlayBlocked && (
         <div
           className="fixed top-[2%] right-[2%] z-101 pointer-events-none rounded-full border-2 border-white"
           style={{
@@ -112,9 +119,11 @@ export const UI = () => {
       )}  
 
       {/* Modular Components */}
-      {showMiniMap && <MiniMapOverlay />}
-      {showMiniMap && <PinControls />}
-      {!showMiniMap && pinPosition && isPinConfirmed && <DistanceHUD />}
+      {showMiniMap && !overlayBlocked && <MiniMapOverlay />}
+      {showMiniMap && !overlayBlocked && <PinControls />}
+      {!showMiniMap && !overlayBlocked && pinPosition && isPinConfirmed && (
+        <DistanceHUD />
+      )}
 
       {/* Global Components */}
       <DestinationChecker />

@@ -6,7 +6,7 @@ import LoadingOverlay from "../components/Experience/ui/LoadingOverlay";
 import { UI } from "../components/Experience/ui/UI";
 import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
-import { WelcomeDialog } from "../components/Experience/ui/WelcomeDialog";
+import { TourGuideDialog } from "../components/Experience/ui/TourGuideDialog.tsx";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
@@ -195,7 +195,7 @@ export default function ExperienceScene() {
       <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
 
-      <WelcomeDialog
+      <TourGuideDialog
         open={showWelcome}
         onClose={() => setShowWelcome(false)}
         portraitSrc="/images/headIconGirl.png"
@@ -208,7 +208,7 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      <UI />
+      <UI overlayBlocked={showWelcome} />
 
       <Canvas
         style={{
