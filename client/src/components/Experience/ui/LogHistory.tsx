@@ -143,7 +143,7 @@ export const LogHistory = () => {
                 transition={{ type: "spring", duration: 0.3 }}
               >
                 {/* Notebook Header */}
-                <div className="px-6 py-4 border-b-2 border-gray-300 bg-gradient-to-r from-[#660B05] to-[#8C1007] rounded-t-xl">
+                <div className="px-6 py-4 border-b-2 border-gray-300 bg-linear-to-r from-[#660B05] to-[#8C1007] rounded-t-xl">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <FileText className="w-6 h-6 text-white" />
@@ -211,11 +211,11 @@ export const LogHistory = () => {
                         <table className="w-full border-collapse bg-white shadow-sm table-auto">
                           {/* Table Header */}
                           <thead>
-                            <tr className="bg-gradient-to-r from-[#660B05] to-[#8C1007] text-white">
+                            <tr className="bg-linear-to-r from-[#660B05] to-[#8C1007] text-white">
                               <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[100px] sm:min-w-[120px] border-r border-white/20">
                                 Full Name
                               </th>
-                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[80px] sm:min-w-[100px] border-r border-white/20">
+                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-20 sm:min-w-[100px] border-r border-white/20">
                                 Visitor Type
                               </th>
                               <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[100px] sm:min-w-[120px] border-r border-white/20">
@@ -224,7 +224,7 @@ export const LogHistory = () => {
                               <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[120px] sm:min-w-[150px] max-w-[200px] border-r border-white/20">
                                 Purpose
                               </th>
-                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[80px] sm:min-w-[100px] border-r border-white/20">
+                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-20 sm:min-w-[100px] border-r border-white/20">
                                 Date
                               </th>
                               <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[70px] sm:min-w-[90px] border-r border-white/20">
@@ -233,7 +233,7 @@ export const LogHistory = () => {
                               <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[70px] sm:min-w-[90px] border-r border-white/20">
                                 Time Out
                               </th>
-                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[60px] sm:min-w-[80px]">
+                              <th className="px-2 sm:px-3 py-3 text-left text-xs sm:text-sm font-bold min-w-[60px] sm:min-w-20">
                                 Duration
                               </th>
                             </tr>
@@ -258,13 +258,13 @@ export const LogHistory = () => {
                                 </td>
                                 <td className="px-2 sm:px-3 py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-200">
                                   <div className="flex items-center gap-1">
-                                    <MapPin className="w-3 h-3 text-gray-500 flex-shrink-0" />
+                                    <MapPin className="w-3 h-3 text-gray-500 shrink-0" />
                                     <span className="truncate">{entry.destination}</span>
                                   </div>
                                 </td>
                                 <td className="px-2 sm:px-3 py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-200" style={{ maxWidth: '200px', wordBreak: 'break-word' }}>
                                   <div 
-                                    className="break-words" 
+                                    className="wrap-break-word" 
                                     title={entry.purpose}
                                     style={{ 
                                       wordBreak: 'break-word',
@@ -282,20 +282,20 @@ export const LogHistory = () => {
                                 </td>
                                 <td className="px-2 sm:px-3 py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-200">
                                   <div className="flex items-center gap-1">
-                                    <Calendar className="w-3 h-3 text-gray-500 flex-shrink-0" />
+                                    <Calendar className="w-3 h-3 text-gray-500 shrink-0" />
                                     <span className="whitespace-nowrap">{formatDate(entry.date)}</span>
                                   </div>
                                 </td>
                                 <td className="px-2 sm:px-3 py-3 text-xs sm:text-sm text-gray-700 font-mono border-r border-gray-200">
                                   <div className="flex items-center gap-1">
-                                    <Clock className="w-3 h-3 text-gray-500 flex-shrink-0" />
+                                    <Clock className="w-3 h-3 text-gray-500 shrink-0" />
                                     <span className="whitespace-nowrap">{formatTime(entry.timeIn)}</span>
                                   </div>
                                 </td>
                                 <td className="px-2 sm:px-3 py-3 text-xs sm:text-sm text-gray-700 font-mono border-r border-gray-200">
                                   {entry.timeOut ? (
                                     <div className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3 text-gray-500 flex-shrink-0" />
+                                      <Clock className="w-3 h-3 text-gray-500 shrink-0" />
                                       <span className="whitespace-nowrap">{formatTime(entry.timeOut)}</span>
                                     </div>
                                   ) : (

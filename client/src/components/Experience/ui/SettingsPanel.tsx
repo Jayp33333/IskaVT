@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Maximize2, Minimize2 } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
 import { useLogbookTimeout } from "../../../hooks/useLogbookTimeout";
@@ -16,6 +16,27 @@ export const SettingsPanel = () => {
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(
+    typeof document !== "undefined" && !!document.fullscreenElement
+  );
+
+  useEffect(() => {
+    const onFullscreenChange = () => setIsFullScreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  const toggleFullScreen = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (err) {
+      console.warn("Full screen not supported or denied:", err);
+    }
+  };
 
   // Handle ESC key to close settings
   useEffect(() => {
@@ -134,6 +155,28 @@ export const SettingsPanel = () => {
                   {cameraSensitivity.toFixed(1)}x
                 </span>
               </div>
+            </div>
+
+            {/* Full Screen */}
+            <div className="flex items-center justify-between py-3 px-2">
+              <span className="text-gray-300 text-sm">Full Screen</span>
+              <button
+                onClick={toggleFullScreen}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium transition-colors"
+                aria-label={isFullScreen ? "Exit full screen" : "Enter full screen"}
+              >
+                {isFullScreen ? (
+                  <>
+                    <Minimize2 className="w-4 h-4" />
+                    Exit Full Screen
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-4 h-4" />
+                    Enter Full Screen
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
