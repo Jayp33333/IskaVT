@@ -108,7 +108,7 @@ export const LogHistory = () => {
           <>
             {/* Backdrop */}
             <motion.div
-              className="fixed inset-0 bg-black/50 z-[1000] backdrop-blur-sm"
+              className="fixed inset-0 bg-black/50 z-1000 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -120,7 +120,7 @@ export const LogHistory = () => {
 
             {/* Notebook Container */}
             <motion.div
-              className="fixed inset-0 z-[1001] flex items-center justify-center p-4"
+              className="fixed inset-0 z-1001 flex items-center justify-center p-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

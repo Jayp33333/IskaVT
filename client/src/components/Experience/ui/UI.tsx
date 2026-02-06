@@ -7,7 +7,6 @@ import { AvatarPicker } from "./AvatarPicker";
 import { DestinationPicker } from "./DestinationPicker";
 import { DestinationChecker } from "./DestinationChecker";
 import { FloorLabel } from "./FloorLabel";
-import { CenterDot } from "./CenterDot";
 import { DistanceHUD } from "./DistanceHUD";
 
 import { MiniMapOverlay } from "./MiniMapOverlay";
@@ -20,21 +19,27 @@ import { LogHistory } from "./LogHistory";
 import { SettingsButton } from "./SettingsButton";
 import { SettingsPanel } from "./SettingsPanel";
 import { FixedLocationModal } from "./FixedLocationModal";
+import { NPCDialog } from "./NPCDialog";
 import { audioManager } from "../../../services/AudioManager";
 
 export const UI = () => {
-  const { cameraMode, showMiniMap, pinPosition, isPinConfirmed } = useWorld(
-    (s: any) => s
-  );
+  const {
+    showMiniMap,
+    pinPosition,
+    isPinConfirmed,
+    activeNPCDialog,
+  } = useWorld((s: any) => ({
+    showMiniMap: s.showMiniMap,
+    pinPosition: s.pinPosition,
+    isPinConfirmed: s.isPinConfirmed,
+    activeNPCDialog: s.activeNPCDialog,
+  }));
 
   const [selectedFixedPin, setSelectedFixedPin] =
     useState<FixedLocationPin | null>(null);
 
   return (
     <>
-      {/* First-Person Center Dot */}
-      {cameraMode === "first" && !showMiniMap && <CenterDot />}
-
       {!showMiniMap && <MiniMapEdgePin />}
 
       {/* Top-left Controls */}
@@ -113,6 +118,17 @@ export const UI = () => {
 
       {/* Global Components */}
       <DestinationChecker />
+
+      {/* NPC Dialog - fixed at bottom like WelcomeDialog */}
+      {activeNPCDialog && (
+        <NPCDialog
+          open
+          title={activeNPCDialog.title}
+          message={activeNPCDialog.message}
+          options={activeNPCDialog.options}
+          onClose={activeNPCDialog.onClose}
+        />
+      )}
 
       {/* Settings Panel */}
       <SettingsPanel />

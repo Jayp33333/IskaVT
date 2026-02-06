@@ -31,8 +31,28 @@ interface WorldState {
   showLogHistory: boolean;
   showSettings: boolean;
   query: string;
+  /** NPCs in range: id -> { position, onTalk }. Used for F-key interaction. */
+  npcsInRange: Map<string, { position: Vector3; onTalk: () => void }>;
+  /** Active NPC dialog shown as fixed overlay at bottom (WelcomeDialog style). */
+  activeNPCDialog: {
+    title: string;
+    message: string;
+    options?: { label: string; onClick: () => void }[];
+    onClose: () => void;
+  } | null;
 
   setAvatar: (avatar: any) => void;
+  setActiveNPCDialog: (
+    d: {
+      title: string;
+      message: string;
+      options?: { label: string; onClick: () => void }[];
+      onClose: () => void;
+    } | null
+  ) => void;
+  registerNPCInRange: (id: string, position: Vector3, onTalk: () => void) => void;
+  unregisterNPCInRange: (id: string) => void;
+  triggerNearestNPCTalk: () => void;
   setCharacterPosition: (position: Vector3) => void;
   setCharacterPositionOnFloorLabel: (position: Vector3) => void;
   setPinPosition: (position: Vector3 | null) => void;
@@ -72,8 +92,37 @@ const useWorld = create<WorldState>((set) => ({
   query: "",
   isLoading: false,
   loadingMessage: "",
+  npcsInRange: new Map(),
+  activeNPCDialog: null,
 
   setAvatar: (avatar) => set({ avatar }),
+  setActiveNPCDialog: (activeNPCDialog) => set({ activeNPCDialog }),
+  registerNPCInRange: (id, position, onTalk) =>
+    set((s) => {
+      const next = new Map(s.npcsInRange);
+      next.set(id, { position: position.clone(), onTalk });
+      return { npcsInRange: next };
+    }),
+  unregisterNPCInRange: (id) =>
+    set((s) => {
+      const next = new Map(s.npcsInRange);
+      next.delete(id);
+      return { npcsInRange: next };
+    }),
+  triggerNearestNPCTalk: () => {
+    const { npcsInRange, characterPosition } = useWorld.getState();
+    if (npcsInRange.size === 0 || !characterPosition) return;
+    let nearest: { id: string; onTalk: () => void } | null = null;
+    let minDist = Infinity;
+    for (const [id, { position, onTalk }] of npcsInRange) {
+      const d = position.distanceTo(characterPosition);
+      if (d < minDist) {
+        minDist = d;
+        nearest = { id, onTalk };
+      }
+    }
+    if (nearest) nearest.onTalk();
+  },
   setCharacterPosition: (characterPosition) => set({ characterPosition }),
   setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel) =>
     set({ characterPositionOnFloorLabel }),
