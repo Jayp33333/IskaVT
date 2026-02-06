@@ -19,7 +19,6 @@ import { LogHistory } from "./LogHistory";
 import { SettingsButton } from "./SettingsButton";
 import { SettingsPanel } from "./SettingsPanel";
 import { FixedLocationModal } from "./FixedLocationModal";
-import { NPCDialog } from "./NPCDialog";
 import { audioManager } from "../../../services/AudioManager";
 
 export const UI = () => {
@@ -27,7 +26,6 @@ export const UI = () => {
     showMiniMap,
     pinPosition,
     isPinConfirmed,
-    activeNPCDialog,
   } = useWorld((s: any) => ({
     showMiniMap: s.showMiniMap,
     pinPosition: s.pinPosition,
