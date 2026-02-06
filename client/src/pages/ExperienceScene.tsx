@@ -21,8 +21,6 @@ export default function ExperienceScene() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
-  const [pointerLocked, setPointerLocked] = useState(false);
-  const [hasPointerLockedOnce, setHasPointerLockedOnce] = useState(false);
   const sceneContainerRef = useRef<HTMLDivElement>(null);
 
   const hasLogbookEntry = useMemo(() => {
@@ -30,30 +28,12 @@ export default function ExperienceScene() {
     return localStorage.getItem(LOGBOOK_ENTRY_ID_KEY) !== null;
   }, [logbookOpen]);
 
-  const experienceReady =
-    loadingFinished && !logbookOpen && !showWelcome;
-
   // Initialize logbook timeout handling (automatic cleanup on unmount)
   useLogbookTimeout();
 
   useEffect(() => {
     // Attempt fullscreen + landscape lock on load (may require a user gesture in some browsers)
     void enterKioskLandscape();
-  }, []);
-
-  // Get main scene canvas for pointer lock
-  const getMainCanvas = () =>
-    sceneContainerRef.current?.querySelector("canvas") ?? null;
-
-  // Track pointer lock state; only show "Click to enter" before first lock
-  useEffect(() => {
-    const handleChange = () => {
-      const locked = !!document.pointerLockElement;
-      setPointerLocked(locked);
-      if (locked) setHasPointerLockedOnce(true);
-    };
-    document.addEventListener("pointerlockchange", handleChange);
-    return () => document.removeEventListener("pointerlockchange", handleChange);
   }, []);
 
   // F key: talk to nearest NPC when in range
@@ -156,37 +136,6 @@ export default function ExperienceScene() {
       />
 
       <UI />
-
-      {/* Click-to-enter overlay: only before first lock */}
-      {experienceReady && !pointerLocked && !hasPointerLockedOnce && (
-        <div
-          role="button"
-          tabIndex={0}
-          className="fixed inset-0 z-5000 flex cursor-default items-center justify-center bg-black/20"
-          onClick={() => {
-            const canvas = getMainCanvas();
-            if (canvas?.requestPointerLock) {
-              canvas.requestPointerLock();
-              canvas.focus(); // Focus canvas so WASD keyboard bindings receive input
-            }
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              const canvas = getMainCanvas();
-              if (canvas?.requestPointerLock) {
-                canvas.requestPointerLock();
-                canvas.focus(); // Focus canvas so WASD keyboard bindings receive input
-              }
-            }
-          }}
-          aria-label="Click to enter"
-        >
-          <p className="text-white/90 text-sm font-medium">
-            Click anywhere to enter
-          </p>
-        </div>
-      )}
 
       <div
         ref={sceneContainerRef}
