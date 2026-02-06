@@ -49,3 +49,30 @@ body {
     transform: scale(1);
   }
 }
+
+/* Mobile joystick: ensure it's on top and visible for touch (viverse screen joystick) */
+.viverse-joystick {
+  z-index: 200;
+  pointer-events: auto;
+}
+/* Show joystick on touch devices and small screens (fallback if (pointer: coarse) doesn't match) */
+@media (hover: none), (max-width: 768px) {
+  .viverse-joystick.mobile-only {
+    display: block !important;
+  }
+}
+.viverse-jump.mobile-only {
+  z-index: 200;
+  pointer-events: auto;
+}
+@media (hover: none), (max-width: 768px) {
+  .viverse-jump.mobile-only {
+    display: block !important;
+  }
+}
+
+/* Hide joystick while NPC dialog is open; show after talking ends */
+body.npc-dialog-open .viverse-joystick,
+body.npc-dialog-open .viverse-jump {
+  display: none !important;
+}
