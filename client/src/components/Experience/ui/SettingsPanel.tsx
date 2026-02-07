@@ -103,19 +103,19 @@ export const SettingsPanel = () => {
       />
 
       {/* Settings Panel */}
-      <div className="relative w-full max-w-2xl bg-[#1c1c1c]/95 backdrop-blur-md rounded-md border border-white/15 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-2xl mx-4 sm:mx-6 max-h-[80dvh] sm:max-h-[85dvh] md:max-h-[90dvh] overflow-x-hidden overflow-y-auto bg-[#1c1c1c]/95 backdrop-blur-md rounded-md border border-white/15 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-gradient-to-r from-[#6b1111] to-[#b52222]">
-          <h2 className="text-lg font-semibold text-white tracking-[0.16em] uppercase">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/10 bg-gradient-to-r from-[#6b1111] to-[#b52222]">
+          <h2 className="text-base sm:text-lg font-semibold text-white tracking-[0.16em] uppercase">
             Settings
           </h2>
         </div>
 
         {/* Settings Content */}
-        <div className="p-6 text-sm text-gray-100">
+        <div className="p-4 sm:p-6 text-sm text-gray-100">
           <div className="space-y-1">
             {/* Camera Mode */}
-            <div className="flex items-center justify-between py-3 px-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-3 px-2">
               <span className="text-gray-200 text-sm">Camera Mode</span>
               <div className="flex items-center gap-2">
                 <button
@@ -139,12 +139,12 @@ export const SettingsPanel = () => {
             </div>
 
             {/* Camera Sensitivity */}
-            <div className="flex items-center justify-between py-3 px-2 gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-3 px-2">
               <div className="flex flex-col">
                 <span className="text-gray-200 text-sm">Camera Sensitivity</span>
                 <span className="text-gray-400 text-xs">Adjust mouse/trackpad look speed</span>
               </div>
-              <div className="flex items-center gap-3 w-[260px]">
+              <div className="flex items-center gap-3 w-full sm:w-[260px] min-w-0 shrink-0">
                 <input
                   type="range"
                   min={0.2}
@@ -152,32 +152,32 @@ export const SettingsPanel = () => {
                   step={0.1}
                   value={cameraSensitivity}
                   onChange={(e) => setCameraSensitivity(Number(e.target.value))}
-                  className="w-full accent-[#b52222]"
+                  className="w-full min-w-0 accent-[#b52222]"
                   aria-label="Camera sensitivity"
                 />
-                <span className="text-white text-sm tabular-nums min-w-[52px] text-right">
+                <span className="text-white text-sm tabular-nums min-w-[52px] text-right shrink-0">
                   {cameraSensitivity.toFixed(1)}x
                 </span>
               </div>
             </div>
 
             {/* Full Screen */}
-            <div className="flex items-center justify-between py-3 px-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-3 px-2">
               <span className="text-gray-200 text-sm">Full Screen</span>
               <button
                 onClick={toggleFullScreen}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#8f1616] hover:bg-[#b52222] text-white text-sm font-medium transition-colors shadow-sm"
+                className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-[#8f1616] hover:bg-[#b52222] text-white text-sm font-medium transition-colors shadow-sm w-full sm:w-auto"
                 aria-label={isFullScreen ? "Exit full screen" : "Enter full screen"}
               >
                 {isFullScreen ? (
                   <>
-                    <Minimize2 className="w-4 h-4" />
-                    Exit Full Screen
+                    <Minimize2 className="w-4 h-4 shrink-0" />
+                    <span>Exit Full Screen</span>
                   </>
                 ) : (
                   <>
-                    <Maximize2 className="w-4 h-4" />
-                    Enter Full Screen
+                    <Maximize2 className="w-4 h-4 shrink-0" />
+                    <span>Enter Full Screen</span>
                   </>
                 )}
               </button>
@@ -186,7 +186,7 @@ export const SettingsPanel = () => {
         </div>
 
         {/* Bottom Action Bar */}
-        <div className={`border-t border-white/10 bg-black/50 p-4 flex items-center gap-3 ${hasActiveEntry ? 'justify-between' : 'justify-end'}`}>
+        <div className={`border-t border-white/10 bg-black/50 p-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 ${hasActiveEntry ? 'sm:justify-between' : 'sm:justify-end'}`}>
           {hasActiveEntry && (
             <button
               onClick={handleExitTour}
@@ -212,8 +212,8 @@ export const SettingsPanel = () => {
 
       {/* Exit Confirmation Dialog */}
       {showExitConfirm && (
-        <div className="absolute inset-0 flex items-center justify-center z-401">
-          <div className="w-full max-w-md mx-4 rounded-md border border-white/15 bg-[#1c1c1c]/98 shadow-2xl overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center z-401 p-4">
+          <div className="w-full max-w-md rounded-md border border-white/15 bg-[#1c1c1c]/98 shadow-2xl overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-3 border-b border-white/10 bg-gradient-to-r from-[#6b1111] to-[#b52222]">
               <div className="p-2 rounded-md bg-black/20">
                 <LogOut className="w-5 h-5 text-white" />
