@@ -23,22 +23,41 @@ const npcData: NPCData[] = [
     rotation: [0, -90, 0],
     dialogs: [
       {
-        message: "Hello! Welcome to PUP Lopez Campus.",
+        message: "Hello! Welcome to PUP Lopez Campus. What would you like to know?",
         options: [
-          { label: "Who are you?", next: 1 },
+          { label: "How to enroll?", next: 1 },
+          { label: "How do I get there?", next: 2 },
+          { label: "Who are you?", next: 3 },
           { label: "Goodbye", next: null },
         ],
       },
       {
-        message: "I am the campus guard. I make sure everyone is safe.",
+        message: "To enroll, visit the Registrar's Office or check our official website. You'll need your admission documents and valid IDs. The enrollment period is usually announced at the start of each semester.",
         options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Goodbye", next: null },
+        ],
+      },
+      {
+        message: "You can reach PUP Lopez via public transport. Jeepneys and tricycles stop near the main gate. If you're driving, we have a parking area inside the campus. The main buildings are easy to find once you enter.",
+        options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Goodbye", next: null },
+        ],
+      },
+      {
+        message: "I am the campus guard. I make sure everyone is safe and help visitors find their way.",
+        options: [
+          { label: "Any tips?", next: 4 },
           { label: "Thanks!", next: null },
-          { label: "Any tips?", next: 2 },
         ],
       },
       {
         message: "Always keep your ID with you, and follow campus rules.",
-        options: [{ label: "Got it!", next: null }],
+        options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Got it!", next: null },
+        ],
       },
     ],
   },
@@ -50,15 +69,34 @@ const npcData: NPCData[] = [
     rotation: [0, 90, 0],
     dialogs: [
       {
-        message: "Hello Iska! I hope you are ready for class.",
+        message: "Hello Iska! I hope you are ready for class. What can I help you with?",
         options: [
-          { label: "Yes, professor!", next: null },
-          { label: "Any advice?", next: 1 },
+          { label: "How to enroll in your class?", next: 1 },
+          { label: "Where is the classroom?", next: 2 },
+          { label: "Any advice for students?", next: 3 },
+          { label: "Goodbye", next: null },
         ],
       },
       {
-        message: "Always review your notes and stay curious.",
-        options: [{ label: "Thank you!", next: null }],
+        message: "You can enroll through the student portal or add the subject during the enrollment period. Make sure you meet the prerequisites. See the Registrar if you have any conflicts.",
+        options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Thank you!", next: null },
+        ],
+      },
+      {
+        message: "The classroom is in the main building. Check your schedule for the room number. You can also use the campus map — it's available near the entrance.",
+        options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Thanks!", next: null },
+        ],
+      },
+      {
+        message: "Always review your notes before class, stay curious, and don't hesitate to ask questions. Office hours are there for a reason!",
+        options: [
+          { label: "Anything else?", next: 0 },
+          { label: "Thank you!", next: null },
+        ],
       },
     ],
   },
