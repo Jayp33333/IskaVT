@@ -17,7 +17,7 @@ export const NavBar = () => {
           </div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex space-x-8 font-semibold">
             {["Home", "Features", "About", "Contact"].map((link) => (
               <a
                 key={link}
@@ -50,10 +50,10 @@ export const NavBar = () => {
           </div>
 
           {/* Mobile Hamburger */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center border-2 border-black bg-[#620f0f] pb-1 px-px rounded-lg ">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-[#800000] focus:outline-none text-xl p-2 rounded-lg hover:text-white hover:bg-[#800000] transition"
+              className="text-white focus:outline-none text-xl bg-[#8C1007] border-2 border-[#da4d4db5] p-2 rounded-lg  hover:bg-[#800000]/90 transition"
             >
               <HiOutlineMenu />
             </button>

@@ -25,13 +25,13 @@ export function Hero() {
             </div>
 
             {/* Heading */}
-            <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#660B05]">
+            <h1 className="relative text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#660B05]">
               Experience a 3D
               <span className="block text-[#8C1007]">Campus Tour</span>
             </h1>
 
             {/* Description */}
-            <p className="text-sm sm:text-sm md:text-md lg:text-lg text-[#800000] max-w-2xl mx-auto">
+            <p className="text-sm sm:text-sm md:text-md lg:text-lg text-[#800000] font-bold max-w-2xl mx-auto">
               Explore the campus through an immersive 3D virtual tour featuring key buildings, facilities, and a guided character tour—anytime, anywhere.
             </p>
 
@@ -39,10 +39,10 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
               <button
                 onClick={handleStartTour}
-                className="relative bg-[#660B05] rounded-xl cursor-pointer inline-flex items-center gap-2 group"
+                className="relative bg-[rgb(102,11,5)] border-3 pt-1 boder-black rounded-xl cursor-pointer inline-flex items-center gap-2 group"
               >
                 <span
-                  className="bg-[#8C1007] text-white font-semibold rounded-xl text-xs
+                  className="bg-[#8C1007] border-2 border-[#da4d4db5] text-white font-bold rounded-[10px] text-xs
                      px-6 py-3
                      transform -translate-y-1
                      transition-transform duration-100 ease-in-out

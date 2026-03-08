@@ -48,7 +48,7 @@ export default function ExperienceScene() {
         return;
       }   
 
-      // Press F to interact with NPCs or toggle fullscreen
+      // Press F to interact: NPC (if in range) or door (desktop; mobile uses tap only)
       if (e.key === 'f' || e.key === 'F') {
         const {
           showMiniMap,
@@ -56,19 +56,20 @@ export default function ExperienceScene() {
           activeNPCDialog,
           npcsInRange,
           triggerNearestNPCTalk,
+          triggerDoorOpen,
         } = useWorld.getState() as any;
 
-        // If an NPC is in range and no conflicting overlays are open, use F to talk.
-        if (
-          !showMiniMap &&
-          !showLogHistory &&
-          !activeNPCDialog &&
-          npcsInRange &&
-          npcsInRange.size > 0
-        ) {
+        if (showMiniMap || showLogHistory || activeNPCDialog) return;
+
+        // If an NPC is in range, use F to talk.
+        if (npcsInRange && npcsInRange.size > 0) {
           e.preventDefault();
           triggerNearestNPCTalk();
           return;
+        }
+        if (triggerDoorOpen) {
+          e.preventDefault();
+          triggerDoorOpen();
         }
       }
     };
@@ -211,6 +212,7 @@ export default function ExperienceScene() {
       <UI overlayBlocked={showWelcome} />
 
       <Canvas
+        shadows
         style={{
           position: "absolute",
           inset: 0,
