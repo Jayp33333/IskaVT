@@ -1,14 +1,17 @@
 import { useProgress } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
-export default function LoadingOverlay({ onFinished }: { onFinished: () => void }) {
+export default function LoadingOverlay({
+  onFinished,
+}: {
+  onFinished: () => void;
+}) {
   const { progress } = useProgress();
   const [done, setDone] = useState(false);
   const [visible, setVisible] = useState(true);
   const [opacity, setOpacity] = useState(1);
 
-  const logo = "/images/iska-logo.png"; // Main logo
-  const profileIcon = "/images/iska-profile.png"; // Moving icon on progress bar
+  const logo = "/images/iska-logo.png";
 
   useEffect(() => {
     if (progress === 100 && !done) {
@@ -32,46 +35,54 @@ export default function LoadingOverlay({ onFinished }: { onFinished: () => void 
 
   return (
     <div
-      className={`absolute inset-0 z-9999 flex flex-col justify-center items-center bg-white transition-opacity duration-500 ease-in-out
-      ${opacity === 0 ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"}
-`}
-      style={{ padding: "clamp(20px, 5vw, 40px)" }}
+      className={`absolute inset-0 z-[9999] flex flex-col justify-center items-center bg-[#FFF5F5] transition-opacity duration-500 ease-in-out
+      ${
+        opacity === 0
+          ? "opacity-0 pointer-events-none"
+          : "opacity-100 pointer-events-auto"
+      }`}
     >
-      {/* Center Logo */}
-      <img
-        src={logo}
-        alt="ISKA Logo"
-        className="h-14 sm:h-16 md:h-18 mb-10"
-      />
-
-      {/* Progress Bar with Moving Icon */}
-      <div className="relative w-60 h-2 sm:h-3 rounded-full bg-white/15">
-        {/* Moving profile icon */}
-        <img
-          src={profileIcon}
-          alt="Loading Icon"
-          className="
-              absolute bottom-0 w-7 h-7 sm:w-8 sm:h-8
-              rounded-full bg-[#111] p-0.5
-              shadow-[0_0_10px_rgba(155,28,28,0.9)]
-              transition-all duration-300 ease-in-out
-              z-10
-            "
-            style={{
-              left: `calc(${progress}% - 14px)`,
-            }} // moves along the bar
-        />
-
-        {/* Progress fill */}
-        <div
-          className="h-full rounded-full bg-linear-to-r from-[#6b0000] to-[#9b1c1c] transition-all duration-300 ease-in-out"
-          style={{ width: `${progress}%` }}
-        />
+      {/* Soft Background Accents */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-red-100 rounded-full blur-3xl opacity-50" />
+        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-red-200 rounded-full blur-3xl opacity-50" />
       </div>
 
-      {/* Percentage */}
-      <div className="mt-2 text-xs sm:text-sm text-[#800000] font-bold">
-        {progress.toFixed(0)}%
+      {/* Content */}
+      <div className="relative flex flex-col items-center">
+        {/* Logo */}
+        <div className="flex justify-center items-center mb-10">
+          <img
+            src={logo}
+            alt="ISKA Logo"
+            className="h-16 sm:h-20 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.05)]"
+          />
+        </div>
+
+        {/* Progress Bar */}
+        <div className="relative w-64 h-8 bg-white border-4 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div
+            className="h-full bg-[#9b1c1c] transition-all duration-300 ease-out"
+            style={{
+              width: `${progress}%`,
+              backgroundImage:
+                "linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent)",
+              backgroundSize: "30px 30px",
+            }}
+          />
+        </div>
+
+        {/* Percentage */}
+        <div className="mt-6">
+          <span className="text-[#9b1c1c] font-black text-lg tracking-tight italic">
+            {progress < 100 ? `${progress.toFixed(0)}%` : "READY!"}
+          </span>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 font-black text-black/20 text-[10px] tracking-[0.3em] uppercase">
+        Loading Assets
       </div>
     </div>
   );

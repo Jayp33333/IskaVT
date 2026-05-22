@@ -1,48 +1,123 @@
-import { Suspense, useRef, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import useWorld from "../../../hooks/useWorld";
 
-const ArrowModel = () => {
-  const characterPosition = useWorld((state: any) => state.characterPosition);
-  const pinPosition = useWorld((state: any) => state.pinPosition);
-  const isPinConfirmed = useWorld((state: any) => state.isPinConfirmed);
+const UP_AXIS = new THREE.Vector3(0, 1, 0);
+const FLOW_DOT_COUNT = 7;
 
-  const arrowRef = useRef<THREE.Object3D>(null);
+const GuideLine = () => {
+  const guideRef = useRef<THREE.Group>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
+  const coreRef = useRef<THREE.Mesh>(null);
+  const destinationRingRef = useRef<THREE.Mesh>(null);
+  const flowDots = useRef<THREE.Mesh[]>([]);
 
-  // Suspense will wait until the model is loaded
-  const { scene: arrowScene } = useGLTF("/models/ArrowGuide.glb") as any;
-  const memoizedArrow = useMemo(() => arrowScene.clone(), [arrowScene]);
+  const dotIndexes = useMemo(
+    () => Array.from({ length: FLOW_DOT_COUNT }, (_, index) => index),
+    []
+  );
 
-  useFrame(() => {
-    if (!arrowRef.current) return;
+  useFrame(({ clock }) => {
+    const { characterPosition, pinPosition, isPinConfirmed } = useWorld.getState();
+    const guide = guideRef.current;
 
-    arrowRef.current.visible = !!pinPosition && isPinConfirmed;
+    if (!guide) return;
 
-    if (!pinPosition || !characterPosition || !isPinConfirmed) return;
+    guide.visible = !!characterPosition && !!pinPosition && isPinConfirmed;
+    if (!guide.visible || !characterPosition || !pinPosition) return;
 
-    const start = new THREE.Vector3(characterPosition.x, characterPosition.y, characterPosition.z);
-    const end = new THREE.Vector3(pinPosition.x, pinPosition.y, pinPosition.z);
-    const dir = new THREE.Vector3().subVectors(end, start);
-    const length = dir.length();
-    dir.normalize();
+    const start = new THREE.Vector3(characterPosition.x, 0.18, characterPosition.z);
+    const end = new THREE.Vector3(pinPosition.x, 0.18, pinPosition.z);
+    const direction = end.clone().sub(start);
+    const length = direction.length();
 
-    // place arrow at 5% along the line
-    arrowRef.current.position.copy(start.clone().add(dir.clone().multiplyScalar(length * 0.05)));
+    if (length < 0.5) {
+      guide.visible = false;
+      return;
+    }
 
-    // make arrow face the destination
-    arrowRef.current.lookAt(end);
+    direction.normalize();
+
+    const midpoint = start.clone().lerp(end, 0.5);
+    const rotation = new THREE.Quaternion().setFromUnitVectors(UP_AXIS, direction);
+
+    for (const mesh of [glowRef.current, coreRef.current]) {
+      if (!mesh) continue;
+      mesh.position.copy(midpoint);
+      mesh.quaternion.copy(rotation);
+      mesh.scale.set(1, length, 1);
+    }
+
+    const elapsed = clock.getElapsedTime();
+    flowDots.current.forEach((dot, index) => {
+      if (!dot) return;
+      const progress = (elapsed * 0.45 + index / FLOW_DOT_COUNT) % 1;
+      const easedProgress = 0.08 + progress * 0.84;
+      dot.position.copy(start).add(direction.clone().multiplyScalar(length * easedProgress));
+      dot.scale.setScalar(0.75 + Math.sin(elapsed * 5 + index) * 0.15);
+    });
+
+    if (destinationRingRef.current) {
+      const pulse = 1 + Math.sin(elapsed * 4) * 0.18;
+      destinationRingRef.current.position.copy(end);
+      destinationRingRef.current.scale.setScalar(pulse);
+    }
   });
 
-  return <primitive ref={arrowRef} object={memoizedArrow} visible={false} />;
+  return (
+    <group ref={guideRef} visible={false}>
+      <mesh ref={glowRef} renderOrder={2}>
+        <cylinderGeometry args={[0.18, 0.18, 1, 16]} />
+        <meshBasicMaterial
+          color="#38bdf8"
+          depthWrite={false}
+          transparent
+          opacity={0.2}
+        />
+      </mesh>
+
+      <mesh ref={coreRef} renderOrder={3}>
+        <cylinderGeometry args={[0.055, 0.055, 1, 12]} />
+        <meshBasicMaterial
+          color="#67e8f9"
+          depthWrite={false}
+          transparent
+          opacity={0.85}
+        />
+      </mesh>
+
+      {dotIndexes.map((index) => (
+        <mesh
+          key={index}
+          ref={(mesh) => {
+            if (mesh) flowDots.current[index] = mesh;
+          }}
+          renderOrder={4}
+        >
+          <sphereGeometry args={[0.23, 16, 16]} />
+          <meshBasicMaterial
+            color="#ecfeff"
+            depthWrite={false}
+            transparent
+            opacity={0.95}
+          />
+        </mesh>
+      ))}
+
+      <mesh ref={destinationRingRef} rotation={[-Math.PI / 2, 0, 0]} renderOrder={3}>
+        <torusGeometry args={[1.15, 0.08, 10, 48]} />
+        <meshBasicMaterial
+          color="#22d3ee"
+          depthWrite={false}
+          transparent
+          opacity={0.75}
+        />
+      </mesh>
+    </group>
+  );
 };
 
-// Wrap with Suspense in parent component or in Canvas
 export const ArrowGuide = () => {
-  return (
-    <Suspense fallback={null}>
-      <ArrowModel />
-    </Suspense>
-  );
+  return <GuideLine />;
 };

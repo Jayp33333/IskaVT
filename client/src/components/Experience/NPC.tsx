@@ -12,11 +12,12 @@ type DialogStep = {
 type NPCProps = {
   id: string;
   position: [number, number, number];
-  model: string;
+  model?: string;
   name?: string;
   scale?: number | [number, number, number];
   rotation?: [number, number, number]; // degrees (x, y, z)
   dialogs: DialogStep[];
+  color?: string;
 };
 
 const INTERACT_DISTANCE = 3;
@@ -29,6 +30,7 @@ export const NPC = ({
   scale = 1,
   rotation = [0, 0, 0],
   dialogs,
+  color = "#D43F3F",
 }: NPCProps) => {
   const npcRef = useRef<THREE.Group>(null);
   const [canTalk, setCanTalk] = useState(false);
@@ -52,7 +54,10 @@ export const NPC = ({
   }));
 
   const npcWorldPos = useRef(new THREE.Vector3());
-  const handleTalk = () => setShowDialog(true);
+  const handleTalk = () => {
+    setDialogStep(0);
+    setShowDialog(true);
+  };
 
   useFrame(() => {
     if (!npcRef.current || !characterPosition) return;
@@ -114,7 +119,24 @@ export const NPC = ({
         THREE.MathUtils.degToRad(rotation[2]),
       ]}
     >
-      <Gltf src={model} castShadow receiveShadow />
+      {model ? (
+        <Gltf src={model} castShadow receiveShadow />
+      ) : (
+        <group>
+          <mesh castShadow position={[0, 0.95, 0]}>
+            <capsuleGeometry args={[0.28, 0.8, 8, 16]} />
+            <meshStandardMaterial color={color} roughness={0.55} />
+          </mesh>
+          <mesh castShadow position={[0, 1.62, 0]}>
+            <sphereGeometry args={[0.28, 24, 24]} />
+            <meshStandardMaterial color="#f2c4a3" roughness={0.5} />
+          </mesh>
+          <mesh castShadow position={[0, 1.9, 0]}>
+            <sphereGeometry args={[0.3, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color="#1f2937" roughness={0.7} />
+          </mesh>
+        </group>
+      )}
 
       {canTalk && !showMiniMap && !showDialog && !showLogHistory && (
         <Html position={[0, 1.2, 0]} center>
@@ -130,7 +152,7 @@ export const NPC = ({
             }}
             onClick={handleTalk}
           >
-            💬 Talk (F)
+            Talk (F)
           </div>
         </Html>
       )}

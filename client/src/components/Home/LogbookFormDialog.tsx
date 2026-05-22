@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
+import { ClipboardList, X } from "lucide-react";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
 
@@ -7,10 +8,6 @@ interface LogbookFormDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  /**
-   * If true, the dialog cannot be dismissed (used to gate the tour).
-   * The user must submit the form successfully.
-   */
   required?: boolean;
 }
 
@@ -24,39 +21,12 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const visitorTypes = [
-    "Student",
-    "Faculty",
-    "Staff",
-    "Visitor",
-    "Alumni",
-    "Guest",
-  ];
-
-  const destinations = [
-    "Grandstand",
-    "Lab 1",
-    "Lab 2",
-    "Lab 3",
-    "Library",
-    "Administration Building",
-    "Classroom Building",
-    "Cafeteria",
-    "Gymnasium",
-    "Auditorium",
-    "Computer Lab",
-    "Science Lab",
-    "Main Building",
-    "Student Center",
-    "Other",
-  ];
+  const visitorTypes = ["Student", "Faculty", "Staff", "Visitor", "Alumni", "Guest"];
+  const destinations = ["Grandstand", "Lab 1", "Library", "Cafeteria", "Gymnasium", "Other"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError(null);
   };
 
@@ -66,9 +36,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
     setIsSubmitting(true);
 
     try {
-      // Run on the user's "Start Tour" gesture: best chance for fullscreen + landscape lock.
       void enterKioskLandscape();
-
       const now = new Date();
       const entryData: LogbookEntry = {
         ...formData,
@@ -78,223 +46,143 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
 
       const response = await logbookAPI.createEntry(entryData);
       
-      // Store the logbook entry ID in localStorage for timeout tracking
-      if (response.data && response.data._id) {
+      if (response.data?._id) {
         localStorage.setItem('logbookEntryId', response.data._id);
         localStorage.setItem('logbookTimeIn', new Date().toISOString());
       }
       
       onSuccess();
-      // Reset form
-      setFormData({
-        fullName: "",
-        visitorType: "",
-        purpose: "",
-        destination: "",
-      });
+      setFormData({ fullName: "", visitorType: "", purpose: "", destination: "" });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit logbook entry");
+      setError(err instanceof Error ? err.message : "Oops! Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    if (required) return;
-    if (!isSubmitting) {
-      setFormData({
-        fullName: "",
-        visitorType: "",
-        purpose: "",
-        destination: "",
-      });
-      setError(null);
-      onClose();
-    }
-  };
+  const inputBase = "w-full px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 text-sm [@media(max-height:500px)]:text-[11px] font-bold text-slate-800 bg-white border-[3px] border-slate-900 rounded-2xl outline-none shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] focus:bg-yellow-50 placeholder:text-slate-400 transition-all";
+  const labelBase = "block text-xs [@media(max-height:500px)]:text-[9px] font-black text-slate-700 uppercase tracking-wider mb-2 ml-1";
 
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/60 z-[5000]"
+            className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[5000]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={handleClose}
+            onClick={() => !required && !isSubmitting && onClose()}
           />
 
-          {/* Dialog */}
           <motion.div
-            className="fixed inset-0 z-[5001] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[5001] flex items-center justify-center p-4 [@media(max-height:500px)]:p-2 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-100"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              transition={{ type: "spring", duration: 0.3 }}
+              className="w-full max-w-[500px] [@media(max-height:500px)]:max-w-[500px] max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] bg-[#FFFDF9] text-slate-800 rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] overflow-hidden pointer-events-auto flex flex-col"
+              initial={{ scale: 0.9, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 40 }}
+              transition={{ type: "spring", damping: 20, stiffness: 250 }}
             >
-              <div className="p-6 sm:p-8">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#660B05] mb-1">
-                      Visitor Logbook
-                    </h2>
-                    <p className="text-sm text-gray-500">
-                      Please fill in your information to start the tour
-                    </p>
+              <div className="bg-[#D43F3F] border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-slate-900 px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-yellow-300 border-[3px] border-slate-900 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] shrink-0">
+                      <ClipboardList className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-slate-900" strokeWidth={3.5} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="inline-block rounded-full bg-yellow-300 border-[3px] border-slate-900 px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-slate-900">
+                        Visitor Check-In
+                      </p>
+                      <h2 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight truncate">
+                        Visitor Logbook
+                      </h2>
+                    </div>
                   </div>
                   {!required && (
                     <button
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none disabled:opacity-50 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
-                      aria-label="Close dialog"
+                      onClick={onClose}
+                      className="bg-white border-[3px] border-slate-900 p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shrink-0"
+                      aria-label="Close"
+                      type="button"
                     >
-                      ×
+                      <X size={18} strokeWidth={4} />
                     </button>
                   )}
                 </div>
+                <p className="mt-2 [@media(max-height:500px)]:mt-1 text-xs [@media(max-height:500px)]:text-[9px] font-bold text-white/90">
+                  Fill out your details to start the campus adventure.
+                </p>
+              </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="flex-1 min-h-0 overflow-y-auto p-5 [@media(max-height:500px)]:p-3 custom-scrollbar">
+                <form onSubmit={handleSubmit} className="space-y-5 [@media(max-height:500px)]:space-y-3">
                   {/* Full Name */}
                   <div>
-                    <label htmlFor="fullName" className="block text-sm font-semibold text-gray-800 mb-2">
-                      Full Name <span className="text-red-500">*</span>
-                    </label>
+                    <label className={labelBase}>Your Name</label>
                     <input
                       type="text"
-                      id="fullName"
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05] transition-all placeholder:text-gray-400"
-                      placeholder="Enter your full name"
+                      className={inputBase}
+                      placeholder="e.g. John Doe"
                     />
                   </div>
 
-                  {/* Visitor Type */}
-                  <div>
-                    <label htmlFor="visitorType" className="block text-sm font-semibold text-gray-800 mb-2">
-                      Visitor Type <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="visitorType"
-                      name="visitorType"
-                      value={formData.visitorType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05] transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="" className="text-gray-400">Select visitor type</option>
-                      {visitorTypes.map((type) => (
-                        <option key={type} value={type} className="text-gray-900">
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Destination */}
-                  <div>
-                    <label htmlFor="destination" className="block text-sm font-semibold text-gray-800 mb-2">
-                      Destination <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="destination"
-                      name="destination"
-                      value={formData.destination}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05] transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="" className="text-gray-400">Select destination</option>
-                      {destinations.map((destination) => (
-                        <option key={destination} value={destination} className="text-gray-900">
-                          {destination}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Two Column for Type & Destination */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 [@media(max-height:500px)]:gap-3">
+                    <div>
+                      <label className={labelBase}>Who are you?</label>
+                      <select name="visitorType" value={formData.visitorType} onChange={handleChange} required className={inputBase}>
+                        <option value="">Select</option>
+                        {visitorTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelBase}>Heading to?</label>
+                      <select name="destination" value={formData.destination} onChange={handleChange} required className={inputBase}>
+                        <option value="">Select</option>
+                        {destinations.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
                   </div>
 
                   {/* Purpose */}
                   <div>
-                    <label htmlFor="purpose" className="block text-sm font-semibold text-gray-800 mb-2">
-                      Purpose <span className="text-red-500">*</span>
-                      <span className="text-xs text-gray-500 font-normal ml-2">
-                        (Max {formData.purpose.length}/200 characters)
-                      </span>
-                    </label>
+                    <label className={labelBase}>Purpose of Visit</label>
                     <textarea
-                      id="purpose"
                       name="purpose"
                       value={formData.purpose}
                       onChange={handleChange}
                       required
                       maxLength={200}
-                      rows={3}
-                      className="w-full px-4 py-3 text-gray-900 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05] transition-all resize-none placeholder:text-gray-400"
-                      placeholder="Enter your purpose for visiting"
+                      rows={2}
+                      className={`${inputBase} resize-none`}
+                      placeholder="Tell us what's up!"
                     />
                   </div>
 
-                  {/* Error Message */}
                   {error && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg"
-                    >
-                      <div className="flex items-start">
-                        <svg className="w-5 h-5 text-red-500 mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        <p className="text-sm text-red-700 font-medium">{error}</p>
-                      </div>
-                    </motion.div>
+                    <div className="p-3 bg-red-100 border-[3px] border-slate-900 rounded-2xl font-black text-red-700 text-sm [@media(max-height:500px)]:text-xs shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
+                      {error}
+                    </div>
                   )}
 
-                  {/* Submit Button */}
-                  <div className="flex gap-3 pt-2">
-                    {!required && (
-                      <button
-                        type="button"
-                        onClick={handleClose}
-                        disabled={isSubmitting}
-                        className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 px-6 py-3 bg-[#660B05] text-white rounded-xl hover:bg-[#8C1007] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      {isSubmitting ? (
-                        <span className="flex items-center justify-center">
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Submitting...
-                        </span>
-                      ) : (
-                        "Start Tour"
-                      )}
-                    </button>
-                  </div>
+                  {/* Action Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-4 [@media(max-height:500px)]:py-2.5 bg-[#D43F3F] hover:bg-[#c93333] text-white border-[3px] border-slate-900 rounded-2xl font-black text-lg [@media(max-height:500px)]:text-xs italic uppercase tracking-wide shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Checking In..." : "Start Tour"}
+                  </button>
                 </form>
               </div>
             </motion.div>

@@ -13,7 +13,6 @@ const Character = () => {
   const isMobile = useIsMobile();
   const avatar = useWorld((s: any) => s.avatar);
   const cameraMode = useWorld((s: any) => s.cameraMode);
-  const cameraSensitivity = useWorld((s: any) => s.cameraSensitivity);
   const pinPosition = useWorld((s: any) => s.pinPosition);
   const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
@@ -35,7 +34,7 @@ const Character = () => {
     // While talking to an NPC, do not allow acquiring pointer lock
     lockOnClick: !isMobile && !interactionLocked,
     // Also effectively freeze camera rotation while in dialog
-    rotationSpeed: interactionLocked ? 0 : 0.1 * cameraSensitivity,
+    rotationSpeed: interactionLocked ? 0 : 0.1,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
 

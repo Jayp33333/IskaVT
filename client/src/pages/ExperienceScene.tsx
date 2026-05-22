@@ -13,6 +13,8 @@ import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
 import useWorld from "../hooks/useWorld";
+import Map2D from "../components/Experience/Map2D";
+
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
@@ -192,6 +194,7 @@ export default function ExperienceScene() {
 
   return (
     <>
+ 
       <OrientationGuard />
       <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
@@ -209,10 +212,13 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      <UI overlayBlocked={showWelcome} />
+      {/* <UI overlayBlocked={showWelcome} /> */}
+      <UI />
+
+      {/* <Map2D /> */}
+      
 
       <Canvas
-        shadows
         style={{
           position: "absolute",
           inset: 0,

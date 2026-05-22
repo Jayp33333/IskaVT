@@ -8,7 +8,10 @@ const DistanceUpdater = () => {
 
   useFrame(() => {
     if (characterPosition && pinPosition) {
-      setDistance(characterPosition.distanceTo(pinPosition));
+      const dx = pinPosition.x - characterPosition.x;
+      const dy = pinPosition.y - characterPosition.y;
+      const dz = pinPosition.z - characterPosition.z;
+      setDistance(Math.hypot(dx, dy, dz));
     }
   });
 

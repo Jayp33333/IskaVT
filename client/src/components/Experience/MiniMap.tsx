@@ -23,7 +23,7 @@ const MAP_BOUNDS = {
   minZ: -220,
   maxZ: 20,
   minZoom: 10,
-  maxZoom: 160,
+  maxZoom: 400, // 160
 };
 
 type MiniMapProps = {
@@ -62,7 +62,7 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
   const boyTexture = useTexture("/images/headIconBoy.png");
   const profileTexture = currentAvatar.id === 189084? girlTexture : boyTexture;
 
-  const mapModel = "./models/PUPCampus.glb";
+  const mapModel = "./models/PUP_CAMPUS.glb";
 
   // --- Local state ---
   const [cameraPosition, setCameraPosition] = useState(

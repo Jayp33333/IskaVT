@@ -2,18 +2,6 @@ import { create } from "zustand";
 import { SAMPLE_AVATAR_LIST } from "../sampleData";
 import { Vector3 } from "three";
 
-const CAMERA_SENSITIVITY_KEY = "cameraSensitivity";
-
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
-
-const getInitialCameraSensitivity = () => {
-  if (typeof window === "undefined") return 1;
-  const raw = window.localStorage.getItem(CAMERA_SENSITIVITY_KEY);
-  const parsed = raw == null ? NaN : Number.parseFloat(raw);
-  if (!Number.isFinite(parsed)) return 1;
-  return clamp(parsed, 0.2, 3);
-};
-
 interface WorldState {
   avatar: any;
   characterPosition: Vector3;
@@ -25,11 +13,9 @@ interface WorldState {
   currentZoom: number;
   cameraRotation: Vector3;
   cameraMode: "first" | "third";
-  cameraSensitivity: number;
   selectedDestination: any;
   showMiniMap: boolean;
   showLogHistory: boolean;
-  showSettings: boolean;
   query: string;
   /** NPCs in range: id -> { position, onTalk }. Used for F-key interaction. */
   npcsInRange: Map<string, { position: Vector3; onTalk: () => void }>;
@@ -79,11 +65,9 @@ interface WorldState {
   setCurrentZoom: (zoomChange: number) => void;
   setCameraRotation: (rotation: Vector3) => void;
   setCameraMode: (mode: "first" | "third") => void;
-  setCameraSensitivity: (value: number) => void;
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
-  setShowSettings: (value: boolean) => void;
   setQuery: (query: string) => void;
   setLoading: (isLoading: boolean, message?: string) => void;
   isLoading: boolean;
@@ -101,11 +85,9 @@ const useWorld = create<WorldState>((set) => ({
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0),
   cameraMode: "first",
-  cameraSensitivity: getInitialCameraSensitivity(),
   selectedDestination: null,
   showMiniMap: false,
   showLogHistory: false,
-  showSettings: false,
   query: "",
   isLoading: false,
   loadingMessage: "",
@@ -180,21 +162,13 @@ const useWorld = create<WorldState>((set) => ({
   setDistance: (distance) => set({ distance }),
   setCurrentZoom: (zoomChange) =>
     set((state) => ({
-      currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),
+      currentZoom: Math.max(19, Math.min(400, state.currentZoom * zoomChange)), //currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),
     })),
   setCameraRotation: (cameraRotation) => set({ cameraRotation }),
   setCameraMode: (cameraMode) => set({ cameraMode }),
-  setCameraSensitivity: (value) => {
-    const next = clamp(value, 0.2, 3);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(CAMERA_SENSITIVITY_KEY, String(next));
-    }
-    set({ cameraSensitivity: next });
-  },
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
-  setShowSettings: (showSettings) => set({ showSettings }),
   setQuery: (query) => set({ query }),
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),

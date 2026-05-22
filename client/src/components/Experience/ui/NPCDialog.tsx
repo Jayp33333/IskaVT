@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { MessageCircle, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 
 export type DialogOption = {
@@ -30,22 +31,27 @@ export const NPCDialog = ({
   const indexRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const clearTypingInterval = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
   // Typewriter effect: reset and type when message changes
   useEffect(() => {
     if (!open || !message) {
       setDisplayedText("");
       setTypingDone(false);
       indexRef.current = 0;
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      clearTypingInterval();
       return;
     }
 
     setDisplayedText("");
     setTypingDone(false);
     indexRef.current = 0;
+    clearTypingInterval();
 
     intervalRef.current = setInterval(() => {
       const nextIndex = indexRef.current + 1;
@@ -53,95 +59,111 @@ export const NPCDialog = ({
       indexRef.current = nextIndex;
 
       if (nextIndex >= message.length) {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
+        clearTypingInterval();
         setTypingDone(true);
       }
     }, TYPING_INTERVAL_MS);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
+    return clearTypingInterval;
   }, [open, message]);
 
   const hasOptions = options && options.length > 0;
+  const speakerInitial = title.trim().charAt(0).toUpperCase() || "?";
+
+  const handleMessageClick = () => {
+    if (typingDone) return;
+    clearTypingInterval();
+    setDisplayedText(message);
+    indexRef.current = message.length;
+    setTypingDone(true);
+  };
 
   return (
     <AnimatePresence>
       {open && !showLogHistory && (
-        <>
-          {/* Options – top right, above the message (Genshin-style); only after NPC finishes */}
-          {typingDone && (
-            <motion.div
-              className="
-                fixed bottom-28 right-4 sm:right-6 z-50 w-full max-w-[280px] sm:max-w-xs
-                flex flex-col gap-2 rounded-lg bg-black/85 px-3 py-3
-                shadow-xl border border-white/15
-              "
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 16 }}
-              transition={{ duration: 0.3 }}
-            >
-              <span className="text-white/70 text-xs font-medium uppercase tracking-wider px-1">
-                Reply
-              </span>
-              {hasOptions ? (
-                options!.map((opt, i) => (
+        <motion.div
+          className="fixed inset-x-0 bottom-0 z-[1200] pointer-events-none px-3 pb-3 sm:px-6 sm:pb-5 [@media(orientation:landscape)_and_(max-height:600px)]:px-4 [@media(orientation:landscape)_and_(max-height:600px)]:pb-2"
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 28 }}
+          transition={{ type: "spring", damping: 24, stiffness: 260 }}
+        >
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-2.5 pointer-events-auto sm:gap-3 [@media(orientation:landscape)_and_(max-height:600px)]:max-w-3xl [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5">
+            {typingDone && (
+              <motion.div
+                className="ml-auto flex w-full max-w-[20rem] flex-col gap-1.5 rounded-2xl border-[3px] border-slate-900 bg-white p-2.5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] sm:border-[4px] sm:p-3 sm:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[20rem] [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:p-2"
+                initial={{ opacity: 0, x: 18 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 18 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="flex items-center gap-1.5 px-1 text-[9px] font-black uppercase leading-none tracking-widest text-slate-500 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
+                  <MessageCircle size={14} strokeWidth={4} />
+                  Your Reply
+                </div>
+                {hasOptions ? (
+                  options!.map((opt, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className="rounded-xl border-[3px] border-slate-900 bg-yellow-400 px-3 py-2 text-left text-xs font-extrabold leading-snug text-slate-900 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] transition-all hover:bg-yellow-300 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
+                      onClick={opt.onClick}
+                    >
+                      {opt.label}
+                    </button>
+                  ))
+                ) : (
                   <button
-                    key={i}
                     type="button"
-                    className="
-                      bg-white/10 hover:bg-white/20 border border-white/20
-                      hover:border-white/40 text-white text-left px-3 py-2.5
-                      rounded-lg cursor-pointer font-medium text-sm
-                      transition-all duration-200
-                    "
-                    onClick={opt.onClick}
+                    className="rounded-xl border-[3px] border-slate-900 bg-[#D43F3F] px-3 py-2 text-xs font-black uppercase tracking-wide text-white shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
+                    onClick={onClose}
                   >
-                    {opt.label}
+                    Close
                   </button>
-                ))
-              ) : (
+                )}
+              </motion.div>
+            )}
+
+            <div
+              className="relative overflow-hidden rounded-[1.5rem] border-[4px] border-slate-900 bg-[#FFFDF9] shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] sm:rounded-[1.75rem] sm:border-[5px] sm:shadow-[7px_7px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]"
+              onClick={handleMessageClick}
+              role="dialog"
+              aria-label={`${title} dialog`}
+            >
+              <div className="flex items-center gap-3 border-b-[4px] border-slate-900 bg-[#D43F3F] px-3.5 py-2.5 text-white sm:gap-4 sm:px-5 sm:py-3.5 [@media(orientation:landscape)_and_(max-height:600px)]:gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[3px] border-slate-900 bg-yellow-400 text-lg font-black leading-none text-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] sm:h-12 sm:w-12 sm:rounded-2xl sm:text-xl sm:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:h-8 [@media(orientation:landscape)_and_(max-height:600px)]:w-8 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:text-sm">
+                  {speakerInitial}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-base font-black italic leading-none tracking-tight text-white sm:text-xl [@media(orientation:landscape)_and_(max-height:600px)]:text-sm">
+                    {title}
+                  </h3>
+                </div>
                 <button
                   type="button"
-                  className="
-                    bg-white/15 border border-white/25 text-white
-                    px-4 py-2 rounded-lg cursor-pointer font-semibold
-                    hover:bg-white/25 transition-colors
-                  "
-                  onClick={onClose}
+                  className="shrink-0 rounded-xl border-[3px] border-slate-900 bg-white p-1.5 text-slate-900 transition-transform active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onClose();
+                  }}
+                  aria-label="Close NPC dialog"
                 >
-                  Close
+                  <X size={20} strokeWidth={4} />
                 </button>
-              )}
-            </motion.div>
-          )}
+              </div>
 
-          {/* NPC message – wide at bottom, full width left to right (Genshin: dialogue box) */}
-          <motion.div
-            className="
-              fixed bottom-0 left-0 right-0 z-40 rounded-t-xl bg-black/90
-              px-4 sm:px-6 py-4 sm:py-5 flex flex-col gap-2
-              shadow-xl border-t border-white/10
-            "
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ duration: 0.4 }}
-          >
-            <h3 className="text-[#e8d5b7] text-base font-semibold m-0">{title}</h3>
-            <p className="text-white text-sm sm:text-base leading-relaxed m-0 min-h-[2.4em]">
-              {displayedText}
-              <span className={typingDone ? "opacity-0" : "animate-pulse"}>|</span>
-            </p>
-          </motion.div>
-        </>
+              <div className="px-4 py-3.5 sm:px-6 sm:py-5 [@media(orientation:landscape)_and_(max-height:600px)]:px-4 [@media(orientation:landscape)_and_(max-height:600px)]:py-2.5">
+                <p className="min-h-[3rem] text-[13px] font-bold leading-6 text-slate-800 sm:min-h-[3.25rem] sm:text-sm sm:leading-7 [@media(orientation:landscape)_and_(max-height:600px)]:min-h-[2rem] [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:600px)]:leading-4">
+                  {displayedText}
+                  <span className={typingDone ? "opacity-0" : "animate-pulse"}>|</span>
+                </p>
+                <p className="mt-2.5 text-[10px] font-black uppercase leading-none tracking-wider text-slate-400 sm:mt-3 [@media(orientation:landscape)_and_(max-height:600px)]:mt-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
+                  {typingDone ? "Choose a reply to continue" : "Click dialog to skip typing"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

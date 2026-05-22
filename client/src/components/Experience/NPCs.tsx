@@ -7,11 +7,12 @@ type DialogStep = {
 
 type NPCData = {
   position: [number, number, number];
-  model: string;
+  model?: string;
   name?: string;
   scale?: number | [number, number, number];
   rotation?: [number, number, number];
   dialogs: DialogStep[];
+  color?: string;
 };
 
 const npcData: NPCData[] = [
@@ -21,6 +22,7 @@ const npcData: NPCData[] = [
     name: "Guard",
     scale: 1.1,
     rotation: [0, -90, 0],
+    color: "#D43F3F",
     dialogs: [
       {
         message: "Hello! Welcome to PUP Lopez Campus. What would you like to know?",
@@ -67,6 +69,7 @@ const npcData: NPCData[] = [
     name: "Professor",
     scale: 1,
     rotation: [0, 90, 0],
+    color: "#2563eb",
     dialogs: [
       {
         message: "Hello Iska! I hope you are ready for class. What can I help you with?",
@@ -114,6 +117,7 @@ const NPCs = () => (
         scale={npc.scale ?? 1}
         rotation={npc.rotation ?? [0, 0, 0]}
         dialogs={npc.dialogs}
+        color={npc.color}
       />
     ))}
   </>

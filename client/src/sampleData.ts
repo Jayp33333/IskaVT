@@ -23,36 +23,28 @@ export type FixedLocationPin = {
 export const SAMPLE_AVATAR_LIST = IS_DEV
   ? [
       {
-        headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=headicon",
-        id: 189084,
-        vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=model&lod=original",
+        headIconUrl: "images/iska-head-icon.png",
+        id: 1,
+        vrmUrl: "models/avatars/Iska.vrm",
       },
 
       {
-        headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=headicon",
-        id: 187572,
-        vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=model&lod=original",
+        headIconUrl: "images/isko-head-icon.png",
+        id: 2,
+        vrmUrl: "models/avatars/Isko.vrm",
       },
     ]
   : [
       {
-        headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=headicon",
-        id: 189084,
-        vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/d8ea0cd736c07133c3ecefcd5a9c366543259fbb3932a6821975a08d2aafbd346954/files?filetype=model&lod=original",
+        headIconUrl: "images/iska-head-icon.png",
+        id: 1,
+        vrmUrl: "models/avatars/Iska.vrm",
       },
 
       {
-        headIconUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=headicon",
-        id: 187572,
-        vrmUrl:
-          "https://avatar.viverse.com/api/meetingareaselector/v2/newgenavatar/avatars/52699dd28ec9a53583b78d03d1fa1edba4eb019b3226c35149f95320a70a3e5fa803/files?filetype=model&lod=original",
+        headIconUrl: "images/isko-head-icon.png",
+        id: 2,
+        vrmUrl: "models/avatars/Isko.vrm",
       },
     ];
 
@@ -203,7 +195,7 @@ export const floorZones = [
     name: "Administration Building",
     xMin: 13.5,
     xMax: 63.37,
-    zMin: -1.87, 
+    zMin: -1.87,
     zMax: 7.58,
     yMin: 0,
     yMax: 5,
@@ -212,7 +204,7 @@ export const floorZones = [
     name: "Pylon",
     xMin: 10.7,
     xMax: 21.13,
-    zMin: -77.56, 
+    zMin: -77.56,
     zMax: -69.18,
     yMin: 0,
     yMax: 5,
@@ -221,7 +213,7 @@ export const floorZones = [
     name: "Business and Accountancy Building",
     xMin: 10.7,
     xMax: 26.5,
-    zMin: -178.40, 
+    zMin: -178.4,
     zMax: -108.62,
     yMin: 0,
     yMax: 7,
@@ -231,16 +223,16 @@ export const floorZones = [
   //   name: "PUP Gymnasium",
   //   xMin: 10.7,
   //   xMax: 26.5,
-  //   zMin: -178.40, 
+  //   zMin: -178.40,
   //   zMax: -108.62,
   //   yMin: 0,
   //   yMax: 7,
   // },
-    {
+  {
     name: "Grandstand",
     xMin: -7.3,
     xMax: 4.7,
-    zMin: -137.71, 
+    zMin: -137.71,
     zMax: -110.1,
     yMin: 0,
     yMax: 7,
@@ -249,7 +241,7 @@ export const floorZones = [
     name: "Health and Sciences Building",
     xMin: -97.44,
     xMax: -30.85,
-    zMin: -58.33, 
+    zMin: -58.33,
     zMax: -37.75,
     yMin: 0,
     yMax: 7,
@@ -258,7 +250,7 @@ export const floorZones = [
     name: "Tau Gamma ",
     xMin: -21.5,
     xMax: -16.44,
-    zMin: -32, 
+    zMin: -32,
     zMax: -24.25,
     yMin: 0,
     yMax: 7,
@@ -278,7 +270,7 @@ function withRoomOffsets(
     xOffset: number;
     zOffset: number;
     imageSrc?: string;
-  }>
+  }>,
 ): FixedLocationRoom[] {
   return rooms.map((r, idx) => {
     const y =
@@ -290,7 +282,11 @@ function withRoomOffsets(
       id: `${buildingId}-room-${idx + 1}`,
       name: r.name,
       floor: r.floor,
-      position: new THREE.Vector3(center.x + r.xOffset, y, center.z + r.zOffset),
+      position: new THREE.Vector3(
+        center.x + r.xOffset,
+        y,
+        center.z + r.zOffset,
+      ),
       imageSrc: r.imageSrc ?? DEFAULT_LOCATION_IMAGE,
     };
   });
@@ -315,31 +311,143 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     imageSrc: DEFAULT_LOCATION_IMAGE,
     kind: "building",
     // 18 rooms total: 6 per floor (1st/2nd/3rd). Replace names + offsets as needed.
-    rooms: withRoomOffsets("yumul-building", new THREE.Vector3(51.4, 0.2, -33.5), [
-      // 1st floor (yOffset relative to building center)
-      { name: "Room 1 (set name)", floor: 1, yOffset: 0, xOffset: -3.2, zOffset: -1.6 },
-      { name: "Room 2 (set name)", floor: 1, yOffset: 0, xOffset: 0, zOffset: -1.6 },
-      { name: "CSC Office", floor: 1, yOffset: 0, xOffset: 3.2, zOffset: -1.6 },
-      { name: "Room 4 (set name)", floor: 1, yOffset: 0, xOffset: -3.2, zOffset: 1.6 },
-      { name: "Room 5 (set name)", floor: 1, yOffset: 0, xOffset: 0, zOffset: 1.6 },
-      { name: "Room 6 (set name)", floor: 1, yOffset: 0, xOffset: 3.2, zOffset: 1.6 },
+    rooms: withRoomOffsets(
+      "yumul-building",
+      new THREE.Vector3(51.4, 0.2, -33.5),
+      [
+        // 1st floor (yOffset relative to building center)
+        {
+          name: "Room 1 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 2 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 0,
+          zOffset: -1.6,
+        },
+        {
+          name: "CSC Office",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 4 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -3.2,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 5 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 0,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 6 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 3.2,
+          zOffset: 1.6,
+        },
 
-      // 2nd floor
-      { name: "Room 7 (set name)", floor: 2, yOffset: 4.2, xOffset: -3.2, zOffset: -1.6 },
-      { name: "Room 8 (set name)", floor: 2, yOffset: 4.2, xOffset: 0, zOffset: -1.6 },
-      { name: "Room 9 (set name)", floor: 2, yOffset: 4.2, xOffset: 3.2, zOffset: -1.6 },
-      { name: "Room 10 (set name)", floor: 2, yOffset: 4.2, xOffset: -3.2, zOffset: 1.6 },
-      { name: "Room 11 (set name)", floor: 2, yOffset: 4.2, xOffset: 0, zOffset: 1.6 },
-      { name: "Room 12 (set name)", floor: 2, yOffset: 4.2, xOffset: 3.2, zOffset: 1.6 },
+        // 2nd floor
+        {
+          name: "Room 7 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 8 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 0,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 9 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 10 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -3.2,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 11 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 0,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 12 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 3.2,
+          zOffset: 1.6,
+        },
 
-      // 3rd floor
-      { name: "Room 13 (set name)", floor: 3, yOffset: 8.4, xOffset: -3.2, zOffset: -1.6 },
-      { name: "Room 14 (set name)", floor: 3, yOffset: 8.4, xOffset: 0, zOffset: -1.6 },
-      { name: "Room 15 (set name)", floor: 3, yOffset: 8.4, xOffset: 3.2, zOffset: -1.6 },
-      { name: "Room 16 (set name)", floor: 3, yOffset: 8.4, xOffset: -3.2, zOffset: 1.6 },
-      { name: "Room 17 (set name)", floor: 3, yOffset: 8.4, xOffset: 0, zOffset: 1.6 },
-      { name: "Room 18 (set name)", floor: 3, yOffset: 8.4, xOffset: 3.2, zOffset: 1.6 },
-    ]),
+        // 3rd floor
+        {
+          name: "Room 13 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: -3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 14 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: 0,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 15 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: 3.2,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 16 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: -3.2,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 17 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: 0,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 18 (set name)",
+          floor: 3,
+          yOffset: 8.4,
+          xOffset: 3.2,
+          zOffset: 1.6,
+        },
+      ],
+    ),
   },
   {
     id: "administration-building",
@@ -348,17 +456,57 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     highlighted: false,
     imageSrc: DEFAULT_LOCATION_IMAGE,
     kind: "building",
-    rooms: withRoomOffsets("administration-building", new THREE.Vector3(38.4, 0.2, 2.85), [
-      // 1st floor
-      { name: "Accounting Office", floor: 1, yOffset: 0, xOffset: -18, zOffset: -2.5},
-      { name: "Fund Management Office", floor: 1, yOffset: 0, xOffset: 2.5, zOffset: -2.5},
-      { name: "Office of the Registrar", floor: 1, yOffset: 0, xOffset: 0, zOffset: -2.5 },
-      { name: "Admission Office", floor: 1, yOffset: 0, xOffset: 15, zOffset: -2.5 },
-      // 2nd floor
-      // Adjust yOffset (height) for your model's 2nd floor
-      { name: "Office of Head", floor: 2, yOffset: 4.2, xOffset: -2.5, zOffset: -2.5 },
-      { name: "Office of the Director", floor: 2, yOffset: 4, xOffset: 10, zOffset: -2.5 },
-    ]),
+    rooms: withRoomOffsets(
+      "administration-building",
+      new THREE.Vector3(38.4, 0.2, 2.85),
+      [
+        // 1st floor
+        {
+          name: "Accounting Office",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -18,
+          zOffset: -2.5,
+        },
+        {
+          name: "Fund Management Office",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 2.5,
+          zOffset: -2.5,
+        },
+        {
+          name: "Office of the Registrar",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 0,
+          zOffset: -2.5,
+        },
+        {
+          name: "Admission Office",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 15,
+          zOffset: -2.5,
+        },
+        // 2nd floor
+        // Adjust yOffset (height) for your model's 2nd floor
+        {
+          name: "Office of Head",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -2.5,
+          zOffset: -2.5,
+        },
+        {
+          name: "Office of the Director",
+          floor: 2,
+          yOffset: 4,
+          xOffset: 10,
+          zOffset: -2.5,
+        },
+      ],
+    ),
   },
   {
     id: "business-accountancy",
@@ -368,19 +516,71 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     imageSrc: DEFAULT_LOCATION_IMAGE,
     kind: "building",
     // 2 floors: 4 rooms each (edit names + offsets as needed)
-    rooms: withRoomOffsets("business-accountancy", new THREE.Vector3(18.6, 0.2, -143.5), [
-      // 1st floor
-      { name: "Room 1 (set name)", floor: 1, yOffset: 1, xOffset: -2.4, zOffset: -1.6 },
-      { name: "Room 2 (set name)", floor: 1, yOffset: 1, xOffset: 2.4, zOffset: -1.6 },
-      { name: "Room 3 (set name)", floor: 1, yOffset: 1, xOffset: -2.4, zOffset: 1.6 },
-      { name: "Room 4 (set name)", floor: 1, yOffset: 1, xOffset: 2.4, zOffset: 1.6 },
+    rooms: withRoomOffsets(
+      "business-accountancy",
+      new THREE.Vector3(18.6, 0.2, -143.5),
+      [
+        // 1st floor
+        {
+          name: "Room 1 (set name)",
+          floor: 1,
+          yOffset: 1,
+          xOffset: -2.4,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 2 (set name)",
+          floor: 1,
+          yOffset: 1,
+          xOffset: 2.4,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 3 (set name)",
+          floor: 1,
+          yOffset: 1,
+          xOffset: -2.4,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 4 (set name)",
+          floor: 1,
+          yOffset: 1,
+          xOffset: 2.4,
+          zOffset: 1.6,
+        },
 
-      // 2nd floor
-      { name: "Room 5 (set name)", floor: 2, yOffset: 4.2, xOffset: -2.4, zOffset: -1.6 },
-      { name: "Room 6 (set name)", floor: 2, yOffset: 4.2, xOffset: 2.4, zOffset: -1.6 },
-      { name: "Room 7 (set name)", floor: 2, yOffset: 4.2, xOffset: -2.4, zOffset: 1.6 },
-      { name: "Room 8 (set name)", floor: 2, yOffset: 4.2, xOffset: 2.4, zOffset: 1.6 },
-    ]),
+        // 2nd floor
+        {
+          name: "Room 5 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -2.4,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 6 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 2.4,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 7 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -2.4,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 8 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 2.4,
+          zOffset: 1.6,
+        },
+      ],
+    ),
   },
   {
     id: "health-sciences",
@@ -390,27 +590,127 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     imageSrc: DEFAULT_LOCATION_IMAGE,
     kind: "building",
     // 16 rooms total: 8 per floor (1st/2nd). Replace names + offsets as needed.
-    rooms: withRoomOffsets("health-sciences", new THREE.Vector3(-64.1, 0.2, -48.0), [
-      // 1st floor
-      { name: "Room 1 (set name)", floor: 1, yOffset: 0, xOffset: -4.8, zOffset: -1.6 },
-      { name: "Room 2 (set name)", floor: 1, yOffset: 0, xOffset: -1.6, zOffset: -1.6 },
-      { name: "Room 3 (set name)", floor: 1, yOffset: 0, xOffset: 1.6, zOffset: -1.6 },
-      { name: "Room 4 (set name)", floor: 1, yOffset: 0, xOffset: 4.8, zOffset: -1.6 },
-      { name: "Room 5 (set name)", floor: 1, yOffset: 0, xOffset: -4.8, zOffset: 1.6 },
-      { name: "Room 6 (set name)", floor: 1, yOffset: 0, xOffset: -1.6, zOffset: 1.6 },
-      { name: "Room 7 (set name)", floor: 1, yOffset: 0, xOffset: 1.6, zOffset: 1.6 },
-      { name: "Room 8 (set name)", floor: 1, yOffset: 0, xOffset: 4.8, zOffset: 1.6 },
+    rooms: withRoomOffsets(
+      "health-sciences",
+      new THREE.Vector3(-64.1, 0.2, -48.0),
+      [
+        // 1st floor
+        {
+          name: "Room 1 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 2 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 3 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 4 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 5 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 6 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 7 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 8 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
 
-      // 2nd floor
-      { name: "Room 9 (set name)", floor: 2, yOffset: 4.2, xOffset: -4.8, zOffset: -1.6 },
-      { name: "Room 10 (set name)", floor: 2, yOffset: 4.2, xOffset: -1.6, zOffset: -1.6 },
-      { name: "Room 11 (set name)", floor: 2, yOffset: 4.2, xOffset: 1.6, zOffset: -1.6 },
-      { name: "Room 12 (set name)", floor: 2, yOffset: 4.2, xOffset: 4.8, zOffset: -1.6 },
-      { name: "Room 13 (set name)", floor: 2, yOffset: 4.2, xOffset: -4.8, zOffset: 1.6 },
-      { name: "Room 14 (set name)", floor: 2, yOffset: 4.2, xOffset: -1.6, zOffset: 1.6 },
-      { name: "Room 15 (set name)", floor: 2, yOffset: 4.2, xOffset: 1.6, zOffset: 1.6 },
-      { name: "Room 16 (set name)", floor: 2, yOffset: 4.2, xOffset: 4.8, zOffset: 1.6 },
-    ]),
+        // 2nd floor
+        {
+          name: "Room 9 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 10 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 11 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 12 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 13 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 14 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 15 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 16 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
+      ],
+    ),
   },
   {
     id: "pylon",
