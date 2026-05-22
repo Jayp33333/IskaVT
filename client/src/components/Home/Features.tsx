@@ -1,4 +1,4 @@
-import { MapPin, UserCircle, Map, Navigation, Info, MessageSquare, Sparkles } from "lucide-react";
+import { MapPin, UserCircle, Map, Navigation, Info, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
@@ -77,7 +77,7 @@ export function Features() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10, x: -5 }}
-                className="group relative bg-white border-4 border-black p-8 rounded-[32px] 
+                className="group relative bg-white border-4 border-black p-8 rounded-4xl
                            shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(128,0,0,1)] 
                            transition-all duration-300"
               >

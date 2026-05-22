@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mail, MessageCircle, Phone, Sparkles } from 'lucide-react';
 

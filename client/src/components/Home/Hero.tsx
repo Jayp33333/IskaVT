@@ -1,6 +1,5 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Map } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export function Hero() {

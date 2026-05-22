@@ -13,7 +13,6 @@ import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
 import useWorld from "../hooks/useWorld";
-import Map2D from "../components/Experience/Map2D";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
