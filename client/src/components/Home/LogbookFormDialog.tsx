@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { ClipboardList, X } from "lucide-react";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
+import { getErrorMessage } from "../../utils/errors";
 
 interface LogbookFormDialogProps {
   open: boolean;
@@ -54,8 +55,8 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
       onSuccess();
       setFormData({ fullName: "", visitorType: "", purpose: "", destination: "" });
       onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Oops! Something went wrong.");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Oops! Something went wrong."));
     } finally {
       setIsSubmitting(false);
     }

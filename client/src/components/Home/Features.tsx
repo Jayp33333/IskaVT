@@ -2,102 +2,117 @@ import { MapPin, UserCircle, Map, Navigation, Info, MessageSquare } from "lucide
 import { motion } from "framer-motion";
 
 const features = [
-  { 
-    icon: MapPin, 
-    title: "Interactive 3D Campus", 
-    description: "Fully modeled 3D representation of PUP Lopez. Explore buildings and walk through an immersive environment.",
-    color: "bg-[#FFD700]" // Yellow accent
+  {
+    icon: MapPin,
+    title: "Interactive 3D Campus",
+    description:
+      "Fully modeled 3D representation of PUP Lopez. Explore buildings and walk through an immersive environment.",
+    color: "bg-[#FFD700]",
   },
-  { 
-    icon: UserCircle, 
-    title: "Playable Tour Guide", 
-    description: "Toggle between first and third-person views with a customizable character leading your journey.",
-    color: "bg-[#800000]" // Maroon accent
+  {
+    icon: UserCircle,
+    title: "Playable Tour Guide",
+    description:
+      "Toggle between first and third-person views with a customizable character leading your journey.",
+    color: "bg-[#800000]",
   },
-  { 
-    icon: Map, 
-    title: "Mini-Map Navigation", 
-    description: "Real-time position tracking with clickable teleportation icons and pinned destinations.",
-    color: "bg-white" 
+  {
+    icon: Map,
+    title: "Mini-Map Navigation",
+    description:
+      "Real-time position tracking with clickable teleportation icons and pinned destinations.",
+    color: "bg-white",
   },
-  { 
-    icon: Navigation, 
-    title: "Guided Wayfinding", 
-    description: "Dynamic arrow guides and distance meters help you find any building with precision.",
-    color: "bg-white"
+  {
+    icon: Navigation,
+    title: "Guided Wayfinding",
+    description:
+      "Dynamic arrow guides and distance meters help you find any building with precision.",
+    color: "bg-white",
   },
-  { 
-    icon: Info, 
-    title: "Area Detection", 
-    description: "Automatic landmark identification. The system displays building names as you approach them.",
-    color: "bg-[#800000]"
+  {
+    icon: Info,
+    title: "Area Detection",
+    description:
+      "Automatic landmark identification. The system displays building names as you approach them.",
+    color: "bg-[#800000]",
   },
-  { 
-    icon: MessageSquare, 
-    title: "NPC Dialog System", 
-    description: "Interact with characters across campus to receive helpful information and instructions.",
-    color: "bg-[#FFD700]"
+  {
+    icon: MessageSquare,
+    title: "NPC Dialog System",
+    description:
+      "Interact with characters across campus to receive helpful information and instructions.",
+    color: "bg-[#FFD700]",
   },
 ];
 
 export function Features() {
   return (
-    <section className="py-32 px-6 lg:px-20 bg-[#FFFDF5] relative overflow-hidden" id="features">
-
-      <div className="container mx-auto relative z-10">
-        <div className="flex flex-col items-center mb-20">
-          <motion.span 
+    <section
+      className="relative overflow-hidden bg-[#FFFDF5] px-4 py-16 sm:px-6 sm:py-20 lg:px-12 lg:py-24 xl:px-20"
+      id="features"
+    >
+      <div className="container relative z-10 mx-auto">
+        <div className="mb-10 flex flex-col items-center sm:mb-12 lg:mb-14">
+          <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-[#800000] font-black uppercase tracking-[0.2em] text-sm mb-4 italic"
+            className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[#800000] italic sm:mb-4 sm:text-sm"
           >
             Capabilities
           </motion.span>
-          <h2 className="text-5xl md:text-7xl font-black text-black text-center leading-tight">
+          <h2 className="text-center text-3xl font-black leading-tight text-black sm:text-4xl md:text-5xl lg:text-6xl">
             BUILT FOR <br />
-            <span className="text-[#800000] relative">
+            <span className="relative text-[#800000]">
               EXPLORATION
-              <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 20" fill="none">
-                <path d="M5 15Q150 5 295 15" stroke="#FFD700" strokeWidth="8" strokeLinecap="round"/>
+              <svg
+                className="absolute -bottom-1 left-0 w-full sm:-bottom-2"
+                viewBox="0 0 300 20"
+                fill="none"
+              >
+                <path
+                  d="M5 15Q150 5 295 15"
+                  stroke="#FFD700"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
               </svg>
             </span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isMaroon = feature.color === "bg-[#800000]";
-            
+
             return (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
+                key={feature.title}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -10, x: -5 }}
-                className="group relative bg-white border-4 border-black p-8 rounded-4xl
-                           shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(128,0,0,1)] 
-                           transition-all duration-300"
+                whileHover={{ y: -6, x: -4 }}
+                className="group relative rounded-2xl border-2 border-black bg-white p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 hover:shadow-[10px_10px_0px_0px_rgba(128,0,0,1)] sm:rounded-3xl sm:border-4 sm:p-6 lg:p-7"
               >
-                {/* Icon Container */}
-                <div className={`w-16 h-16 rounded-2xl border-4 border-black mb-6 flex items-center justify-center 
-                                ${feature.color} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
-                                group-hover:rotate-6 transition-transform`}>
-                  <Icon className={`w-8 h-8 ${isMaroon ? 'text-white' : 'text-black'}`} />
+                <div
+                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-transform group-hover:rotate-6 sm:mb-5 sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4 ${feature.color}`}
+                >
+                  <Icon
+                    className={`h-6 w-6 sm:h-7 sm:w-7 ${isMaroon ? "text-white" : "text-black"}`}
+                  />
                 </div>
 
-                <h3 className="text-2xl font-black text-black mb-4 uppercase tracking-tighter">
+                <h3 className="mb-2 text-lg font-black uppercase tracking-tighter text-black sm:mb-3 sm:text-xl">
                   {feature.title}
                 </h3>
-                
-                <p className="text-black/70 font-bold leading-relaxed">
+
+                <p className="text-sm font-bold leading-relaxed text-black/70 sm:text-base">
                   {feature.description}
                 </p>
 
-                {/* Decorative Slanted Corner (Futuristic Detail) */}
-                <div className="absolute top-0 right-0 w-8 h-8 bg-[#FFFDF5] border-b-4 border-l-4 border-black rounded-bl-2xl" />
+                <div className="absolute top-0 right-0 h-6 w-6 rounded-bl-xl border-b-2 border-l-2 border-black bg-[#FFFDF5] sm:h-8 sm:w-8 sm:rounded-bl-2xl sm:border-b-4 sm:border-l-4" />
               </motion.div>
             );
           })}
