@@ -243,7 +243,7 @@ export default function ExperienceScene() {
           onComplete={handleAssetLoadComplete}
         />
         <BvhPhysicsWorld>
-          <Experience />
+          <Experience assetsReady={loadComplete} />
         </BvhPhysicsWorld>
       </Canvas>
     </>
