@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { BvhPhysicsWorld } from "@react-three/viverse";
 import Experience from "./Experience";
 import LoadingOverlay from "../components/Experience/ui/LoadingOverlay";
-import { AssetLoadProgress } from "../components/Experience/AssetLoadProgress";
 import { UI } from "../components/Experience/ui/UI";
 import { audioManager } from "../services/AudioManager";
+import useAudioPreload from "../hooks/useAudioPreload";
 import { TourGuideDialog } from "../components/Experience/ui/TourGuideDialog.tsx";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
@@ -18,20 +18,10 @@ import useWorld from "../hooks/useWorld";
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
 export default function ExperienceScene() {
+  useAudioPreload();
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [loadComplete, setLoadComplete] = useState(false);
-
-  const handleAssetProgress = useCallback((progress: number) => {
-    setLoadProgress(progress);
-  }, []);
-
-  const handleAssetLoadComplete = useCallback(() => {
-    setLoadProgress(100);
-    setLoadComplete(true);
-  }, []);
 
   // Global NPC dialog state – used to temporarily lock movement/camera
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
@@ -205,11 +195,7 @@ export default function ExperienceScene() {
     <>
  
       <OrientationGuard />
-      <LoadingOverlay
-        progress={loadProgress}
-        isComplete={loadComplete}
-        onFinished={handleLoadingFinished}
-      />
+      <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
 
       <TourGuideDialog
@@ -238,12 +224,8 @@ export default function ExperienceScene() {
           touchAction: "none",
         }}
       >
-        <AssetLoadProgress
-          onProgress={handleAssetProgress}
-          onComplete={handleAssetLoadComplete}
-        />
         <BvhPhysicsWorld>
-          <Experience assetsReady={loadComplete} />
+          <Experience />
         </BvhPhysicsWorld>
       </Canvas>
     </>

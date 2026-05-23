@@ -1,25 +1,20 @@
+import { useProgress } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
 export default function LoadingOverlay({
-  progress,
-  isComplete,
   onFinished,
 }: {
-  progress: number;
-  isComplete: boolean;
   onFinished: () => void;
 }) {
+  const { progress } = useProgress();
   const [done, setDone] = useState(false);
   const [visible, setVisible] = useState(true);
   const [opacity, setOpacity] = useState(1);
 
   const logo = "/images/iska-logo.png";
-  const displayProgress = Number.isFinite(progress)
-    ? Math.min(100, Math.max(0, progress))
-    : 0;
 
   useEffect(() => {
-    if (isComplete && !done) {
+    if (progress === 100 && !done) {
       const finishTimeout = setTimeout(() => {
         onFinished();
         setDone(true);
@@ -34,7 +29,7 @@ export default function LoadingOverlay({
         clearTimeout(hideTimeout);
       };
     }
-  }, [isComplete, done, onFinished]);
+  }, [progress, done, onFinished]);
 
   if (!visible) return null;
 
@@ -69,7 +64,7 @@ export default function LoadingOverlay({
           <div
             className="h-full bg-[#9b1c1c] transition-all duration-300 ease-out"
             style={{
-              width: `${displayProgress}%`,
+              width: `${progress}%`,
               backgroundImage:
                 "linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent)",
               backgroundSize: "30px 30px",
@@ -80,7 +75,7 @@ export default function LoadingOverlay({
         {/* Percentage */}
         <div className="mt-6">
           <span className="text-[#9b1c1c] font-black text-lg tracking-tight italic">
-            {displayProgress}%
+            {progress < 100 ? `${progress.toFixed(0)}%` : "READY!"}
           </span>
         </div>
       </div>

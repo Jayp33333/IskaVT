@@ -9,7 +9,7 @@ import Lights from "../components/Experience/Lights";
 import useWorld from "../hooks/useWorld";
 import DistanceUpdater from "../components/Experience/ui/DistanceUpdater";
 
-const Experience = ({ assetsReady }: { assetsReady: boolean }) => {
+const Experience = () => {
   const pinPosition = useWorld((s: any) => s.pinPosition);
   const isPinConfirmed = useWorld((s: any) => s.isPinConfirmed);
 
@@ -17,21 +17,15 @@ const Experience = ({ assetsReady }: { assetsReady: boolean }) => {
     <>
       <Sky />
       <Lights />
+      <World />
       <Suspense fallback={null}>
-        <World />
+        <Character />
       </Suspense>
-      {assetsReady && (
-        <>
-          <Suspense fallback={null}>
-            <NPCs />
-          </Suspense>
-          <Suspense fallback={null}>
-            <Character />
-          </Suspense>
-        </>
-      )}
+      <Suspense fallback={null}>
+        <NPCs />
+      </Suspense>
       <DistanceUpdater />
-      {pinPosition && isPinConfirmed && assetsReady && <Pin />}
+      {pinPosition && isPinConfirmed && <Pin />}
     </>
   );
 };
