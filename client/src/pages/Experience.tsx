@@ -17,7 +17,9 @@ const Experience = () => {
     <>
       <Sky />
       <Lights />
-      <World />
+      <Suspense fallback={null}>
+        <World />
+      </Suspense>
       <Suspense fallback={null}>
         <Character />
       </Suspense>
