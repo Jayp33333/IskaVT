@@ -164,41 +164,51 @@ export const floorZones = [
   { name: "Main Gate", xMin: 5, xMax: 12, zMin: -3, zMax: 8, yMin: 0, yMax: 3 },
   {
     name: "Comlab 1",
-    xMin: -12,
-    xMax: 1.6,
-    zMin: -16.5,
-    zMax: -4.4,
+    xMin: -8.2,
+    xMax: 4.8,
+    zMin: -23.65,
+    zMax: -11.2,
     yMin: 0,
     yMax: 3,
   },
   {
     name: "Comlab 2",
-    xMin: -0.37,
-    xMax: 11.37,
-    zMin: -30.44,
-    zMax: -18.59,
+    xMin: 1.5,
+    xMax: 14,
+    zMin: -38,
+    zMax: -24.24,
     yMin: 0,
     yMax: 3,
   },
 
   {
     name: "Yumul Building",
-    xMin: 42.87,
+    xMin: 35.5,
     xMax: 60,
     zMin: -61,
-    zMax: -6,
+    zMax: -11,
     yMin: 0,
-    yMax: 3,
+    yMax: 9,
   },
   { name: "Library", xMin: -10, xMax: 0, zMin: 10, zMax: 20, yMin: 0, yMax: 3 },
   {
     name: "Administration Building",
-    xMin: 13.5,
-    xMax: 63.37,
-    zMin: -1.87,
-    zMax: 7.58,
+    xMin: 13.4,
+    xMax: 54,
+    zMin: -7.8,
+    zMax: 6.5,
     yMin: 0,
     yMax: 5,
+  },
+
+  {
+    name: "Accounting Office",
+    xMin: 18,
+    xMax: 20,
+    zMin: -6,
+    zMax: -4.1,
+    yMin: 0,
+    yMax: 2,
   },
   {
     name: "Pylon",
@@ -210,7 +220,7 @@ export const floorZones = [
     yMax: 5,
   },
   {
-    name: "Business and Accountancy Building",
+    name: "Nantes Building",
     xMin: 10.7,
     xMax: 26.5,
     zMin: -178.4,
@@ -239,10 +249,10 @@ export const floorZones = [
   },
   {
     name: "Health and Sciences Building",
-    xMin: -97.44,
-    xMax: -30.85,
-    zMin: -58.33,
-    zMax: -37.75,
+    xMin: -51,
+    xMax: -12.31,
+    zMin: -85.85,
+    zMax: -38.5,
     yMin: 0,
     yMax: 7,
   },
@@ -257,7 +267,52 @@ export const floorZones = [
   },
 ];
 
-const DEFAULT_LOCATION_IMAGE = "/images/campus-image.jpg";
+export type FloorZone = (typeof floorZones)[number];
+
+export function isPositionInFloorZone(
+  position: { x: number; y: number; z: number },
+  zone: FloorZone
+): boolean {
+  return (
+    position.x >= zone.xMin &&
+    position.x <= zone.xMax &&
+    position.z >= zone.zMin &&
+    position.z <= zone.zMax &&
+    position.y >= (zone.yMin ?? 0) &&
+    position.y <= (zone.yMax ?? 10)
+  );
+}
+
+function floorZoneVolume(zone: FloorZone): number {
+  return (
+    (zone.xMax - zone.xMin) *
+    (zone.zMax - zone.zMin) *
+    ((zone.yMax ?? 10) - (zone.yMin ?? 0))
+  );
+}
+
+/** All zones containing the position, most specific (smallest) first. */
+export function getFloorZonesAtPosition(position: {
+  x: number;
+  y: number;
+  z: number;
+}): FloorZone[] {
+  return floorZones
+    .filter((zone) => isPositionInFloorZone(position, zone))
+    .sort((a, b) => floorZoneVolume(a) - floorZoneVolume(b));
+}
+
+const PYLON_IMAGE = "/images/campus-image.jpg";
+const ADMIN_BUILDING_IMAGE = "/images/buildings/AdminBuilding.webp";
+const GYM_IMAGE = "/images/buildings/Gymnasium.jpg";
+const GRANDSTAND_IMAGE = "/images/buildings/Grandstand.jpg";
+const YUMUL_IMAGE = "/images/buildings/YumulBuilding.png";
+const NANTES_IMAGE = "/images/buildings/NantesBuilding.webp";
+const HEALTH_SCIENCES_BUILDING_IMAGE = "/images/buildings/HealthSciencesBuilding.webp";
+const ENGINEERING_BUILDING_IMAGE = "/images/buildings/EngineeringBuilding.webp";
+const EDUCATION_BUILDING_IMAGE = "/images/buildings/EducationBuilding.png";
+const COMLAB1_IMAGE = "/images/buildings/Comlab1.jpg";
+const COMLAB2_IMAGE = "/images/buildings/Comlab2.jpg";
 
 function withRoomOffsets(
   buildingId: string,
@@ -287,7 +342,7 @@ function withRoomOffsets(
         y,
         center.z + r.zOffset,
       ),
-      imageSrc: r.imageSrc ?? DEFAULT_LOCATION_IMAGE,
+      imageSrc: r.imageSrc ?? PYLON_IMAGE,
     };
   });
 }
@@ -298,185 +353,56 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "grandstand",
     name: "Grandstand",
-    position: new THREE.Vector3(-1.3, 0.2, -123.9), // Center of Grandstand zone
-    highlighted: true, // Yellow pin with label
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    position: new THREE.Vector3(6, 2, -119), // Center of Grandstand zone
+    highlighted: false, // Yellow pin with label
+    imageSrc: GRANDSTAND_IMAGE,
+    kind: "poi",
+  },
+  {
+    id: "gymnasium",
+    name: "PUP Gymnasium",
+    position: new THREE.Vector3(41, 0.2, -148), // Center of PUP Gymnasium zone
+    highlighted: false, // Yellow pin with label
+    imageSrc: GYM_IMAGE,
     kind: "poi",
   },
   {
     id: "yumul-building",
     name: "Yumul Building",
-    position: new THREE.Vector3(51.4, 0.2, -33.5), // Center of Yumul Building zone
+    position: new THREE.Vector3(38.4, 0.2, -33.5), // Center of Yumul Building zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: YUMUL_IMAGE,
     kind: "building",
-    // 18 rooms total: 6 per floor (1st/2nd/3rd). Replace names + offsets as needed.
-    rooms: withRoomOffsets(
-      "yumul-building",
-      new THREE.Vector3(51.4, 0.2, -33.5),
-      [
-        // 1st floor (yOffset relative to building center)
-        {
-          name: "Room 1 (set name)",
-          floor: 1,
-          yOffset: 0,
-          xOffset: -3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 2 (set name)",
-          floor: 1,
-          yOffset: 0,
-          xOffset: 0,
-          zOffset: -1.6,
-        },
-        {
-          name: "CSC Office",
-          floor: 1,
-          yOffset: 0,
-          xOffset: 3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 4 (set name)",
-          floor: 1,
-          yOffset: 0,
-          xOffset: -3.2,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 5 (set name)",
-          floor: 1,
-          yOffset: 0,
-          xOffset: 0,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 6 (set name)",
-          floor: 1,
-          yOffset: 0,
-          xOffset: 3.2,
-          zOffset: 1.6,
-        },
-
-        // 2nd floor
-        {
-          name: "Room 7 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: -3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 8 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: 0,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 9 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: 3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 10 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: -3.2,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 11 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: 0,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 12 (set name)",
-          floor: 2,
-          yOffset: 4.2,
-          xOffset: 3.2,
-          zOffset: 1.6,
-        },
-
-        // 3rd floor
-        {
-          name: "Room 13 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: -3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 14 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: 0,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 15 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: 3.2,
-          zOffset: -1.6,
-        },
-        {
-          name: "Room 16 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: -3.2,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 17 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: 0,
-          zOffset: 1.6,
-        },
-        {
-          name: "Room 18 (set name)",
-          floor: 3,
-          yOffset: 8.4,
-          xOffset: 3.2,
-          zOffset: 1.6,
-        },
-      ],
-    ),
   },
+
   {
     id: "administration-building",
     name: "Administration Building",
-    position: new THREE.Vector3(38.4, 0.2, 2.85), // Center of Administration Building zone
+    position: new THREE.Vector3(31, 0.2, -6), // Center of Administration Building zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: ADMIN_BUILDING_IMAGE,
     kind: "building",
     rooms: withRoomOffsets(
       "administration-building",
-      new THREE.Vector3(38.4, 0.2, 2.85),
+      new THREE.Vector3(31, 0.2, -5),
       [
         // 1st floor
         {
           name: "Accounting Office",
           floor: 1,
           yOffset: 0,
-          xOffset: -18,
-          zOffset: -2.5,
+          xOffset: 0,
+          zOffset: 0,
         },
         {
-          name: "Fund Management Office",
+          name: "Cashier's Office",
           floor: 1,
           yOffset: 0,
           xOffset: 2.5,
           zOffset: -2.5,
         },
         {
-          name: "Office of the Registrar",
+          name: "Registrar's Office",
           floor: 1,
           yOffset: 0,
           xOffset: 0,
@@ -492,7 +418,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
         // 2nd floor
         // Adjust yOffset (height) for your model's 2nd floor
         {
-          name: "Office of Head",
+          name: "Office of the Student Affairs and Services (OSAS)",
           floor: 2,
           yOffset: 4.2,
           xOffset: -2.5,
@@ -505,28 +431,35 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
           xOffset: 10,
           zOffset: -2.5,
         },
+        {
+          name: "OJT Coordinator's Office",
+          floor: 2,
+          yOffset: 3.8,
+          xOffset: 10,
+          zOffset: -2.5,
+        },
       ],
     ),
   },
   {
-    id: "business-accountancy",
-    name: "Business and Accountancy Building",
-    position: new THREE.Vector3(20.6, 0.2, -143.5), // Center of Business and Accountancy Building zone
+    id: "nantes-building",
+    name: "Nantes Building",
+    position: new THREE.Vector3(28, 0.2, -138), // Center of Nantes Building zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: NANTES_IMAGE,
     kind: "building",
     // 2 floors: 4 rooms each (edit names + offsets as needed)
     rooms: withRoomOffsets(
-      "business-accountancy",
-      new THREE.Vector3(18.6, 0.2, -143.5),
+      "nantes-building",
+      new THREE.Vector3(28, 0.2, -138),
       [
         // 1st floor
         {
           name: "Room 1 (set name)",
           floor: 1,
           yOffset: 1,
-          xOffset: -2.4,
-          zOffset: -1.6,
+          xOffset: 0,
+          zOffset: 0,
         },
         {
           name: "Room 2 (set name)",
@@ -585,22 +518,284 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "health-sciences",
     name: "Health and Sciences Building",
-    position: new THREE.Vector3(-64.1, 0.2, -48.0), // Center of Health and Sciences Building zone
+    position: new THREE.Vector3(-33, 0.2, -65), // Center of Health and Sciences Building zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: HEALTH_SCIENCES_BUILDING_IMAGE,
     kind: "building",
     // 16 rooms total: 8 per floor (1st/2nd). Replace names + offsets as needed.
     rooms: withRoomOffsets(
       "health-sciences",
-      new THREE.Vector3(-64.1, 0.2, -48.0),
+      new THREE.Vector3(-33, 0.2, -65),
       [
         // 1st floor
         {
           name: "Room 1 (set name)",
           floor: 1,
           yOffset: 0,
+          xOffset: 0,
+          zOffset: 0,
+        },
+        {
+          name: "Room 2 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 3 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 4 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 5 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 6 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 7 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 8 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
+
+        // 2nd floor
+        {
+          name: "Room 9 (set name)",
+          floor: 2,
+          yOffset: 4.2,
           xOffset: -4.8,
           zOffset: -1.6,
+        },
+        {
+          name: "Room 10 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 11 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 12 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 13 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 14 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 15 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 16 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
+      ],
+    ),
+  },
+
+  {
+    id: "education-building",
+    name: "Education Building",
+    position: new THREE.Vector3(-10, 0.2, -197), // Center of Education Building zone
+    highlighted: false,
+    imageSrc: EDUCATION_BUILDING_IMAGE,
+    kind: "building",
+    // 16 rooms total: 8 per floor (1st/2nd). Replace names + offsets as needed.
+    rooms: withRoomOffsets(
+      "education-building",
+      new THREE.Vector3(-10, 0.2, -197),
+      [
+        // 1st floor
+        {
+          name: "Room 1 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 0,
+          zOffset: 0,
+        },
+        {
+          name: "Room 2 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 3 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 4 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 5 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 6 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 7 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 8 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
+
+        // 2nd floor
+        {
+          name: "Room 9 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 10 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 11 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 12 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: -1.6,
+        },
+        {
+          name: "Room 13 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -4.8,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 14 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: -1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 15 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 1.6,
+          zOffset: 1.6,
+        },
+        {
+          name: "Room 16 (set name)",
+          floor: 2,
+          yOffset: 4.2,
+          xOffset: 4.8,
+          zOffset: 1.6,
+        },
+      ],
+    ),
+  },
+  
+  {
+    id: "engineering-building",
+    name: "Engineering Building",
+    position: new THREE.Vector3(-50, 0.2, -128), // Center of Engineering Building zone
+    highlighted: false,
+    imageSrc: ENGINEERING_BUILDING_IMAGE,
+    kind: "building",
+    // 16 rooms total: 8 per floor (1st/2nd). Replace names + offsets as needed.
+    rooms: withRoomOffsets(
+      "engineering-building",
+      new THREE.Vector3(-50, 0.2, -128),
+      [
+        // 1st floor
+        {
+          name: "Room 1 (set name)",
+          floor: 1,
+          yOffset: 0,
+          xOffset: 0,
+          zOffset: 0,
         },
         {
           name: "Room 2 (set name)",
@@ -715,33 +910,33 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "pylon",
     name: "Pylon",
-    position: new THREE.Vector3(15.9, 1.2, -73.4), // Center of Pylon zone
+    position: new THREE.Vector3(19, 1.2, -71), // Center of Pylon zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: PYLON_IMAGE,
     kind: "poi",
   },
   {
     id: "comlab-1",
     name: "Comlab 1",
-    position: new THREE.Vector3(-5.2, 0.2, -10.45), // Center of Comlab 1 zone
+    position: new THREE.Vector3(2, 0.2, -12.5), // Center of Comlab 1 zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: COMLAB1_IMAGE,
     kind: "poi",
   },
   {
     id: "comlab-2",
     name: "Comlab 2",
-    position: new THREE.Vector3(5.5, 0.2, -24.5), // Center of Comlab 2 zone
+    position: new THREE.Vector3(12, 0.2, -26.2), // Center of Comlab 2 zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: COMLAB2_IMAGE,
     kind: "poi",
   },
   {
     id: "main-gate",
     name: "Main Gate",
-    position: new THREE.Vector3(8.5, 0.2, 2.5), // Center of Main Gate zone
+    position: new THREE.Vector3(11, 0.2, 2.5), // Center of Main Gate zone
     highlighted: false,
-    imageSrc: DEFAULT_LOCATION_IMAGE,
+    imageSrc: PYLON_IMAGE,
     kind: "poi",
   },
 ];

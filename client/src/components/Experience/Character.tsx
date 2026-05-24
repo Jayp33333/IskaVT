@@ -21,7 +21,7 @@ const Character = () => {
   const setQuery = useWorld((s: any) => s.setQuery);
   const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
   const setCharacterPositionOnFloorLabel = useWorld(
-    (s: any) => s.setCharacterPositionOnFloorLabel
+    (s: any) => s.setCharacterPositionOnFloorLabel,
   );
   const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
@@ -51,7 +51,11 @@ const Character = () => {
   const handleTeleport = useCallback(() => {
     if (!characterRef.current || !pinPosition) return;
 
-    characterRef.current.position.set(pinPosition.x, pinPosition.y, pinPosition.z);
+    characterRef.current.position.set(
+      pinPosition.x,
+      pinPosition.y,
+      pinPosition.z,
+    );
     setCharacterPosition(characterRef.current.position);
     setPinPosition(null);
     setIsPinTeleported(false);
@@ -63,9 +67,16 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
+    console.log("Character position:", character.position);
+
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
     setCameraRotation(camera.rotation.clone());
+
+    if (character.position.y < -10) {
+      character.position.set(0, 1, 0);
+      setCharacterPosition(character.position);
+    }
 
     if (isPinTeleported) handleTeleport();
   });
@@ -75,20 +86,20 @@ const Character = () => {
       ref={characterRef}
       position={[10, 3, 0]}
       movement={{
-        jump: { speed: 5 },
+        jump: { speed: 4 },
+        walk: { speed: 3 },
+        run: { speed: 5 },
       }}
       model={
         cameraMode === "third" && avatar
           ? {
               type: "vrm",
-              url: avatar.vrmUrl
+              url: avatar.vrmUrl,
             }
           : false
       }
       cameraBehavior={
-        cameraMode === "first"
-          ? FirstPersonCharacterCameraBehavior
-          : undefined
+        cameraMode === "first" ? FirstPersonCharacterCameraBehavior : undefined
       }
     />
   );

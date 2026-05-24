@@ -59,7 +59,7 @@ export function FixedLocationModal({
     <AnimatePresence>
       {pin && (
         <motion.div
-          className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 pointer-events-auto"
+          className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 pointer-events-auto [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -71,8 +71,10 @@ export function FixedLocationModal({
               bg-[#FFFDF9] text-slate-800
               rounded-[2rem] sm:rounded-[2.5rem]
               border-[4px] sm:border-[6px] border-slate-900
-              shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)]
               flex flex-col max-h-[90vh] overflow-hidden
+              [@media(max-height:500px)]:max-h-[94dvh] [@media(max-height:500px)]:rounded-2xl [@media(max-height:500px)]:border-[3px]
+              [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:768px)]:border-[3px]
+              [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[98dvh] [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-2
             "
             initial={{ scale: 0.9, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -81,11 +83,11 @@ export function FixedLocationModal({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header image with gradient overlay and title */}
-            <div className="relative border-b-[4px] sm:border-b-[6px] border-slate-900">
+            <div className="relative border-b-[4px] sm:border-b-[6px] border-slate-900 [@media(max-height:500px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:768px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:500px)]:border-b-2">
               <img
                 src={pin.imageSrc ?? "/images/campus-image.jpg"}
                 alt={pin.name}
-                className="w-full h-44 sm:h-52 object-cover block"
+                className="w-full h-44 sm:h-52 object-cover block [@media(max-height:500px)]:h-32 [@media(orientation:landscape)_and_(max-height:768px)]:h-24 [@media(orientation:landscape)_and_(max-height:500px)]:h-[4.5rem]"
                 loading="lazy"
                 draggable={false}
               />
@@ -96,30 +98,30 @@ export function FixedLocationModal({
                 onClick={onClose}
                 aria-label="Close"
                 type="button"
-                className="absolute top-3 right-3 bg-white border-[3px] border-slate-900 p-1.5 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shadow-[3px_3px_0_0_rgba(15,23,42,1)]"
+                className="absolute top-3 right-3 bg-white border-[3px] border-slate-900 p-1.5 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shadow-[3px_3px_0_0_rgba(15,23,42,1)] [@media(max-height:500px)]:top-2 [@media(max-height:500px)]:right-2 [@media(max-height:500px)]:p-1 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:right-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-1 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2"
               >
-                <IoClose size={18} strokeWidth={2} />
+                <IoClose className="h-[18px] w-[18px] [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-4 [@media(orientation:landscape)_and_(max-height:768px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-3.5" strokeWidth={2} />
               </button>
 
               {/* Kind badge */}
-              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-yellow-400 border-[3px] border-slate-900 px-2 py-0.5 rounded-full shadow-[3px_3px_0_0_rgba(15,23,42,1)]">
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-yellow-400 border-[3px] border-slate-900 px-2 py-0.5 rounded-full shadow-[3px_3px_0_0_rgba(15,23,42,1)] [@media(max-height:500px)]:top-2 [@media(max-height:500px)]:left-2 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:left-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0 [@media(orientation:landscape)_and_(max-height:768px)]:border-2">
                 {isBuilding ? (
-                  <HiBuildingOffice2 size={12} className="text-slate-900" />
+                  <HiBuildingOffice2 className="h-3 w-3 text-slate-900 [@media(orientation:landscape)_and_(max-height:768px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-2.5" />
                 ) : (
-                  <MdPlace size={12} className="text-slate-900" />
+                  <MdPlace className="h-3 w-3 text-slate-900 [@media(orientation:landscape)_and_(max-height:768px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-2.5" />
                 )}
-                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900">
+                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[7px]">
                   {isBuilding ? "Building" : "Location"}
                 </p>
               </div>
 
               {/* Title block */}
-              <div className="absolute bottom-3 left-4 right-4">
-                <h2 className="text-xl sm:text-2xl font-black italic text-white leading-tight uppercase drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]">
+              <div className="absolute bottom-3 left-4 right-4 [@media(max-height:500px)]:bottom-2 [@media(max-height:500px)]:left-3 [@media(max-height:500px)]:right-3 [@media(orientation:landscape)_and_(max-height:768px)]:bottom-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:left-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:right-2.5">
+                <h2 className="text-xl sm:text-2xl font-black italic text-white leading-tight uppercase drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] [@media(max-height:500px)]:text-lg [@media(orientation:landscape)_and_(max-height:768px)]:text-sm [@media(orientation:landscape)_and_(max-height:500px)]:text-xs">
                   {pin.name}
                 </h2>
                 {isBuilding && rooms.length > 0 && (
-                  <p className="text-[10px] sm:text-xs font-bold text-white/90 mt-0.5">
+                  <p className="text-[10px] sm:text-xs font-bold text-white/90 mt-0.5 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:768px)]:mt-0 [@media(orientation:landscape)_and_(max-height:500px)]:hidden">
                     {rooms.length} room{rooms.length === 1 ? "" : "s"}
                     {floorKeys.length > 1
                       ? ` · ${floorKeys.length} floors`
@@ -130,12 +132,12 @@ export function FixedLocationModal({
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
               {rooms.length > 0 ? (
-                <div className="p-4 sm:p-5 space-y-4">
+                <div className="p-4 sm:p-5 space-y-4 [@media(max-height:500px)]:p-3 [@media(max-height:500px)]:space-y-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:space-y-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:space-y-1.5">
                   {/* Floor tabs (only when there are multiple floors) */}
                   {roomsByFloor && floorKeys.length > 1 && (
-                    <div className="flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1">
+                    <div className="flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1 [@media(orientation:landscape)_and_(max-height:768px)]:pb-0">
                       {floorKeys.map((floor) => {
                         const active = activeFloor === floor;
                         return (
@@ -143,9 +145,9 @@ export function FixedLocationModal({
                             key={floor}
                             type="button"
                             onClick={() => setActiveFloor(floor)}
-                            className={`shrink-0 px-3 py-1.5 rounded-xl border-[3px] border-slate-900 text-[11px] sm:text-xs font-black uppercase tracking-wider transition-all active:translate-y-0.5 ${
+                            className={`shrink-0 px-3 py-1.5 rounded-xl border-[3px] border-slate-900 text-[11px] sm:text-xs font-black uppercase tracking-wider transition-all active:translate-y-0.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:500px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:text-[8px] ${
                               active
-                                ? "bg-[#D43F3F] text-white shadow-[3px_3px_0_0_rgba(15,23,42,1)] active:shadow-none"
+                                ? "bg-[#D43F3F] text-white shadow-[3px_3px_0_0_rgba(15,23,42,1)] active:shadow-none [@media(orientation:landscape)_and_(max-height:768px)]:shadow-[2px_2px_0_0_rgba(15,23,42,1)]"
                                 : "bg-white text-slate-700 hover:bg-slate-100 shadow-[2px_2px_0_0_rgba(15,23,42,1)] active:shadow-none"
                             }`}
                           >
@@ -157,98 +159,89 @@ export function FixedLocationModal({
                   )}
 
                   {/* Room list */}
-                  <div className="space-y-2">
+                  <div className="space-y-2 [@media(orientation:landscape)_and_(max-height:768px)]:space-y-1 [@media(orientation:landscape)_and_(max-height:500px)]:space-y-0.5">
                     {(roomsByFloor && activeFloor
                       ? roomsByFloor[activeFloor] ?? []
                       : rooms
                     ).map((room) => (
-                      <button
+                      <div
                         key={room.id}
-                        type="button"
-                        onClick={() => onVisit(room)}
                         className="
-                          group w-full flex items-center justify-between gap-3
+                          w-full flex items-center justify-between gap-3
                           px-3 py-2.5 rounded-xl
                           bg-white border-[3px] border-slate-900
                           shadow-[3px_3px_0_0_rgba(15,23,42,1)]
-                          hover:bg-slate-50
-                          active:translate-y-0.5 active:shadow-none
-                          transition-all
+                          [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:gap-2
+                          [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:shadow-[2px_2px_0_0_rgba(15,23,42,1)]
+                          [@media(orientation:landscape)_and_(max-height:500px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:py-1 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1
                         "
                       >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className="bg-blue-400 border-[2px] border-slate-900 p-1.5 rounded-lg shrink-0 shadow-[2px_2px_0_0_rgba(15,23,42,1)]">
-                            <MdPlace size={14} className="text-slate-900" />
+                        <div className="flex items-center gap-2 min-w-0 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1.5">
+                          <div className="bg-blue-400 border-[2px] border-slate-900 p-1.5 rounded-lg shrink-0 shadow-[2px_2px_0_0_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:768px)]:p-1 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5">
+                            <MdPlace className="h-3.5 w-3.5 text-slate-900 [@media(orientation:landscape)_and_(max-height:768px)]:h-3 [@media(orientation:landscape)_and_(max-height:768px)]:w-3 [@media(orientation:landscape)_and_(max-height:500px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-2.5" />
                           </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-slate-800 truncate">
+                          <span className="text-xs sm:text-sm font-extrabold text-slate-800 truncate [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[9px]">
                             {room.name}
                           </span>
                         </div>
-                        <span className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-yellow-400 border-[2px] border-slate-900 text-[10px] sm:text-[11px] font-black italic uppercase text-slate-900 group-hover:bg-yellow-300 transition">
-                          <FaLocationCrosshairs size={10} />
+                        <button
+                          type="button"
+                          onClick={() => onVisit(room)}
+                          className="
+                            shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg
+                            bg-yellow-400 border-[2px] border-slate-900
+                            text-[10px] sm:text-[11px] font-black italic uppercase text-slate-900
+                            hover:bg-yellow-300
+                            active:translate-y-0.5 active:shadow-none
+                            transition-all
+                            [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-0.5 [@media(max-height:500px)]:text-[9px]
+                            [@media(orientation:landscape)_and_(max-height:768px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]
+                            [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]
+                          "
+                        >
+                          <FaLocationCrosshairs className="h-2.5 w-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:h-2 [@media(orientation:landscape)_and_(max-height:768px)]:w-2" />
                           Visit
-                        </span>
-                      </button>
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="p-5 sm:p-6">
-                  <div className="bg-slate-100 border-[3px] border-slate-900 rounded-2xl p-4 flex items-start gap-3">
-                    <div className="bg-blue-400 border-[3px] border-slate-900 p-2 rounded-xl shrink-0 shadow-[3px_3px_0_0_rgba(15,23,42,1)]">
-                      <MdPlace size={18} className="text-slate-900" />
+                <div className="p-5 sm:p-6 [@media(max-height:500px)]:p-3 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:p-2">
+                  <div className="bg-slate-100 border-[3px] border-slate-900 rounded-2xl p-4 flex items-center justify-between gap-3 [@media(max-height:500px)]:p-3 [@media(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
+                    <div className="flex items-start gap-3 min-w-0 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2">
+                      <div className="bg-blue-400 border-[3px] border-slate-900 p-2 rounded-xl shrink-0 shadow-[3px_3px_0_0_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:768px)]:p-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-1">
+                        <MdPlace className="h-[18px] w-[18px] text-slate-900 [@media(orientation:landscape)_and_(max-height:768px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-3.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-3 [@media(orientation:landscape)_and_(max-height:500px)]:w-3" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] sm:text-xs font-black uppercase text-slate-500 tracking-wider [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[8px]">
+                          Point of Interest
+                        </p>
+                        <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-tight mt-0.5 [@media(max-height:500px)]:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:768px)]:mt-0 [@media(orientation:landscape)_and_(max-height:500px)]:text-[9px]">
+                          Teleport instantly to this location.
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-[11px] sm:text-xs font-black uppercase text-slate-500 tracking-wider">
-                        Point of Interest
-                      </p>
-                      <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-tight mt-0.5">
-                        Tap "Visit" to teleport instantly to this location.
-                      </p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onVisit(pin)}
+                      className="
+                        shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg
+                        bg-yellow-400 border-[2px] border-slate-900
+                        text-[10px] sm:text-[11px] font-black italic uppercase text-slate-900
+                        hover:bg-yellow-300
+                        active:translate-y-0.5 active:shadow-none
+                        transition-all
+                        [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-0.5 [@media(max-height:500px)]:text-[9px]
+                        [@media(orientation:landscape)_and_(max-height:768px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]
+                        [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]
+                      "
+                    >
+                      <FaLocationCrosshairs className="h-2.5 w-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:h-2 [@media(orientation:landscape)_and_(max-height:768px)]:w-2" />
+                      Visit
+                    </button>
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 sm:p-5 bg-white border-t-[4px] sm:border-t-[6px] border-slate-900 flex items-center gap-3">
-              <button
-                onClick={onClose}
-                type="button"
-                className="
-                  flex-1 sm:flex-none py-2.5 px-4
-                  bg-white text-slate-900
-                  border-[3px] border-slate-900 rounded-xl
-                  text-xs sm:text-sm font-black italic uppercase tracking-wide
-                  shadow-[3px_3px_0_0_rgba(15,23,42,1)]
-                  hover:bg-slate-100
-                  active:translate-y-0.5 active:shadow-none
-                  transition-all
-                "
-              >
-                Close
-              </button>
-
-              {!isBuilding && (
-                <button
-                  onClick={() => onVisit(pin)}
-                  type="button"
-                  className="
-                    flex-1 py-2.5 px-4
-                    bg-[#D43F3F] text-white
-                    border-[3px] border-slate-900 rounded-xl
-                    text-xs sm:text-sm font-black italic uppercase tracking-wide
-                    shadow-[3px_3px_0_0_rgba(15,23,42,1)]
-                    hover:bg-[#B83434]
-                    active:translate-y-0.5 active:shadow-none
-                    transition-all
-                    flex items-center justify-center gap-2
-                  "
-                >
-                  <FaLocationCrosshairs size={14} />
-                  Teleport
-                </button>
               )}
             </div>
           </motion.div>

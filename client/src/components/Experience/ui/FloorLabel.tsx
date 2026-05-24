@@ -1,39 +1,27 @@
 import { useState, useEffect } from "react";
 import useWorld from "../../../hooks/useWorld";
 import { motion, AnimatePresence } from "framer-motion";
-import { floorZones } from "../../../sampleData";
+import { getFloorZonesAtPosition } from "../../../sampleData";
 
 export const FloorLabel = () => {
   const characterPositionOnFloorLabel = useWorld(
     (state: any) => state.characterPositionOnFloorLabel
   );
-  const [currentZone, setCurrentZone] = useState<string | null>(null);
+  const [currentZones, setCurrentZones] = useState<string[]>([]);
 
   useEffect(() => {
     if (!characterPositionOnFloorLabel) return;
-    let zoneFound: string | null = null;
-    for (const zone of floorZones) {
-      if (
-        characterPositionOnFloorLabel.x >= zone.xMin &&
-        characterPositionOnFloorLabel.x <= zone.xMax &&
-        characterPositionOnFloorLabel.z >= zone.zMin &&
-        characterPositionOnFloorLabel.z <= zone.zMax &&
-        characterPositionOnFloorLabel.y >= (zone.yMin || 0) &&
-        characterPositionOnFloorLabel.y <= (zone.yMax || 10)
-      ) {
-        zoneFound = zone.name;
-        break;
-      }
-    }
-
-    setCurrentZone(zoneFound);
+    const zones = getFloorZonesAtPosition(characterPositionOnFloorLabel);
+    setCurrentZones(zones.map((zone) => zone.name));
   }, [characterPositionOnFloorLabel]);
+
+  const labelKey = currentZones.join("|");
 
   return (
     <AnimatePresence>
-      {currentZone && (
+      {currentZones.length > 0 && (
         <motion.div
-          key={currentZone}
+          key={labelKey}
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
@@ -43,7 +31,16 @@ export const FloorLabel = () => {
             textShadow: "0 1px 0 rgba(255,255,255,0.85)",
           }}
         >
-          {currentZone}
+          {currentZones.length === 1 ? (
+            currentZones[0]
+          ) : (
+            <>
+              <span className="block">{currentZones[0]}</span>
+              <span className="mt-0.5 block text-[0.72em] font-bold not-italic tracking-normal opacity-85">
+                {currentZones.slice(1).join(" · ")}
+              </span>
+            </>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

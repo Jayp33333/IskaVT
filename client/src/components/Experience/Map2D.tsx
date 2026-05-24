@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoClose, IoLocationSharp } from "react-icons/io5";
 import { FaLocationArrow, FaLocationCrosshairs } from "react-icons/fa6";
 import { FiPlus, FiMinus, FiMaximize2, FiCompass } from "react-icons/fi";
@@ -74,6 +74,9 @@ export default function Map2D() {
   // Ref to the expanded-map <img> so pointerup can compute click position
   // against the actual rendered image rectangle (after any zoom/pan transform).
   const imageRef = useRef<HTMLImageElement>(null);
+  const mapViewportRef = useRef<HTMLDivElement>(null);
+  const mapContentRef = useRef<HTMLDivElement>(null);
+  const panLimitsRef = useRef({ maxX: 0, maxY: 0 });
 
   // --- Pan & zoom state for the expanded map ---
   const [zoom, setZoom] = useState(1);
@@ -115,6 +118,55 @@ export default function Map2D() {
     setZoom(1);
     setPan({ x: 0, y: 0 });
   };
+
+  const canPan = zoom > 1;
+
+  const measurePanLimits = () => {
+    const viewport = mapViewportRef.current;
+    const content = mapContentRef.current;
+    if (!viewport || !content) return { maxX: 0, maxY: 0 };
+
+    const vw = viewport.clientWidth;
+    const vh = viewport.clientHeight;
+    const cw = content.offsetWidth;
+    const ch = content.offsetHeight;
+
+    return {
+      maxX: Math.max(0, (cw * zoom - vw) / 2),
+      maxY: Math.max(0, (ch * zoom - vh) / 2),
+    };
+  };
+
+  const clampPan = (
+    x: number,
+    y: number,
+    limits = panLimitsRef.current,
+  ) => ({
+    x: clamp(x, -limits.maxX, limits.maxX),
+    y: clamp(y, -limits.maxY, limits.maxY),
+  });
+
+  const applyPanLimits = () => {
+    const limits = measurePanLimits();
+    panLimitsRef.current = limits;
+    setPan((current) => clampPan(current.x, current.y, limits));
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    applyPanLimits();
+  }, [zoom, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const viewport = mapViewportRef.current;
+    if (!viewport) return;
+
+    const ro = new ResizeObserver(() => applyPanLimits());
+    ro.observe(viewport);
+    return () => ro.disconnect();
+  }, [isOpen, zoom]);
+
   // Player marker position (in % of the map image) + rotation
   const { normX, normY, rotationY } = useMemo(() => {
     const width = CAMPUS.maxX - CAMPUS.minX;
@@ -160,7 +212,7 @@ export default function Map2D() {
     });
   }, []);
 
-  // Open the info modal (image + description + rooms/floors) for a fixed pin
+  // Open the info modal (image + rooms/floors) for a fixed pin
   const openFixedPinInfo = (pin: FixedLocationPin) => {
     setSelectedFixedPin(pin);
   };
@@ -223,7 +275,8 @@ export default function Map2D() {
     const dx = e.clientX - s.startX;
     const dy = e.clientY - s.startY;
     if (Math.abs(dx) > 4 || Math.abs(dy) > 4) s.moved = true;
-    setPan({ x: s.panX + dx, y: s.panY + dy });
+    if (!canPan) return;
+    setPan(clampPan(s.panX + dx, s.panY + dy));
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -242,18 +295,22 @@ export default function Map2D() {
     }
   };
 
-  // --- Wheel zoom ---
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+  // --- Wheel zoom (native listener — React wheel handlers are passive) ---
+  const handleWheel = useCallback((e: WheelEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const delta = e.deltaY > 0 ? -MAP_ZOOM_STEP : MAP_ZOOM_STEP;
     setZoom((z) => {
       const next = clamp(z + delta, MAP_MIN_ZOOM, MAP_MAX_ZOOM);
       if (next === 1) setPan({ x: 0, y: 0 });
       return next;
     });
-  };
+  }, []);
 
   // --- Pinch-to-zoom (touch) ---
-  const getTouchDistance = (touches: React.TouchList) => {
+  const getTouchDistance = (
+    touches: ArrayLike<{ clientX: number; clientY: number }>,
+  ) => {
     const dx = touches[0].clientX - touches[1].clientX;
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.hypot(dx, dy);
@@ -269,16 +326,33 @@ export default function Map2D() {
     }
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (e.touches.length === 2 && pinchRef.current) {
       e.preventDefault();
       const dist = getTouchDistance(e.touches);
       const ratio = dist / pinchRef.current.startDist;
-      setZoom(
-        clamp(pinchRef.current.startZoom * ratio, MAP_MIN_ZOOM, MAP_MAX_ZOOM)
+      const next = clamp(
+        pinchRef.current.startZoom * ratio,
+        MAP_MIN_ZOOM,
+        MAP_MAX_ZOOM,
       );
+      if (next === 1) setPan({ x: 0, y: 0 });
+      setZoom(next);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const viewport = mapViewportRef.current;
+    if (!viewport || !isOpen) return;
+
+    viewport.addEventListener("wheel", handleWheel, { passive: false });
+    viewport.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      viewport.removeEventListener("wheel", handleWheel);
+      viewport.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [isOpen, handleWheel, handleTouchMove]);
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length < 2) pinchRef.current = null;
@@ -310,7 +384,7 @@ export default function Map2D() {
         title="Open campus map"
         aria-label="Open campus map"
         className="
-          fixed top-5 right-5 z-1000
+          fixed top-5 right-5 z-[1050]
           
           w-[18vh] h-[18vh] max-w-[180px] max-h-[180px]
           [@media(max-height:500px)]:top-3 [@media(max-height:500px)]:right-3
@@ -405,7 +479,7 @@ export default function Map2D() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
+            className="fixed inset-0 z-[1150] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -455,21 +529,25 @@ export default function Map2D() {
 
               {/* Map body */}
               <div
+                ref={mapViewportRef}
                 className="relative p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2 flex-1 min-h-0 flex items-center justify-center bg-slate-100 overflow-hidden touch-none select-none"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
-                onWheel={handleWheel}
                 onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 style={{
-                  cursor: dragStateRef.current.dragging ? "grabbing" : "grab",
+                  cursor: canPan
+                    ? dragStateRef.current.dragging
+                      ? "grabbing"
+                      : "grab"
+                    : "default",
                 }}
               >
                 {/* Inner transformed wrapper (pan + zoom) */}
                 <div
+                  ref={mapContentRef}
                   className="relative inline-block"
                   style={{
                     transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
@@ -485,8 +563,11 @@ export default function Map2D() {
                     alt="Campus Map"
                     className="block max-h-[70vh] max-w-[85vw] [@media(max-height:500px)]:max-h-[calc(94dvh-7.5rem)] [@media(max-height:500px)]:max-w-[86vw] [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[calc(92dvh-7.25rem)] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[min(72vw,46rem)] w-auto h-auto rounded-lg border-[3px] border-slate-900 cursor-crosshair select-none pointer-events-none"
                     draggable={false}
+                    onLoad={applyPanLimits}
                   />
 
+                  {/* Pin overlay — matches image bounds exactly */}
+                  <div className="pointer-events-none absolute inset-0 overflow-visible">
                   {/* Destination guide line */}
                   {pinPercent && (
                     <svg
@@ -597,6 +678,7 @@ export default function Map2D() {
                       <span className="absolute w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-red-500/30 animate-ping" />
                       <FaLocationArrow className="relative text-red-500 text-lg sm:text-xl [@media(max-height:500px)]:text-lg -rotate-45 drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                     </div>
+                  </div>
                   </div>
                 </div>
 

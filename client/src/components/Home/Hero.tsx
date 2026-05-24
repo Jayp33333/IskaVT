@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CampusMapDialog } from "./CampusMapDialog";
 
 export function Hero() {
   const navigate = useNavigate();
+  const [mapOpen, setMapOpen] = useState(false);
   return (
     <section
       className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden bg-[#FFFDF5] px-4 pb-10 pt-24 sm:min-h-screen sm:px-6 sm:pb-12 sm:pt-28 lg:px-12 lg:pt-24 xl:px-20"
@@ -65,7 +68,11 @@ export function Hero() {
               <div className="absolute top-0 right-0 h-3 w-3 rounded-bl-lg border-b-2 border-l-2 border-black bg-[#FFFDF5] sm:h-4 sm:w-4 sm:rounded-bl-xl sm:border-b-4 sm:border-l-4" />
             </button>
 
-            <button className="rounded-lg border-2 border-black px-5 py-2.5 text-sm font-black uppercase tracking-tighter shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transition-colors hover:bg-black hover:text-white sm:rounded-xl sm:border-4 sm:px-6 sm:py-3 sm:text-base md:text-lg">
+            <button
+              type="button"
+              onClick={() => setMapOpen(true)}
+              className="rounded-lg border-2 border-black px-5 py-2.5 text-sm font-black uppercase tracking-tighter shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transition-colors hover:bg-black hover:text-white sm:rounded-xl sm:border-4 sm:px-6 sm:py-3 sm:text-base md:text-lg"
+            >
               View Map
             </button>
           </div>
@@ -99,6 +106,8 @@ export function Hero() {
           </div>
         </motion.div>
       </div>
+
+      <CampusMapDialog open={mapOpen} onClose={() => setMapOpen(false)} />
     </section>
   );
 }

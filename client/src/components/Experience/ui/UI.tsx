@@ -19,14 +19,8 @@ export const UI = () => {
 
   return (
     <>
-      {/* First-Person Center Dot */}
-      {/* {cameraMode === "first" && <CenterDot />} */}
-
-      {/* Map */}
-      <Map2D />
-
       {/* Top-left Controls */}
-      <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-300 flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
+      <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-[300] flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
         <div className="flex max-w-full flex-wrap items-start gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
           <AvatarPicker />
           <ExitTourButton />
@@ -50,6 +44,9 @@ export const UI = () => {
           onClose={activeNPCDialog.onClose}
         />
       )}
+
+      {/* Map — render last so it stacks above Area Info */}
+      <Map2D />
     </>
   );
 };
