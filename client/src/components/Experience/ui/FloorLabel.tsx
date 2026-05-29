@@ -12,7 +12,11 @@ export const FloorLabel = () => {
   useEffect(() => {
     if (!characterPositionOnFloorLabel) return;
     const zones = getFloorZonesAtPosition(characterPositionOnFloorLabel);
-    setCurrentZones(zones.map((zone) => zone.name));
+    const nextZones = zones.map((zone) => zone.name);
+    setCurrentZones((prev) => {
+      if (prev.join("|") === nextZones.join("|")) return prev;
+      return nextZones;
+    });
   }, [characterPositionOnFloorLabel]);
 
   const labelKey = currentZones.join("|");

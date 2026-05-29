@@ -65,8 +65,15 @@ export default function Map2D() {
   const setCharacterPosition = GameState((s: any) => s.setCharacterPosition);
   const setSelectedDestination = GameState((s: any) => s.setSelectedDestination);
   const setQuery = GameState((s: any) => s.setQuery);
+  const showDestinationPicker = GameState((s: any) => s.showDestinationPicker);
+  const setMap2DOpen = GameState((s: any) => s.setMap2DOpen);
 
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setMap2DOpen(isOpen);
+    return () => setMap2DOpen(false);
+  }, [isOpen, setMap2DOpen]);
 
   // Selected fixed location (shows the info modal with image / rooms / floors)
   const [selectedFixedPin, setSelectedFixedPin] = useState<FixedLocationPin | null>(null);
@@ -374,6 +381,8 @@ export default function Map2D() {
     setSelectedDestination(null);
     setQuery("");
   };
+
+  if (showDestinationPicker) return null;
 
   return (
     <>

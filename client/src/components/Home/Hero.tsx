@@ -9,7 +9,7 @@ export function Hero() {
   const [mapOpen, setMapOpen] = useState(false);
   return (
     <section
-      className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden bg-[#FFFDF5] px-4 pb-10 pt-24 sm:min-h-screen sm:px-6 sm:pb-12 sm:pt-28 lg:px-12 lg:pt-24 xl:px-20"
+      className="relative flex min-h-[calc(100vh-5rem)] items-center overflow-hidden bg-cream px-4 pb-10 pt-24 sm:min-h-screen sm:px-6 sm:pb-12 sm:pt-28 lg:px-12 lg:pt-24 xl:px-20"
       id="home"
     >
       <div className="absolute bottom-16 left-[35%] sm:bottom-20 sm:left-[40%]">
@@ -50,14 +50,14 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mb-6 max-w-md text-sm font-medium leading-relaxed text-black/70 sm:mb-7 sm:max-w-lg sm:text-base md:text-lg">
-            Step into a vibrant virtual world. Navigate campus buildings,
-            interact with AI guides, and discover facilities in a playful,
-            immersive 3D environment.
+          <p className="mb-6 max-w-md text-sm font-medium leading-relaxed text-ink/70 sm:mb-7 sm:max-w-lg sm:text-base">
+            Walk through buildings, locate offices and facilities, and plan
+            your visit before you arrive on campus.
           </p>
 
           <div className="flex flex-wrap gap-3 sm:gap-4">
             <button
+              type="button"
               onClick={() => navigate("/experience")}
               className="group relative rounded-lg border-2 border-black bg-[#800000] px-5 py-2.5 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-xl sm:border-4 sm:px-6 sm:py-3"
             >
@@ -65,7 +65,7 @@ export function Hero() {
                 Start Tour
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
               </div>
-              <div className="absolute top-0 right-0 h-3 w-3 rounded-bl-lg border-b-2 border-l-2 border-black bg-[#FFFDF5] sm:h-4 sm:w-4 sm:rounded-bl-xl sm:border-b-4 sm:border-l-4" />
+              <div className="absolute top-0 right-0 h-3 w-3 rounded-bl-lg border-b-2 border-l-2 border-black bg-cream sm:h-4 sm:w-4 sm:rounded-bl-xl sm:border-b-4 sm:border-l-4" />
             </button>
 
             <button

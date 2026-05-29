@@ -1,17 +1,20 @@
 import { Hero } from "../components/Home/Hero";
-import { Features } from "../components/Home/Features";
-import { NavBar } from "../components/Home/NavBar";
-import { Contact } from "../components/Home/Contact";
-import { Footer } from "../components/Home/Footer";
+import { HomeWelcome } from "../components/Home/HomeWelcome";
+import { HomeHowItWorks } from "../components/Home/HomeHowItWorks";
+import { HomeExplore } from "../components/Home/HomeExplore";
+import { HomeAudience } from "../components/Home/HomeAudience";
+import { HomeCta } from "../components/Home/HomeCta";
+import { MarketingLayout } from "../components/marketing";
 
 export default function HomePage() {
   return (
-    <div className="bg-white absolute inset-0">
-      <NavBar />
+    <MarketingLayout hero>
       <Hero />
-      <Features />
-      <Contact />
-      <Footer />
-    </div>
+      <HomeWelcome />
+      <HomeHowItWorks />
+      <HomeExplore />
+      <HomeAudience />
+      <HomeCta />
+    </MarketingLayout>
   );
 }

@@ -4,6 +4,7 @@ import { HiChevronDown } from "react-icons/hi2";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { aboutNavLinks } from "./data/pupLopezContent";
+
 export const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -11,20 +12,21 @@ export const NavBar = () => {
   const logo = "/images/iska-logo.png";
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const isHomePage = pathname === "/home" || pathname === "/";
+  const isFeaturesPage = pathname === "/features";
   const isAboutPupSection =
     pathname.startsWith("/about") || pathname === "/programs";
-
-  const sectionLink = (id: string) => (pathname === "/" ? `#${id}` : `/#${id}`);
+  const isContactPage = pathname === "/contact";
 
   const homeNavLinks = [
-    { name: "Home", href: sectionLink("home") },
-    { name: "Features", href: sectionLink("features") },
-    { name: "Contact", href: sectionLink("contact") },
+    { name: "Home", href: "/home", isRoute: true, active: isHomePage },
+    { name: "Features", href: "/features", isRoute: true, active: isFeaturesPage },
+    { name: "Contact", href: "/contact", isRoute: true, active: isContactPage },
   ];
 
   const navLinkClass = (active: boolean) =>
-    `font-black uppercase text-sm tracking-tighter transition-colors relative group ${
-      active ? "text-[#800000]" : "text-black hover:text-[#800000]"
+    `font-black uppercase text-sm tracking-tighter transition-colors relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream ${
+      active ? "text-maroon" : "text-ink hover:text-maroon"
     }`;
 
   const closeMobile = () => {
@@ -33,12 +35,12 @@ export const NavBar = () => {
   };
 
   return (
-    <nav className="bg-[#FFFDF5] border-b-4 border-black fixed top-0 w-full z-100">
+    <nav className="fixed top-0 z-100 w-full border-b-4 border-ink bg-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div
             className="shrink-0 group cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/home")}
           >
             <div className="relative">
               <img
@@ -52,10 +54,14 @@ export const NavBar = () => {
 
           <div className="hidden md:flex items-center space-x-10">
             {homeNavLinks.map((link) => (
-              <a key={link.name} href={link.href} className={navLinkClass(false)}>
+              <Link
+                key={link.name}
+                to={link.href}
+                className={navLinkClass(link.active)}
+              >
                 {link.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-1 bg-[#FFD700] transition-all group-hover:w-full" />
-              </a>
+              </Link>
             ))}
 
             <div
@@ -162,15 +168,19 @@ export const NavBar = () => {
               <div className="flex flex-1 flex-col overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
                 <div className="flex flex-col gap-3 sm:gap-4">
                   {homeNavLinks.map((link) => (
-                    <a
+                    <Link
                       key={link.name}
-                      href={link.href}
+                      to={link.href}
                       onClick={closeMobile}
-                      className="group flex items-center gap-3 text-xl font-black uppercase tracking-tighter text-black hover:text-[#800000] sm:text-2xl"
+                      className={`group flex items-center gap-3 text-xl font-black uppercase tracking-tighter sm:text-2xl ${
+                        link.active
+                          ? "text-[#800000]"
+                          : "text-black hover:text-[#800000]"
+                      }`}
                     >
                       <span className="h-3 w-0 bg-[#FFD700] transition-all group-hover:w-5 sm:group-hover:w-6" />
                       {link.name}
-                    </a>
+                    </Link>
                   ))}
 
                   <div>

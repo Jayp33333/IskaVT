@@ -38,7 +38,10 @@ export const AreaInfo = () => {
 
     const zones = getFloorZonesAtPosition(characterPosition);
     const nextAreas = zones.map((zone) => normalizeAreaName(zone.name));
-    setCurrentAreas(nextAreas);
+    setCurrentAreas((prev) => {
+      if (prev.join("|") === nextAreas.join("|")) return prev;
+      return nextAreas;
+    });
     if (nextAreas.length === 0) setOpen(false);
   }, [characterPosition]);
 
@@ -79,7 +82,7 @@ export const AreaInfo = () => {
         <motion.button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed right-4 top-1/2 z-[200] flex -translate-y-1/2 items-center gap-1.5 rounded-full border-[3px] border-slate-900 bg-yellow-300 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-slate-900 shadow-[3px_3px_0_0_rgba(15,23,42,1)] transition-all hover:bg-yellow-200 active:translate-y-[calc(-50%+2px)] active:shadow-none [@media(max-width:768px)]:top-auto [@media(max-width:768px)]:right-3 [@media(max-width:768px)]:bottom-24 [@media(max-width:768px)]:translate-y-0 [@media(max-width:768px)]:active:translate-y-0.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:right-3 [@media(orientation:landscape)_and_(max-height:600px)]:gap-1 [@media(orientation:landscape)_and_(max-height:600px)]:border-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-2 [@media(orientation:landscape)_and_(max-height:600px)]:py-1 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[2px_2px_0_0_rgba(15,23,42,1)]"
+          className="fixed right-4 top-1/2 z-[1300] flex -translate-y-1/2 items-center gap-1.5 rounded-full border-[3px] border-slate-900 bg-yellow-300 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-slate-900 shadow-[3px_3px_0_0_rgba(15,23,42,1)] transition-all hover:bg-yellow-200 active:translate-y-[calc(-50%+2px)] active:shadow-none [@media(max-width:768px)]:top-auto [@media(max-width:768px)]:right-3 [@media(max-width:768px)]:bottom-24 [@media(max-width:768px)]:translate-y-0 [@media(max-width:768px)]:active:translate-y-0.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:right-3 [@media(orientation:landscape)_and_(max-height:600px)]:gap-1 [@media(orientation:landscape)_and_(max-height:600px)]:border-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-2 [@media(orientation:landscape)_and_(max-height:600px)]:py-1 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[2px_2px_0_0_rgba(15,23,42,1)]"
           initial={{ opacity: 0, x: 18 }}
           animate={{ opacity: 1, x: 0 }}
           whileTap={{ scale: 0.96 }}
@@ -92,7 +95,7 @@ export const AreaInfo = () => {
       <AnimatePresence>
         {open && (
           <motion.aside
-            className="fixed right-4 top-1/2 z-[210] w-[min(340px,calc(100vw-2rem))] -translate-y-1/2 overflow-hidden rounded-[1.75rem] border-[4px] border-slate-900 bg-[#FFFDF9] text-slate-800 shadow-[7px_7px_0_0_rgba(15,23,42,1)] pointer-events-auto [@media(max-width:768px)]:right-1/2 [@media(max-width:768px)]:top-auto [@media(max-width:768px)]:bottom-4 [@media(max-width:768px)]:translate-x-1/2 [@media(max-width:768px)]:translate-y-0 [@media(orientation:landscape)_and_(max-height:600px)]:right-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:top-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:bottom-auto [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[92dvh] [@media(orientation:landscape)_and_(max-height:600px)]:w-[min(300px,58vw)] [@media(orientation:landscape)_and_(max-height:600px)]:translate-x-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:-translate-y-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[4px_4px_0_0_rgba(15,23,42,1)]"
+            className="fixed right-4 top-1/2 z-[1310] w-[min(340px,calc(100vw-2rem))] -translate-y-1/2 overflow-hidden rounded-[1.75rem] border-[4px] border-slate-900 bg-[#FFFDF9] text-slate-800 shadow-[7px_7px_0_0_rgba(15,23,42,1)] pointer-events-auto [@media(max-width:768px)]:right-1/2 [@media(max-width:768px)]:top-auto [@media(max-width:768px)]:bottom-4 [@media(max-width:768px)]:translate-x-1/2 [@media(max-width:768px)]:translate-y-0 [@media(orientation:landscape)_and_(max-height:600px)]:right-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:top-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:bottom-auto [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[92dvh] [@media(orientation:landscape)_and_(max-height:600px)]:w-[min(300px,58vw)] [@media(orientation:landscape)_and_(max-height:600px)]:translate-x-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:-translate-y-1/2 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[4px_4px_0_0_rgba(15,23,42,1)]"
             initial={{ opacity: 0, x: 32, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 32, scale: 0.96 }}

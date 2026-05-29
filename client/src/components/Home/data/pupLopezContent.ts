@@ -25,6 +25,7 @@ export type AboutContentBlock =
     };
 
 export const aboutNavLinks: { name: string; path: string }[] = [
+  { name: "Overview", path: "/about" },
   { name: "Programs", path: "/programs" },
   { name: "Vision & Mission", path: "/about/vision-mission" },
   { name: "Philosophy", path: "/about/philosophy" },
@@ -35,6 +36,71 @@ export const aboutNavLinks: { name: string; path: string }[] = [
 ];
 
 export const defaultAboutSection: AboutSectionId = "vision-mission";
+
+export const aboutOverviewIntro = {
+  headline: "A Premier Polytechnic Campus in Southern Luzon",
+  paragraphs: [
+    "Polytechnic University of the Philippines Lopez Campus has served the communities of Quezon and nearby provinces since 1979. What began as a generous land donation from the Yumul family has grown into a comprehensive campus offering undergraduate, diploma, and graduate programs across education, engineering, business, and the sciences.",
+    "Guided by PUP's vision of becoming a leading comprehensive polytechnic university in Asia, PUP Lopez continues to advance inclusive and globally relevant education. Our campus blends academic rigor with community engagement, producing graduates who excel in board examinations, public service, and industry.",
+    "Whether you are a prospective student, alumni, partner institution, or curious visitor, explore our story through the sections below — from our founding history and core values to the programs that shape future leaders.",
+  ],
+  stats: [
+    { label: "Established", value: "1979" },
+    { label: "Campus Area", value: "23,724 sqm" },
+    { label: "Programs", value: "24+" },
+    { label: "Location", value: "Lopez, Quezon" },
+  ],
+};
+
+export const aboutOverviewSections: {
+  id: AboutSectionId;
+  title: string;
+  description: string;
+  path: string;
+}[] = [
+  {
+    id: "vision-mission",
+    title: "Vision & Mission",
+    description:
+      "Discover PUP's guiding vision for excellence in polytechnic education and our mission to advance inclusive, equitable learning.",
+    path: "/about/vision-mission",
+  },
+  {
+    id: "philosophy",
+    title: "Philosophy",
+    description:
+      "Understand the beliefs that shape our approach to education, national development, and humanist internationalism.",
+    path: "/about/philosophy",
+  },
+  {
+    id: "goals",
+    title: "Strategic Goals",
+    description:
+      "Explore the strategic priorities that drive campus initiatives, academic quality, and community impact.",
+    path: "/about/goals",
+  },
+  {
+    id: "values",
+    title: "Core Values",
+    description:
+      "Meet the INSPIRED values that define character, integrity, and service across the PUP community.",
+    path: "/about/values",
+  },
+  {
+    id: "history",
+    title: "History",
+    description:
+      "Trace our journey from Southern Pacific College to a thriving state university campus with decades of milestones.",
+    path: "/about/history",
+  },
+  {
+    id: "hymn",
+    title: "Hymn",
+    description:
+      "Read and listen to the PUP hymn — a symbol of pride, unity, and dedication shared by every Iskolar ng Bayan.",
+    path: "/about/hymn",
+  },
+];
 
 export const aboutSectionIds = aboutNavLinks
   .filter((link) => link.path.startsWith("/about/"))

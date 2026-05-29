@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, X, Search, Navigation, MapPinned } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
@@ -25,6 +26,12 @@ export const DestinationPicker = () => {
   );
 
   useEffect(() => {
+    return () => {
+      useWorld.getState().setShowDestinationPicker(false);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -45,6 +52,7 @@ export const DestinationPicker = () => {
     setDistance(Math.hypot(dx, dy, dz));
     setSelectedDestination(destination.name);
     setOpen(false);
+    useWorld.getState().setShowDestinationPicker(false);
     setQuery("");
   };
 
@@ -58,6 +66,7 @@ export const DestinationPicker = () => {
 
   const close = () => {
     setOpen(false);
+    useWorld.getState().setShowDestinationPicker(false);
     setQuery("");
   };
 
@@ -66,7 +75,10 @@ export const DestinationPicker = () => {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          useWorld.getState().setShowDestinationPicker(true);
+        }}
         className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-slate-900 transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none ${
           selectedDestination
             ? "bg-[#D43F3F] text-white"
@@ -80,17 +92,18 @@ export const DestinationPicker = () => {
         <MapPin className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-[1400] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 [@media(max-height:500px)]:p-2 pointer-events-auto"
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              className="fixed inset-0 z-[1600] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 [@media(max-height:500px)]:p-2 pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
           >
             <motion.div
-              className="relative w-full max-w-[460px] [@media(max-height:500px)]:max-w-[92vw] [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(92vw,560px)] bg-[#FFFDF9] text-slate-800 rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] flex flex-col max-h-[88vh] [@media(max-height:500px)]:max-h-[96dvh] overflow-hidden"
+              className="relative w-full max-w-[460px] [@media(max-height:500px)]:max-w-[92vw] [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(92vw,560px)] bg-[#FFFDF9] text-slate-800 rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 flex flex-col max-h-[88vh] [@media(max-height:500px)]:max-h-[96dvh] overflow-hidden"
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 40 }}
@@ -162,8 +175,7 @@ export const DestinationPicker = () => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search buildings, rooms, facilities..."
-                    autoFocus
-                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-slate-800 bg-white border-[3px] border-slate-900 rounded-2xl outline-none shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] focus:bg-yellow-50 placeholder:text-slate-400"
+                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-slate-800 bg-white border-[3px] border-slate-900 rounded-2xl outline-none focus:bg-yellow-50 placeholder:text-slate-400"
                   />
                   {query && (
                     <button
@@ -200,7 +212,7 @@ export const DestinationPicker = () => {
                         <li key={d.id}>
                           <button
                             onClick={() => handleSelect(d)}
-                            className={`w-full flex items-center gap-3 [@media(max-height:500px)]:gap-2 p-3 [@media(max-height:500px)]:p-2 rounded-2xl border-[3px] border-slate-900 text-left transition-all shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none ${
+                            className={`w-full flex items-center gap-3 [@media(max-height:500px)]:gap-2 p-3 [@media(max-height:500px)]:p-2 rounded-2xl border-[3px] border-slate-900 text-left transition-colors ${
                               isActive ? "bg-yellow-300" : "bg-white hover:bg-yellow-50"
                             }`}
                             type="button"
@@ -230,9 +242,11 @@ export const DestinationPicker = () => {
                 )}
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 };

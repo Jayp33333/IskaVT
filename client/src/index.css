@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cream: #fffdf5;
+  --color-maroon: #800000;
+  --color-gold: #ffd700;
+  --color-ink: #000000;
+  --color-surface: #ffffff;
+  --color-muted: #f5f5f5;
+  --color-dark-panel: #1a1a1a;
+
+  --shadow-brutal-sm: 4px 4px 0 0 #000000;
+  --shadow-brutal-md: 6px 6px 0 0 #000000;
+  --shadow-brutal-lg: 8px 8px 0 0 #000000;
+  --shadow-brutal-maroon: 10px 10px 0 0 #800000;
+  --shadow-brutal-gold: 8px 8px 0 0 #ffd700;
+  --shadow-brutal-gold-lg: 16px 16px 0 0 #ffd700;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -11,19 +28,13 @@ body {
   font-style: normal;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  background-color: #ffffff;
+  background-color: var(--color-cream);
+  color: var(--color-ink);
 }
 
-.inter-regular {
-  font-family: "Inter", Arial, sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.inter-bold {
-  font-family: "Inter", Arial, sans-serif;
-  font-weight: 700;
-  font-style: normal;
+::selection {
+  background-color: color-mix(in srgb, var(--color-gold) 60%, white);
+  color: var(--color-ink);
 }
 
 .teleport-overlay {

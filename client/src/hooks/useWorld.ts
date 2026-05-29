@@ -15,7 +15,9 @@ interface WorldState {
   cameraMode: "first" | "third";
   selectedDestination: any;
   showMiniMap: boolean;
+  showDestinationPicker: boolean;
   showLogHistory: boolean;
+  map2DOpen: boolean;
   query: string;
   /** NPCs in range: id -> { position, onTalk }. Used for F-key interaction. */
   npcsInRange: Map<string, { position: Vector3; onTalk: () => void }>;
@@ -67,7 +69,9 @@ interface WorldState {
   setCameraMode: (mode: "first" | "third") => void;
   setSelectedDestination: (destination: any) => void;
   setShowMiniMap: (value: boolean) => void;
+  setShowDestinationPicker: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
+  setMap2DOpen: (value: boolean) => void;
   setQuery: (query: string) => void;
   setLoading: (isLoading: boolean, message?: string) => void;
   isLoading: boolean;
@@ -87,7 +91,9 @@ const useWorld = create<WorldState>((set) => ({
   cameraMode: "first",
   selectedDestination: null,
   showMiniMap: false,
+  showDestinationPicker: false,
   showLogHistory: false,
+  map2DOpen: false,
   query: "",
   isLoading: false,
   loadingMessage: "",
@@ -153,9 +159,22 @@ const useWorld = create<WorldState>((set) => ({
 
     if (nearest) nearest.onOpen();
   },
-  setCharacterPosition: (characterPosition) => set({ characterPosition }),
+  setCharacterPosition: (characterPosition) =>
+    set((state) =>
+      state.characterPosition === characterPosition ? state : { characterPosition }
+    ),
   setCharacterPositionOnFloorLabel: (characterPositionOnFloorLabel) =>
-    set({ characterPositionOnFloorLabel }),
+    set((state) => {
+      const prev = state.characterPositionOnFloorLabel;
+      if (
+        prev.x === characterPositionOnFloorLabel.x &&
+        prev.y === characterPositionOnFloorLabel.y &&
+        prev.z === characterPositionOnFloorLabel.z
+      ) {
+        return state;
+      }
+      return { characterPositionOnFloorLabel };
+    }),
   setPinPosition: (pinPosition) => set({ pinPosition }),
   setIsPinConfirmed: (isPinConfirmed) => set({ isPinConfirmed }),
   setIsPinTeleported: (isPinTeleported) => set({ isPinTeleported }),
@@ -168,7 +187,15 @@ const useWorld = create<WorldState>((set) => ({
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
+  setShowDestinationPicker: (showDestinationPicker) =>
+    set((state) =>
+      state.showDestinationPicker === showDestinationPicker
+        ? state
+        : { showDestinationPicker }
+    ),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
+  setMap2DOpen: (map2DOpen) =>
+    set((state) => (state.map2DOpen === map2DOpen ? state : { map2DOpen })),
   setQuery: (query) => set({ query }),
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),

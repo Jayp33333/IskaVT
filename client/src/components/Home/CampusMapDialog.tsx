@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, MapPin, X, Building2, Compass } from "lucide-react";
+import { MapPin, X, Building2, Compass } from "lucide-react";
 import { IoLocationSharp } from "react-icons/io5";
 import { FiPlus, FiMinus, FiMaximize2 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 import { getLocationDescription } from "../../data/locationDescriptions";
-import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
+import { FIXED_LOCATION_PINS } from "../../sampleData";
 import { getViewMapPinsWithPosition } from "../../utils/viewMapPins";
 
 const MAP_SRC = "/images/CampusMap.png";
@@ -37,7 +36,6 @@ type CampusMapDialogProps = {
 };
 
 export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
-  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -54,6 +52,11 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
   });
   const pinchRef = useRef<{ startDist: number; startZoom: number } | null>(null);
 
+  const clearSelectedPin = useCallback(() => {
+    (document.activeElement as HTMLElement | null)?.blur?.();
+    setSelectedId(null);
+  }, []);
+
   useEffect(() => {
     if (open) {
       setZoom(1);
@@ -67,14 +70,14 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       if (selectedId) {
-        setSelectedId(null);
+        clearSelectedPin();
         return;
       }
       onClose();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose, selectedId]);
+  }, [open, onClose, selectedId, clearSelectedPin]);
 
   const pinsWithPercent = useMemo(
     () => getViewMapPinsWithPosition(FIXED_LOCATION_PINS),
@@ -258,64 +261,17 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
     dragStateRef.current.dragging = false;
   };
 
-  const handleStartTour = () => {
-    onClose();
-    navigate("/experience");
+  const handlePinSelect = (pinId: string) => {
+    setSelectedId((prev) => {
+      if (prev === pinId) {
+        (document.activeElement as HTMLElement | null)?.blur?.();
+        return null;
+      }
+      return pinId;
+    });
   };
 
-  const renderLocationCard = (pin: FixedLocationPin) => {
-    const isBuilding = pin.kind === "building";
-    const isSelected = selectedId === pin.id;
-    const roomCount = pin.rooms?.length ?? 0;
-
-    return (
-      <button
-        key={pin.id}
-        type="button"
-        onClick={() => setSelectedId(pin.id)}
-        aria-pressed={isSelected}
-        className={`w-full rounded-lg border-2 border-black p-2.5 text-left transition-all sm:rounded-xl sm:p-3 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:768px)]:p-2 ${
-          isSelected
-            ? "bg-[#800000] text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-            : "bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
-        }`}
-      >
-        <div className="flex items-center gap-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2">
-          <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-black sm:h-9 sm:w-9 sm:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:h-6 [@media(orientation:landscape)_and_(max-height:768px)]:w-6 ${
-              isSelected
-                ? "bg-[#FFD700] text-black"
-                : isBuilding
-                  ? "bg-[#800000] text-white"
-                  : "bg-blue-400 text-black"
-            }`}
-          >
-            {isBuilding ? (
-              <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 [@media(orientation:landscape)_and_(max-height:768px)]:h-3 [@media(orientation:landscape)_and_(max-height:768px)]:w-3" />
-            ) : (
-              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 [@media(orientation:landscape)_and_(max-height:768px)]:h-3 [@media(orientation:landscape)_and_(max-height:768px)]:w-3" />
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-black uppercase tracking-tight sm:text-sm [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px]">
-              {pin.name}
-            </p>
-            <p
-              className={`mt-0.5 text-[10px] font-bold uppercase tracking-wider sm:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px] ${
-                isSelected ? "text-white/70" : "text-black/45"
-              }`}
-            >
-              {isBuilding
-                ? `Building · ${roomCount} room${roomCount === 1 ? "" : "s"}`
-                : "Point of interest"}
-            </p>
-          </div>
-        </div>
-      </button>
-    );
-  };
-
-  const renderLocationPopup = () => {
+  const renderDescriptionPanel = () => {
     if (!selectedPin) return null;
 
     const isBuilding = selectedPin.kind === "building";
@@ -327,15 +283,13 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
     return (
       <motion.div
         key={selectedPin.id}
-        initial={{ opacity: 0, y: 24, scale: 0.94 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 24, scale: 0.94 }}
-        transition={{ type: "spring", damping: 24, stiffness: 320 }}
-        className="pointer-events-auto absolute inset-x-2 bottom-2 z-20 max-h-[min(55dvh,26rem)] overflow-hidden rounded-xl border-2 border-black bg-[#FFFDF5] shadow-[6px_6px_0_0_rgba(0,0,0,1)] sm:inset-x-auto sm:left-3 sm:bottom-3 sm:w-[min(340px,calc(100%-1.5rem))] sm:rounded-2xl sm:border-4 md:w-[min(360px,calc(100%-2rem))] [@media(orientation:landscape)_and_(max-height:768px)]:inset-x-auto [@media(orientation:landscape)_and_(max-height:768px)]:bottom-auto [@media(orientation:landscape)_and_(max-height:768px)]:left-auto [@media(orientation:landscape)_and_(max-height:768px)]:right-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-12 [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(280px,calc(100%-1rem))] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[min(72dvh,18rem)]"
-        onPointerDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 20 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+        className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#FFFDF5]"
       >
-        <div className="relative h-28 shrink-0 border-b-2 border-black bg-slate-200 sm:h-32 [@media(orientation:landscape)_and_(max-height:768px)]:h-20">
+        <div className="relative h-36 shrink-0 border-b-2 border-black bg-slate-200 sm:h-40 [@media(orientation:landscape)_and_(max-height:768px)]:h-28">
           <img
             src={selectedPin.imageSrc ?? "/images/campus-image.jpg"}
             alt={selectedPin.name}
@@ -346,14 +300,14 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
 
           <button
             type="button"
-            onClick={() => setSelectedId(null)}
+            onClick={clearSelectedPin}
             aria-label="Close location details"
             className="absolute right-2.5 top-2.5 rounded-lg border-2 border-black bg-white p-1 shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all hover:bg-slate-100 active:translate-y-0.5 active:shadow-none sm:right-3 sm:top-3 sm:rounded-xl sm:border-4 sm:p-1.5"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
 
-          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border-2 border-black bg-[#FFD700] px-2 py-0.5 sm:border-4 [@media(orientation:landscape)_and_(max-height:768px)]:left-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-2">
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border-2 border-black bg-[#FFD700] px-2 py-0.5 sm:border-4">
             {isBuilding ? (
               <Building2 className="h-3 w-3 text-black" />
             ) : (
@@ -364,12 +318,12 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
             </span>
           </div>
 
-          <div className="absolute bottom-3 left-3 right-12 sm:right-14 [@media(orientation:landscape)_and_(max-height:768px)]:bottom-2 [@media(orientation:landscape)_and_(max-height:768px)]:left-2">
-            <h3 className="text-base font-black uppercase leading-tight text-white sm:text-lg [@media(orientation:landscape)_and_(max-height:768px)]:text-sm">
+          <div className="absolute bottom-3 left-3 right-12">
+            <h3 className="text-base font-black uppercase leading-tight text-white sm:text-lg">
               {selectedPin.name}
             </h3>
             {isBuilding && roomCount > 0 && (
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-white/85 sm:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px]">
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-white/85 sm:text-[11px]">
                 {roomCount} room{roomCount === 1 ? "" : "s"}
                 {floorCount > 1 ? ` · ${floorCount} floors` : ""}
               </p>
@@ -377,23 +331,23 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
           </div>
         </div>
 
-        <div className="custom-scrollbar max-h-[calc(min(62vh,28rem)-7rem)] overflow-y-auto p-4 sm:p-5 [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[calc(min(70vh,20rem)-5rem)] [@media(orientation:landscape)_and_(max-height:768px)]:p-3">
+        <div className="custom-scrollbar min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
           {selectedDetails ? (
-            <p className="text-xs font-medium leading-relaxed text-black/75 sm:text-sm [@media(orientation:landscape)_and_(max-height:768px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:leading-5">
+            <p className="text-xs font-medium leading-relaxed text-black/75 sm:text-sm">
               {selectedDetails.description}
             </p>
           ) : (
-            <p className="text-xs font-medium leading-relaxed text-black/55 sm:text-sm [@media(orientation:landscape)_and_(max-height:768px)]:text-[11px]">
+            <p className="text-xs font-medium leading-relaxed text-black/55 sm:text-sm">
               Explore this location in the 3D campus tour.
             </p>
           )}
 
           {selectedDetails?.highlights && (
-            <div className="mt-3 flex flex-wrap gap-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:mt-2">
+            <div className="mt-3 flex flex-wrap gap-1.5">
               {selectedDetails.highlights.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border-2 border-black bg-white px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-black sm:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]"
+                  className="rounded-full border-2 border-black bg-white px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-black sm:text-[11px]"
                 >
                   {tag}
                 </span>
@@ -443,9 +397,6 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                   <h2 className="text-lg font-black uppercase leading-tight text-white sm:text-2xl [@media(max-height:500px)]:text-base [@media(orientation:landscape)_and_(max-height:768px)]:text-base">
                     PUP Lopez Campus Map
                   </h2>
-                  <p className="mt-0.5 text-xs font-bold text-white/80 sm:text-sm [@media(max-height:500px)]:hidden [@media(orientation:landscape)_and_(max-height:768px)]:hidden">
-                    Explore key buildings and landmarks before your 3D tour
-                  </p>
                 </div>
                 <button
                   type="button"
@@ -491,7 +442,7 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                     <img
                       src={MAP_SRC}
                       alt="PUP Lopez Campus Map"
-                      className="block h-auto w-auto max-h-[34dvh] max-w-[min(92vw,calc(100%-0.5rem))] rounded-lg border-2 border-black sm:max-h-[38dvh] sm:max-w-[min(90vw,calc(100%-1rem))] sm:border-4 md:max-h-[min(calc(88dvh-11rem),640px)] md:max-w-full [@media(max-height:500px)]:max-h-[calc(94dvh-15rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[calc(94dvh-4rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(100%,calc(100vw-19rem))]"
+                      className="block h-auto w-auto max-h-[34dvh] max-w-[min(92vw,calc(100%-0.5rem))] rounded-lg border-2 border-black sm:max-h-[38dvh] sm:max-w-[min(90vw,calc(100%-1rem))] sm:border-4 md:max-h-[min(calc(88dvh-11rem),640px)] md:max-w-full [@media(max-height:500px)]:max-h-[calc(94dvh-10rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[calc(94dvh-4rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-full"
                       draggable={false}
                       onLoad={applyPanLimits}
                     />
@@ -508,7 +459,7 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                             onClick={(e) => {
                               e.stopPropagation();
                               if (!dragStateRef.current.moved) {
-                                setSelectedId(pin.id);
+                                handlePinSelect(pin.id);
                               }
                             }}
                             title={pin.name}
@@ -546,21 +497,6 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                     </div>
                   </div>
 
-                  <AnimatePresence>
-                    {selectedPin && (
-                      <motion.button
-                        type="button"
-                        aria-label="Close location details"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="pointer-events-auto absolute inset-0 z-10 bg-slate-900/20"
-                        onClick={() => setSelectedId(null)}
-                      />
-                    )}
-                    {renderLocationPopup()}
-                  </AnimatePresence>
-
                   {/* Zoom controls */}
                   <div
                     className="absolute right-3 top-3 flex flex-col gap-1.5 sm:right-4 sm:top-4 sm:gap-2 [@media(orientation:landscape)_and_(max-height:768px)]:right-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-2 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1"
@@ -596,31 +532,19 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                   </div>
                 </div>
 
-                {/* Location list */}
-                <div className="flex w-full min-h-0 max-h-[38dvh] shrink-0 flex-col overflow-hidden border-t-2 border-black sm:max-h-[40dvh] md:max-h-none md:w-[min(100%,320px)] md:border-l-2 md:border-t-0 lg:w-[340px] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-none [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(40vw,17.5rem)] [@media(orientation:landscape)_and_(max-height:768px)]:border-l-2 [@media(orientation:landscape)_and_(max-height:768px)]:border-t-0">
-                  <div className="custom-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto p-2.5 sm:space-y-2 sm:p-3 md:p-4 [@media(max-height:500px)]:max-h-[26dvh] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-none [@media(orientation:landscape)_and_(max-height:768px)]:space-y-1 [@media(orientation:landscape)_and_(max-height:768px)]:p-2">
-                    <p className="sticky top-0 z-10 bg-[#FFFDF5] pb-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-[#800000] sm:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:pb-1 [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px]">
-                      Campus Locations ({FIXED_LOCATION_PINS.length})
-                    </p>
-                    {FIXED_LOCATION_PINS.map((pin) => renderLocationCard(pin))}
-                  </div>
-
-                  <div className="shrink-0 border-t-2 border-black p-3 sm:border-t-4 sm:p-4 [@media(orientation:landscape)_and_(max-height:768px)]:p-2">
-                    <button
-                      type="button"
-                      onClick={handleStartTour}
-                      className="group flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#800000] px-4 py-2.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:border-4 sm:py-3 [@media(orientation:landscape)_and_(max-height:768px)]:py-2"
-                    >
-                      <span className="text-sm font-black uppercase tracking-tighter text-white sm:text-base [@media(orientation:landscape)_and_(max-height:768px)]:text-xs">
-                        Start 3D Tour
-                      </span>
-                      <ArrowRight className="h-4 w-4 text-white transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5 [@media(orientation:landscape)_and_(max-height:768px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-3.5" />
-                    </button>
-                    <p className="mt-2 text-center text-[10px] font-bold text-black/50 sm:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:hidden">
-                      Walk the campus in 3D and teleport to any location
-                    </p>
-                  </div>
-                </div>
+                {/* Right description panel — fades in when a pin is selected */}
+                <aside
+                  className={`flex min-h-0 shrink-0 flex-col overflow-hidden border-black transition-[width,opacity,max-height] duration-[280ms] ease-out md:border-l-2 [@media(orientation:landscape)_and_(max-height:768px)]:border-l-2 ${
+                    selectedPin
+                      ? "pointer-events-auto opacity-100 max-md:max-h-[min(42dvh,22rem)] max-md:border-t-2 md:w-[380px] md:border-t-0 [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(42vw,20rem)]"
+                      : "pointer-events-none opacity-0 max-md:max-h-0 max-md:border-t-0 md:w-0"
+                  }`}
+                  {...(!selectedPin ? { inert: true } : {})}
+                >
+                  <AnimatePresence mode="wait">
+                    {selectedPin && renderDescriptionPanel()}
+                  </AnimatePresence>
+                </aside>
               </div>
             </motion.div>
           </motion.div>

@@ -211,8 +211,7 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      {/* <UI overlayBlocked={showWelcome} /> */}
-      <UI />
+      <UI tourGuideDialogOpen={showWelcome} />
 
       {/* <Map2D /> */}
       

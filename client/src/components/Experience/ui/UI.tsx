@@ -14,26 +14,36 @@ import { FullScreenButton } from "./FullScreenButton";
 import Map2D from "../Map2D"; 
 import { NPCDialog } from "./NPCDialog";
 
-export const UI = () => {
-  const { pinPosition, isPinConfirmed, activeNPCDialog } = useWorld((s: any) => s);
+type UIProps = {
+  tourGuideDialogOpen?: boolean;
+};
+
+export const UI = ({ tourGuideDialogOpen = false }: UIProps) => {
+  const { pinPosition, isPinConfirmed, activeNPCDialog, map2DOpen } = useWorld(
+    (s: any) => s
+  );
+  const npcFocus = !!activeNPCDialog;
+  const hideAreaInfo = npcFocus || map2DOpen || tourGuideDialogOpen;
 
   return (
     <>
-      {/* Top-left Controls */}
-      <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-[300] flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
-        <div className="flex max-w-full flex-wrap items-start gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
-          <AvatarPicker />
-          <ExitTourButton />
-          <FullScreenButton />
-          <DestinationPicker />
-          <LogHistory />
+      {/* Top-left Controls — hidden during NPC dialog to keep focus on the conversation */}
+      {!npcFocus && (
+        <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-[300] flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
+          <div className="flex max-w-full flex-wrap items-start gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
+            <AvatarPicker />
+            <ExitTourButton />
+            <FullScreenButton />
+            <DestinationPicker />
+            <LogHistory />
+          </div>
+          {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
-        {pinPosition && isPinConfirmed && <DistanceHUD />}
-      </div>
+      )}
 
       {/* Global Components */}
-      <FloorLabel />
-      <AreaInfo />
+      {!npcFocus && <FloorLabel />}
+      {!hideAreaInfo && <AreaInfo />}
       <DestinationChecker />
       {activeNPCDialog && (
         <NPCDialog
@@ -45,8 +55,8 @@ export const UI = () => {
         />
       )}
 
-      {/* Map — render last so it stacks above Area Info */}
-      <Map2D />
+      {/* Map — hidden during NPC dialog */}
+      {!npcFocus && <Map2D />}
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CampusSubtitle } from "./CampusSubtitle";
+import { PageHeader, Section } from "../marketing";
 import { InspiredValuesGrid } from "./InspiredValuesGrid";
 import { StrategicGoalsGrid } from "./StrategicGoalsGrid";
 import { HymnsContent } from "./HymnsContent";
@@ -15,7 +15,7 @@ import {
 function renderContent(content: AboutContentBlock) {
   if (content.type === "paragraph") {
     return (
-      <p className="text-lg text-black/70 font-bold leading-relaxed">
+      <p className="text-lg text-ink/70 font-bold leading-relaxed">
         {content.text}
       </p>
     );
@@ -25,7 +25,7 @@ function renderContent(content: AboutContentBlock) {
     return (
       <div className="space-y-4">
         {content.intro && (
-          <p className="text-lg text-black/70 font-bold leading-relaxed">
+          <p className="text-lg text-ink/70 font-bold leading-relaxed">
             {content.intro}
           </p>
         )}
@@ -124,35 +124,30 @@ export function About() {
   const page = aboutContent[section];
 
   return (
-    <section
-      className="py-32 px-6 lg:px-20 bg-[#FFFDF5] relative overflow-hidden"
-      id="about"
-    >
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[#FFD700]/10 rounded-full blur-[120px] pointer-events-none" />
+    <Section id="about">
+      <div className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 h-96 w-96 rounded-full bg-gold/10 blur-[120px]" />
 
-      <div className="container mx-auto">
-        <div className="flex flex-col items-center mb-12 text-center">
-          <CampusSubtitle />
-          <h2 className="text-5xl md:text-6xl font-black text-black leading-[0.9] mb-6 uppercase tracking-tighter">
-            About <span className="text-[#800000]">Our Campus</span>
-          </h2>
-          <p className="max-w-2xl text-black/60 font-bold text-lg">
-            Learn about our vision, mission, values, and the history that shaped
-            PUP Lopez into a premier campus in the region.
-          </p>
-        </div>
+      <PageHeader
+        title={
+          <>
+            About <span className="text-maroon">Our Campus</span>
+          </>
+        }
+        description="Learn about our vision, mission, values, and the history that shaped PUP Lopez into a premier campus in the region."
+        backLink={{ to: "/about", label: "← Back to About Overview" }}
+      />
 
-        <motion.div
-          key={section}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className={`mx-auto rounded-[32px] p-8 md:p-12 ${
-            section === "values" || section === "goals" || section === "hymn"
-              ? "max-w-6xl bg-transparent"
-              : "max-w-4xl border-4 border-black bg-white shadow-[16px_16px_0px_0px_rgba(255,215,0,1)]"
-          }`}
-        >
+      <motion.div
+        key={section}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className={`mx-auto rounded-[32px] p-8 md:p-12 ${
+          section === "values" || section === "goals" || section === "hymn"
+            ? "max-w-6xl bg-transparent"
+            : "max-w-4xl border-4 border-ink bg-white shadow-brutal-gold-lg"
+        }`}
+      >
           {section !== "hymn" && (
             <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-[#800000] mb-6">
               {page.title}
@@ -160,7 +155,6 @@ export function About() {
           )}
           {renderContent(page.content)}
         </motion.div>
-      </div>
-    </section>
+    </Section>
   );
 }

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { GraduationCap, Award } from "lucide-react";
-import { CampusSubtitle } from "./CampusSubtitle";
+import { PageHeader, Section } from "../marketing";
 import {
   undergraduateDegreeCourses,
   undergraduateDiplomaCourses,
@@ -120,25 +120,20 @@ export function Programs() {
     graduatePrograms.length;
 
   return (
-    <section
-      className="relative overflow-hidden bg-[#FFFDF5] px-4 py-16 sm:px-6 sm:py-20 lg:px-12 lg:py-24 xl:px-20"
-      id="programs"
-    >
-      <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-[#FFD700]/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-10 bottom-10 h-64 w-64 rounded-full bg-[#800000]/10 blur-3xl" />
+    <Section id="programs">
+      <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-10 bottom-10 h-64 w-64 rounded-full bg-maroon/10 blur-3xl" />
 
-      <div className="container relative z-10 mx-auto max-w-6xl">
-        <div className="mb-10 flex flex-col items-center text-center sm:mb-12">
-          <CampusSubtitle animated />
-          <h2 className="mt-2 text-3xl font-black uppercase leading-tight tracking-tighter text-black sm:text-4xl md:text-5xl lg:text-6xl">
-            Academic <span className="text-[#800000]">Programs</span>
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm font-bold text-black/60 sm:mt-5 sm:text-base">
-            Explore undergraduate and graduate offerings designed to meet local
-            and international standards of quality and excellence.
-          </p>
+      <PageHeader
+        title={
+          <>
+            Academic <span className="text-maroon">Programs</span>
+          </>
+        }
+        description="Explore undergraduate and graduate offerings designed to meet local and international standards of quality and excellence."
+      />
 
-          <div className="mt-6 flex flex-wrap justify-center gap-3 sm:mt-8 sm:gap-4">
+      <div className="mt-6 flex flex-wrap justify-center gap-3 sm:mt-0 sm:gap-4">
             {[
               {
                 label: "Degree",
@@ -171,10 +166,9 @@ export function Programs() {
                 <p className="text-xl font-black sm:text-2xl">{stat.count}</p>
               </div>
             ))}
-          </div>
-        </div>
+      </div>
 
-        <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-6 sm:space-y-8">
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -243,7 +237,6 @@ export function Programs() {
             </ul>
           </motion.article>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

@@ -13,13 +13,9 @@ export function ContactInfoPanel() {
         >
           Get in Touch
         </motion.span>
-        <h2 className="mb-4 text-3xl font-black uppercase leading-[0.95] tracking-tighter text-black sm:mb-5 sm:text-4xl md:text-5xl">
-          READY TO <br />
-          <span className="text-[#800000]">TALK?</span>
-        </h2>
-        <p className="mb-6 max-w-md text-sm font-bold leading-relaxed text-black/70 sm:mb-8 sm:text-base">
+        <p className="mb-6 max-w-md text-sm font-bold leading-relaxed text-ink/70 sm:mb-8 sm:text-base">
           Have questions about the 3D campus or found a bug? Send us a message and our team will
-          get back to you faster than a teleport icon!
+          get back to you within 1–2 business days.
         </p>
 
         <div className="space-y-3 sm:space-y-4">
