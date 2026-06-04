@@ -1,23 +1,28 @@
 import { Inbox, Mail, MailOpen, Trash2 } from "lucide-react";
 import type { MessageRecord } from "../../types";
+import { AdminButton, DetailBackBar } from "../common/adminUi";
 
 type MessageDetailProps = {
   message: MessageRecord | null;
   onToggleRead: (m: MessageRecord) => void;
   onDelete: (m: MessageRecord) => void;
+  onBack?: () => void;
 };
 
-export function MessageDetail({ message, onToggleRead, onDelete }: MessageDetailProps) {
+export function MessageDetail({
+  message,
+  onToggleRead,
+  onDelete,
+  onBack,
+}: MessageDetailProps) {
   if (!message) {
     return (
-      <div className="p-6 max-h-[70vh] overflow-y-auto">
-        <div className="h-full flex flex-col items-center justify-center text-center text-gray-500 py-16">
-          <Inbox className="w-12 h-12 text-gray-300 mb-3" />
-          <p className="text-sm font-semibold text-gray-700">Select a message</p>
-          <p className="text-xs text-gray-500 mt-1">
-            Choose a message from the inbox to read its full contents.
-          </p>
-        </div>
+      <div className="flex max-h-[70vh] flex-col items-center justify-center p-6 py-16 text-center text-gray-500 lg:max-h-none lg:min-h-[min(70vh,640px)]">
+        <Inbox className="mb-3 h-12 w-12 text-gray-300" />
+        <p className="text-sm font-semibold text-gray-700">Select a message</p>
+        <p className="mt-1 text-xs text-gray-500">
+          Choose a message from the inbox to read its full contents.
+        </p>
       </div>
     );
   }
@@ -27,11 +32,13 @@ export function MessageDetail({ message, onToggleRead, onDelete }: MessageDetail
   )}`;
 
   return (
-    <div className="p-6 max-h-[70vh] overflow-y-auto">
+    <div className="max-h-[70vh] overflow-y-auto p-4 sm:p-6 lg:max-h-none lg:min-h-[min(70vh,640px)]">
+      {onBack && <DetailBackBar onBack={onBack} />}
+
       <article>
-        <header className="border-b border-gray-200 pb-4 mb-4">
-          <div className="flex items-start justify-between gap-3 flex-wrap">
-            <div>
+        <header className="mb-4 border-b border-gray-100 pb-4">
+          <div className="flex flex-col gap-4">
+            <div className="min-w-0">
               <h2 className="text-lg font-bold text-gray-900">{message.name}</h2>
               <a
                 href={`mailto:${message.email}`}
@@ -39,51 +46,46 @@ export function MessageDetail({ message, onToggleRead, onDelete }: MessageDetail
               >
                 {message.email}
               </a>
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="mt-1 text-xs text-gray-400">
                 Received {new Date(message.createdAt).toLocaleString()}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button
+            <div className="flex flex-wrap gap-2">
+              <AdminButton
+                variant="secondary"
+                size="sm"
                 onClick={() => onToggleRead(message)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-[#660B05]/10 hover:border-[#660B05]/30 hover:text-[#660B05] text-gray-700 text-sm font-medium transition-all duration-200"
-                title={message.isRead ? "Mark as unread" : "Mark as read"}
               >
                 {message.isRead ? (
                   <>
-                    <Mail className="w-4 h-4" />
-                    Mark Unread
+                    <Mail className="h-4 w-4" />
+                    Unread
                   </>
                 ) : (
                   <>
-                    <MailOpen className="w-4 h-4" />
-                    Mark Read
+                    <MailOpen className="h-4 w-4" />
+                    Read
                   </>
                 )}
-              </button>
-              <a
-                href={replyHref}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#660B05] text-white text-sm font-medium hover:bg-[#8C1007] transition-all duration-200 shadow-sm"
-              >
-                <Mail className="w-4 h-4" />
+              </AdminButton>
+              <a href={replyHref} className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#660B05] px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-[#8C1007]">
+                <Mail className="h-4 w-4" />
                 Reply
               </a>
-              <button
+              <AdminButton
+                variant="danger"
+                size="sm"
                 onClick={() => onDelete(message)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-800 text-red-700 text-sm font-medium transition-all duration-200"
-                title="Delete"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="h-4 w-4" />
                 Delete
-              </button>
+              </AdminButton>
             </div>
           </div>
         </header>
-        <div className="prose prose-sm max-w-none">
-          <pre className="whitespace-pre-wrap font-sans text-sm text-gray-800 leading-relaxed bg-gray-50 rounded-lg p-4 border border-gray-100">
-            {message.message}
-          </pre>
-        </div>
+        <pre className="whitespace-pre-wrap rounded-xl border border-gray-100 bg-gray-50/80 p-4 font-sans text-sm leading-relaxed text-gray-800">
+          {message.message}
+        </pre>
       </article>
     </div>
   );

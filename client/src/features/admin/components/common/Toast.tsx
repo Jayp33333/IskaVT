@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import type { ToastState } from "../../types";
 
 type ToastProps = {
@@ -12,42 +12,33 @@ export function Toast({ toast, onClose }: ToastProps) {
   const isSuccess = toast.type === "success";
 
   return (
-    <div className="fixed top-4 right-4 z-[3000] animate-in slide-in-from-top-5">
+    <div className="fixed left-4 right-4 top-4 z-[3000] sm:left-auto sm:right-4 sm:max-w-sm">
       <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border ${
+        className={`flex items-start gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur-md ${
           isSuccess
-            ? "bg-green-50 border-green-200 text-green-800"
-            : "bg-red-50 border-red-200 text-red-800"
+            ? "border-green-200/80 bg-green-50/95 text-green-800"
+            : "border-red-200/80 bg-red-50/95 text-red-800"
         }`}
       >
-        {isSuccess ? (
-          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-            <svg
-              className="w-3 h-3 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        ) : (
-          <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-            <X className="w-3 h-3 text-white" />
-          </div>
-        )}
-        <span className="text-sm font-medium">{toast.message}</span>
+        <div
+          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+            isSuccess ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          {isSuccess ? (
+            <Check className="h-3 w-3 text-white" strokeWidth={3} />
+          ) : (
+            <X className="h-3 w-3 text-white" strokeWidth={3} />
+          )}
+        </div>
+        <span className="flex-1 text-sm font-medium">{toast.message}</span>
         <button
+          type="button"
           onClick={onClose}
-          className="ml-2 text-gray-400 hover:text-[#660B05]"
+          className="shrink-0 text-gray-400 hover:text-gray-700"
           aria-label="Dismiss"
         >
-          <X className="w-4 h-4" />
+          <X className="h-4 w-4" />
         </button>
       </div>
     </div>

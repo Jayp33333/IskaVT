@@ -22,16 +22,16 @@ export function StatCard({
 
   return (
     <div
-      className={`rounded-xl shadow-sm p-6 flex flex-col gap-3 ${
+      className={`flex flex-col gap-3 rounded-2xl p-5 sm:p-6 ${
         isPrimary
-          ? "bg-[#660B05] text-white"
-          : "bg-white border border-gray-200"
+          ? "bg-gradient-to-br from-[#660B05] to-[#8C1007] text-white shadow-lg shadow-[#660B05]/20"
+          : "border border-gray-200/80 bg-white/90 shadow-sm backdrop-blur-sm"
       }`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span
-          className={`text-xs font-medium uppercase tracking-wide ${
-            isPrimary ? "text-white/80" : "text-gray-500"
+          className={`text-[10px] font-bold uppercase tracking-widest ${
+            isPrimary ? "text-white/75" : "text-gray-500"
           }`}
         >
           {label}
@@ -42,7 +42,7 @@ export function StatCard({
               isPrimary ? "text-white/80" : "text-[#660B05]"
             }`}
           >
-            <ArrowUp className="w-3 h-3" />
+            <ArrowUp className="h-3 w-3" />
             <span>{trendLabel ?? "Increased"}</span>
           </div>
         )}
@@ -55,15 +55,13 @@ export function StatCard({
         )}
       </div>
       <div
-        className={`font-bold ${
-          isPrimary ? "text-4xl" : "text-3xl text-gray-900"
+        className={`font-bold tabular-nums ${
+          isPrimary ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl text-gray-900"
         }`}
       >
         {value}
       </div>
-      <p
-        className={`text-xs ${isPrimary ? "text-white/70" : "text-gray-500"}`}
-      >
+      <p className={`text-xs ${isPrimary ? "text-white/70" : "text-gray-500"}`}>
         {description}
       </p>
     </div>

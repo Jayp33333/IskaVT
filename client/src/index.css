@@ -60,3 +60,33 @@ body {
     transform: scale(1);
   }
 }
+
+/* Experience HUD: borders only, no offset box-shadow */
+body.experience-no-shadow [class*="shadow-brutal"],
+body.experience-no-shadow [class*="shadow-["] {
+  box-shadow: none !important;
+}
+
+body.experience-no-shadow
+  [class*="shadow-md"]:not([class*="shadow-brutal"]),
+body.experience-no-shadow
+  [class*="shadow-lg"]:not([class*="shadow-brutal"]) {
+  box-shadow: none !important;
+}
+
+/* Marketing site (home, features, contact, about PUPLQ, programs): no shadows */
+body.marketing-no-shadow [class*="shadow-brutal"],
+body.marketing-no-shadow [class*="shadow-["] {
+  box-shadow: none !important;
+}
+
+body.marketing-no-shadow
+  [class*="shadow-md"]:not([class*="shadow-brutal"]),
+body.marketing-no-shadow
+  [class*="shadow-lg"]:not([class*="shadow-brutal"]) {
+  box-shadow: none !important;
+}
+
+body.marketing-no-shadow [class*="drop-shadow"] {
+  filter: none !important;
+}

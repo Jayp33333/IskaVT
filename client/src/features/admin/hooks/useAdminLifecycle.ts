@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import type { AdminTab } from "../types";
 import type { UseDashboardDataValue } from "./useDashboardData";
+import type { UseFeedbackValue } from "./useFeedback";
 import type { UseMessagesValue } from "./useMessages";
 import type { UseToastValue } from "./useToast";
 import type { UseVisitorsValue } from "./useVisitors";
@@ -10,6 +11,7 @@ type UseAdminLifecycleParams = {
   data: UseDashboardDataValue;
   visitors: UseVisitorsValue;
   messages: UseMessagesValue;
+  feedback: UseFeedbackValue;
   toast: UseToastValue;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -25,6 +27,7 @@ export function useAdminLifecycle({
   data,
   visitors,
   messages,
+  feedback,
   toast,
   setLoading,
   setError,
@@ -37,6 +40,7 @@ export function useAdminLifecycle({
         data.loadDashboard(),
         visitors.loadVisitors(1),
         messages.refreshUnreadCount(),
+        feedback.refreshUnreadCount(),
       ]);
     } catch (err) {
       const errorMessage =
@@ -45,7 +49,7 @@ export function useAdminLifecycle({
     } finally {
       setLoading(false);
     }
-  }, [data, visitors, messages, setLoading, setError]);
+  }, [data, visitors, messages, feedback, setLoading, setError]);
 
   const refreshTick = useCallback(() => {
     data.loadDashboard().catch(() => {});
@@ -58,10 +62,18 @@ export function useAdminLifecycle({
           filter: messages.messageFilter,
         })
         .catch(() => {});
+    } else if (tab === "feedback") {
+      feedback
+        .loadFeedback(feedback.feedbackPage, {
+          search: feedback.feedbackSearch,
+          filter: feedback.feedbackFilter,
+        })
+        .catch(() => {});
     } else {
       messages.refreshUnreadCount().catch(() => {});
+      feedback.refreshUnreadCount().catch(() => {});
     }
-  }, [data, tab, visitors, messages]);
+  }, [data, tab, visitors, messages, feedback]);
 
   useEffect(() => {
     void reloadAll();
@@ -80,6 +92,17 @@ export function useAdminLifecycle({
         .catch((err: unknown) => {
           const msg =
             err instanceof Error ? err.message : "Failed to load messages";
+          toast.showToast(msg, "error");
+        });
+    } else if (tab === "feedback") {
+      feedback
+        .loadFeedback(1, {
+          search: feedback.feedbackSearch,
+          filter: feedback.feedbackFilter,
+        })
+        .catch((err: unknown) => {
+          const msg =
+            err instanceof Error ? err.message : "Failed to load feedback";
           toast.showToast(msg, "error");
         });
     }

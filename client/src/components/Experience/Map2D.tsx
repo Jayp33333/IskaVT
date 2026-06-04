@@ -488,7 +488,7 @@ export default function Map2D() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-[1150] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
+            className="fixed inset-0 z-[1150] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -497,9 +497,9 @@ export default function Map2D() {
             <motion.div
               className="
                 relative
-                bg-[#FFFDF9] rounded-[2rem] [@media(max-height:500px)]:rounded-2xl
-                border-[4px] sm:border-[6px] border-slate-900
-                shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)]
+                bg-cream rounded-[2rem] [@media(max-height:500px)]:rounded-2xl
+                border-[4px] sm:border-[6px] border-ink
+                shadow-brutal-md sm:shadow-brutal-lg
                 flex flex-col overflow-hidden
                 w-[min(95vw,56rem)] max-h-[90vh]
                 [@media(max-height:500px)]:w-[min(92vw,52rem)]
@@ -515,10 +515,10 @@ export default function Map2D() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="bg-[#D43F3F] border-b-[4px] sm:border-b-[6px] border-slate-900 p-3 sm:p-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 flex items-center justify-between gap-5 shrink-0">
+              <div className="bg-maroon border-b-[4px] sm:border-b-[6px] border-ink p-3 sm:p-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 flex items-center justify-between gap-5 shrink-0">
                 <div>
-                  <div className="bg-yellow-400 border-[3px] border-slate-900 px-2 py-0.5 rounded-full mb-1 [@media(max-height:500px)]:hidden inline-block">
-                    <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900">
+                  <div className="bg-gold border-[3px] border-ink px-2 py-0.5 rounded-full mb-1 [@media(max-height:500px)]:hidden inline-block">
+                    <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-ink">
                       Map View
                     </p>
                   </div>
@@ -528,7 +528,7 @@ export default function Map2D() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="bg-white border-[3px] border-slate-900 p-1.5 [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:600px)]:p-1 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shrink-0"
+                  className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:600px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
                   aria-label="Close map"
                   type="button"
                 >
@@ -539,7 +539,7 @@ export default function Map2D() {
               {/* Map body */}
               <div
                 ref={mapViewportRef}
-                className="relative p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2 flex-1 min-h-0 flex items-center justify-center bg-slate-100 overflow-hidden touch-none select-none"
+                className="relative p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2 flex-1 min-h-0 flex items-center justify-center bg-muted overflow-hidden touch-none select-none"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
@@ -570,7 +570,7 @@ export default function Map2D() {
                     ref={imageRef}
                     src={MAP_SRC}
                     alt="Campus Map"
-                    className="block max-h-[70vh] max-w-[85vw] [@media(max-height:500px)]:max-h-[calc(94dvh-7.5rem)] [@media(max-height:500px)]:max-w-[86vw] [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[calc(92dvh-7.25rem)] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[min(72vw,46rem)] w-auto h-auto rounded-lg border-[3px] border-slate-900 cursor-crosshair select-none pointer-events-none"
+                    className="block max-h-[70vh] max-w-[85vw] [@media(max-height:500px)]:max-h-[calc(94dvh-7.5rem)] [@media(max-height:500px)]:max-w-[86vw] [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[calc(92dvh-7.25rem)] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[min(72vw,46rem)] w-auto h-auto rounded-lg border-[3px] border-ink cursor-crosshair select-none pointer-events-none"
                     draggable={false}
                     onLoad={applyPanLimits}
                   />
@@ -642,7 +642,7 @@ export default function Map2D() {
                       }}
                     >
                       <span
-                        className="px-1.5 py-0.5 rounded-md border-2 border-slate-900 text-[8px] sm:text-[9px] font-black uppercase tracking-tight whitespace-nowrap shadow-[2px_2px_0_0_rgba(15,23,42,1)] bg-white text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="px-1.5 py-0.5 rounded-md border-2 border-ink text-[8px] sm:text-[9px] font-black uppercase tracking-tight whitespace-nowrap shadow-brutal-sm bg-white text-ink opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         {pin.name}
                       </span>
@@ -663,7 +663,7 @@ export default function Map2D() {
                       }}
                     >
                       <div className="relative flex items-center justify-center">
-                        <span className="absolute -bottom-0.5 w-2.5 h-2.5 rounded-full bg-yellow-400/40 animate-ping" />
+                        <span className="absolute -bottom-0.5 w-2.5 h-2.5 rounded-full bg-gold/40 animate-ping" />
                         <IoLocationSharp className="relative text-yellow-400 text-2xl sm:text-3xl [@media(max-height:500px)]:text-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" />
                       </div>
                     </div>
@@ -703,7 +703,7 @@ export default function Map2D() {
                     disabled={zoom >= MAP_MAX_ZOOM}
                     aria-label="Zoom in"
                     title="Zoom in"
-                    className="bg-white border-[3px] border-slate-900 p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:bg-slate-100 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:active:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)]"
+                    className="bg-white border-[3px] border-ink p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-brutal-sm hover:bg-muted active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:active:shadow-brutal-sm"
                   >
                     <FiPlus size={18} strokeWidth={3} />
                   </button>
@@ -713,7 +713,7 @@ export default function Map2D() {
                     disabled={zoom <= MAP_MIN_ZOOM}
                     aria-label="Zoom out"
                     title="Zoom out"
-                    className="bg-white border-[3px] border-slate-900 p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:bg-slate-100 active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:active:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)]"
+                    className="bg-white border-[3px] border-ink p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-brutal-sm hover:bg-muted active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 disabled:active:shadow-brutal-sm"
                   >
                     <FiMinus size={18} strokeWidth={3} />
                   </button>
@@ -722,14 +722,14 @@ export default function Map2D() {
                     onClick={resetView}
                     aria-label="Reset view"
                     title="Reset view"
-                    className="bg-yellow-400 border-[3px] border-slate-900 p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:bg-yellow-300 active:translate-y-0.5 active:shadow-none transition-all"
+                    className="bg-gold border-[3px] border-ink p-2 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-brutal-sm hover:bg-gold active:translate-y-0.5 active:shadow-none transition-all"
                   >
                     <FiMaximize2 size={18} strokeWidth={3} />
                   </button>
                 </div>
 
                 {/* Compass indicator (bottom-left) */}
-                <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5 [@media(max-height:500px)]:bottom-2 [@media(max-height:500px)]:left-2 bg-white border-[3px] border-slate-900 rounded-xl w-16 h-16 [@media(max-height:500px)]:w-12 [@media(max-height:500px)]:h-12 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] text-slate-900 pointer-events-none">
+                <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5 [@media(max-height:500px)]:bottom-2 [@media(max-height:500px)]:left-2 bg-white border-[3px] border-ink rounded-xl w-16 h-16 [@media(max-height:500px)]:w-12 [@media(max-height:500px)]:h-12 shadow-brutal-sm text-ink pointer-events-none">
                   <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] [@media(max-height:500px)]:text-[8px] font-black leading-none">
                     N
                   </span>
@@ -742,12 +742,12 @@ export default function Map2D() {
                   <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] [@media(max-height:500px)]:text-[8px] font-black leading-none">
                     E
                   </span>
-                  <FiCompass className="absolute left-1/2 top-1/2 text-2xl [@media(max-height:500px)]:text-xl -translate-x-1/2 -translate-y-1/2 text-slate-900" strokeWidth={3} />
+                  <FiCompass className="absolute left-1/2 top-1/2 text-2xl [@media(max-height:500px)]:text-xl -translate-x-1/2 -translate-y-1/2 text-ink" strokeWidth={3} />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 bg-white border-t-[4px] sm:border-t-[6px] border-slate-900 flex flex-col sm:flex-row [@media(max-height:500px)]:flex-row items-stretch sm:items-center justify-between gap-3 [@media(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:gap-4 shrink-0">
+              <div className="px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 bg-white border-t-[4px] sm:border-t-[6px] border-ink flex flex-col sm:flex-row [@media(max-height:500px)]:flex-row items-stretch sm:items-center justify-between gap-3 [@media(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:gap-4 shrink-0">
                 <p className="text-[11px] sm:text-xs [@media(max-height:500px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px] font-bold italic text-slate-600 leading-tight max-w-[34rem] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[18rem]">
                   {pinPosition ? (
                     "Pin placed! Teleport or remove it below."
@@ -767,7 +767,7 @@ export default function Map2D() {
                   {pinPosition && (
                     <button
                       onClick={handleUnpin}
-                      className="py-2 px-3 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-white text-slate-900 border-[3px] border-slate-900 rounded-xl text-xs sm:text-sm font-black italic shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
+                      className="py-2 px-3 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-white text-ink border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
                       type="button"
                     >
                       Remove Pin
@@ -777,10 +777,10 @@ export default function Map2D() {
                   <button
                     onClick={handleTeleport}
                     disabled={!pinPosition}
-                    className={`py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] border-[3px] border-slate-900 rounded-xl text-xs sm:text-sm font-black italic shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-1.5 ${
+                    className={`py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-1.5 ${
                       pinPosition
-                        ? "bg-yellow-400 text-slate-900 hover:bg-yellow-300"
-                        : "bg-slate-300 text-slate-500 opacity-60 cursor-not-allowed"
+                        ? "bg-gold text-ink hover:bg-gold"
+                        : "bg-slate-300 text-ink/50 opacity-60 cursor-not-allowed"
                     }`}
                     type="button"
                   >
@@ -790,7 +790,7 @@ export default function Map2D() {
 
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-[#D43F3F] text-white border-[3px] border-slate-900 rounded-xl text-xs sm:text-sm font-black italic shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
+                    className="py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-maroon text-white border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
                     type="button"
                   >
                     Close

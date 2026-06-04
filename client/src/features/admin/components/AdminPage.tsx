@@ -1,9 +1,12 @@
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useAdmin } from "../context/AdminContext";
 import { Toast } from "./common/Toast";
 import { DashboardTab } from "./dashboard/DashboardTab";
+import { AdminMobileNav } from "./layout/AdminMobileNav";
 import { AdminSidebar } from "./layout/AdminSidebar";
 import { AdminTopBar } from "./layout/AdminTopBar";
+import { FeedbackTab } from "./feedback/FeedbackTab";
 import { MessagesTab } from "./messages/MessagesTab";
 import { HelpModal } from "./modals/HelpModal";
 import { SettingsModal } from "./modals/SettingsModal";
@@ -15,36 +18,37 @@ export function AdminPage() {
   const [helpOpen, setHelpOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="flex min-h-screen">
-        <AdminSidebar />
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-gray-50 to-stone-100/80 text-gray-900">
+      <AdminSidebar />
+      <AdminMobileNav />
 
-        <div className="flex-1 md:ml-[260px]">
-          <AdminTopBar
-            onOpenSettings={() => setSettingsOpen(true)}
-            onOpenHelp={() => setHelpOpen(true)}
-          />
+      <div className="flex min-h-screen flex-col md:ml-[272px]">
+        <AdminTopBar
+          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenHelp={() => setHelpOpen(true)}
+        />
 
-          <main className="px-6 py-6">
-            {loading && (
-              <div className="w-full flex justify-center py-10 text-gray-500 text-sm">
-                Loading…
-              </div>
-            )}
+        <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-4 pb-24 sm:px-6 sm:py-6 md:pb-6">
+          {loading && (
+            <div className="flex flex-col items-center justify-center gap-3 py-16 text-gray-500">
+              <Loader2 className="h-8 w-8 animate-spin text-[#660B05]" />
+              <span className="text-sm font-medium">Loading admin data…</span>
+            </div>
+          )}
 
-            {error && (
-              <div className="w-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+          {error && (
+            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
-            {!loading && !error && tab === "dashboard" && <DashboardTab />}
-            {!loading && !error && tab === "visitors" && (
-              <VisitorsTab onChangeExportDefault={() => setSettingsOpen(true)} />
-            )}
-            {!loading && !error && tab === "messages" && <MessagesTab />}
-          </main>
-        </div>
+          {!loading && !error && tab === "dashboard" && <DashboardTab />}
+          {!loading && !error && tab === "visitors" && (
+            <VisitorsTab onChangeExportDefault={() => setSettingsOpen(true)} />
+          )}
+          {!loading && !error && tab === "messages" && <MessagesTab />}
+          {!loading && !error && tab === "feedback" && <FeedbackTab />}
+        </main>
       </div>
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />

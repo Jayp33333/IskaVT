@@ -52,7 +52,7 @@ export const OrientationGuard = () => {
   if (!isPortrait) return null;
 
   return (
-    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/90 px-6 text-center">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-ink px-6 text-center">
       <div className="max-w-md">
         <h2 className="text-white text-2xl font-bold mb-3">Rotate your device</h2>
         <p className="text-white/80 text-sm leading-relaxed mb-6">

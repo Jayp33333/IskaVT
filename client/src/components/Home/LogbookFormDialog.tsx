@@ -1,6 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import { ClipboardList, X } from "lucide-react";
+import {
+  LOGBOOK_ENTRY_ID_KEY,
+  LOGBOOK_TIME_IN_KEY,
+  setSessionFullName,
+} from "../../constants/logbookSession";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
 import { getErrorMessage } from "../../utils/errors";
@@ -48,8 +53,10 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
       const response = await logbookAPI.createEntry(entryData);
       
       if (response.data?._id) {
-        localStorage.setItem('logbookEntryId', response.data._id);
-        localStorage.setItem('logbookTimeIn', new Date().toISOString());
+        localStorage.setItem(LOGBOOK_ENTRY_ID_KEY, response.data._id);
+        localStorage.setItem(LOGBOOK_TIME_IN_KEY, new Date().toISOString());
+        const name = response.data.fullName?.trim() || formData.fullName.trim();
+        setSessionFullName(name);
       }
       
       onSuccess();
@@ -62,15 +69,15 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
     }
   };
 
-  const inputBase = "w-full px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 text-sm [@media(max-height:500px)]:text-[11px] font-bold text-slate-800 bg-white border-[3px] border-slate-900 rounded-2xl outline-none shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] focus:bg-yellow-50 placeholder:text-slate-400 transition-all";
-  const labelBase = "block text-xs [@media(max-height:500px)]:text-[9px] font-black text-slate-700 uppercase tracking-wider mb-2 ml-1";
+  const inputBase = "w-full px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 text-sm [@media(max-height:500px)]:text-[11px] font-bold text-ink bg-white border-[3px] border-ink rounded-2xl outline-none shadow-brutal-sm focus:bg-yellow-50 placeholder:text-slate-400 transition-all";
+  const labelBase = "block text-xs [@media(max-height:500px)]:text-[9px] font-black text-ink/80 uppercase tracking-wider mb-2 ml-1";
 
   return (
     <AnimatePresence>
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[5000]"
+            className="fixed inset-0 bg-ink/85 z-[5000]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -84,20 +91,20 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-[500px] [@media(max-height:500px)]:max-w-[500px] max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] bg-[#FFFDF9] text-slate-800 rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] overflow-hidden pointer-events-auto flex flex-col"
+              className="w-full max-w-[500px] [@media(max-height:500px)]:max-w-[500px] max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md overflow-hidden pointer-events-auto flex flex-col"
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 40 }}
               transition={{ type: "spring", damping: 20, stiffness: 250 }}
             >
-              <div className="bg-[#D43F3F] border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-slate-900 px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
+              <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-yellow-300 border-[3px] border-slate-900 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] shrink-0">
-                      <ClipboardList className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-slate-900" strokeWidth={3.5} />
+                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
+                      <ClipboardList className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-ink" strokeWidth={3.5} />
                     </div>
                     <div className="min-w-0">
-                      <p className="inline-block rounded-full bg-yellow-300 border-[3px] border-slate-900 px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-slate-900">
+                      <p className="inline-block rounded-full bg-gold border-[3px] border-ink px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-ink">
                         Visitor Check-In
                       </p>
                       <h2 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight truncate">
@@ -108,7 +115,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                   {!required && (
                     <button
                       onClick={onClose}
-                      className="bg-white border-[3px] border-slate-900 p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shrink-0"
+                      className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
                       aria-label="Close"
                       type="button"
                     >
@@ -171,7 +178,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                   </div>
 
                   {error && (
-                    <div className="p-3 bg-red-100 border-[3px] border-slate-900 rounded-2xl font-black text-red-700 text-sm [@media(max-height:500px)]:text-xs shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
+                    <div className="p-3 bg-red-100 border-[3px] border-ink rounded-2xl font-black text-red-700 text-sm [@media(max-height:500px)]:text-xs shadow-brutal-sm">
                       {error}
                     </div>
                   )}
@@ -180,7 +187,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 [@media(max-height:500px)]:py-2.5 bg-[#D43F3F] hover:bg-[#c93333] text-white border-[3px] border-slate-900 rounded-2xl font-black text-lg [@media(max-height:500px)]:text-xs italic uppercase tracking-wide shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 [@media(max-height:500px)]:py-2.5 bg-maroon hover:bg-[#c93333] text-white border-[3px] border-ink rounded-2xl font-black text-lg [@media(max-height:500px)]:text-xs italic uppercase tracking-wide shadow-brutal-md active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? "Checking In..." : "Start Tour"}
                   </button>

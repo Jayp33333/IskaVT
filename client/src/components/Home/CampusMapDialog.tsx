@@ -378,7 +378,12 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="relative flex max-h-[94dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border-2 border-black bg-[#FFFDF5] sm:rounded-3xl sm:border-4 lg:h-[min(88dvh,760px)] lg:min-h-[28rem] [@media(orientation:landscape)_and_(max-height:768px)]:h-[94dvh] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[94dvh] [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(98vw,56rem)]"
+              layout
+              className={`relative flex max-h-[94dvh] flex-col overflow-hidden rounded-2xl border-2 border-black bg-[#FFFDF5] transition-[width] duration-300 ease-out sm:rounded-3xl sm:border-4 ${
+                selectedPin
+                  ? "w-full max-w-5xl lg:h-[min(88dvh,760px)] lg:min-h-[28rem] [@media(orientation:landscape)_and_(max-height:768px)]:h-[94dvh] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[94dvh] [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(98vw,56rem)]"
+                  : "w-max max-w-[calc(100vw-1.5rem)]"
+              }`}
               initial={{ scale: 0.92, y: 24 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.92, y: 24 }}
@@ -409,11 +414,21 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
               </div>
 
               {/* Body */}
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row [@media(orientation:landscape)_and_(max-height:768px)]:flex-row">
+              <div
+                className={`flex overflow-hidden ${
+                  selectedPin
+                    ? "min-h-0 flex-1 flex-col md:flex-row [@media(orientation:landscape)_and_(max-height:768px)]:flex-row"
+                    : "flex-col"
+                }`}
+              >
                 {/* Map panel */}
                 <div
                   ref={mapViewportRef}
-                  className="relative flex min-h-[200px] min-w-0 flex-1 items-center justify-center touch-none select-none overflow-hidden bg-slate-100 p-2 sm:min-h-[260px] sm:p-3 md:min-h-[20rem] md:p-4 [@media(max-height:500px)]:min-h-[180px] [@media(max-height:500px)]:p-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:min-h-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+                  className={`relative flex min-w-0 touch-none select-none items-center justify-center overflow-hidden bg-slate-100 p-2 sm:p-3 [@media(max-height:500px)]:p-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-2 ${
+                    selectedPin
+                      ? "min-h-[200px] flex-1 sm:min-h-[260px] md:min-h-[20rem] md:p-4 [@media(max-height:500px)]:min-h-[180px] [@media(orientation:landscape)_and_(max-height:768px)]:min-h-0"
+                      : "shrink-0"
+                  }`}
                   onPointerDown={handlePointerDown}
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
@@ -442,7 +457,11 @@ export function CampusMapDialog({ open, onClose }: CampusMapDialogProps) {
                     <img
                       src={MAP_SRC}
                       alt="PUP Lopez Campus Map"
-                      className="block h-auto w-auto max-h-[34dvh] max-w-[min(92vw,calc(100%-0.5rem))] rounded-lg border-2 border-black sm:max-h-[38dvh] sm:max-w-[min(90vw,calc(100%-1rem))] sm:border-4 md:max-h-[min(calc(88dvh-11rem),640px)] md:max-w-full [@media(max-height:500px)]:max-h-[calc(94dvh-10rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[calc(94dvh-4rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-full"
+                      className={`block h-auto w-auto rounded-lg border-2 border-black sm:border-4 ${
+                        selectedPin
+                          ? "max-h-[34dvh] max-w-[min(92vw,calc(100%-0.5rem))] sm:max-h-[38dvh] sm:max-w-[min(90vw,calc(100%-1rem))] md:max-h-[min(calc(88dvh-11rem),640px)] md:max-w-full [@media(max-height:500px)]:max-h-[calc(94dvh-10rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[calc(94dvh-4rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-full"
+                          : "max-h-[min(72dvh,calc(94dvh-8rem))] max-w-[min(calc(100vw-2.5rem),920px)]"
+                      }`}
                       draggable={false}
                       onLoad={applyPanLimits}
                     />

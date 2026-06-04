@@ -17,3 +17,12 @@ export {
   type MessageListResponse,
   type MessageResponse,
 } from "./messageApi";
+
+export {
+  feedbackAPI,
+  type FeedbackInput,
+  type FeedbackRecord,
+  type FeedbackListResponse,
+  type FeedbackResponse,
+  type FeedbackStatsSummary,
+} from "./feedbackApi";

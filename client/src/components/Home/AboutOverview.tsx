@@ -27,10 +27,7 @@ const sectionIcons: Record<AboutSectionId, typeof Eye> = {
 
 export function AboutOverview() {
   return (
-    <Section id="about">
-      <div className="pointer-events-none absolute -left-16 top-20 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-10 bottom-10 h-64 w-64 rounded-full bg-maroon/10 blur-3xl" />
-
+    <Section id="about" dotGrid>
       <PageHeader
         title={
           <>

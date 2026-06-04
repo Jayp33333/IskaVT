@@ -1,15 +1,74 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  LOGBOOK_ENTRY_ID_KEY,
+  clearLogbookSession,
+} from '../constants/logbookSession';
 import { logbookAPI } from '../services/api';
+import { API_BASE_URL } from '../services/apiClient';
 
-const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
-const LOGBOOK_TIME_IN_KEY = 'logbookTimeIn';
+const LOGBOOK_SKIP_PAGEHIDE_KEY = 'logbook-skip-pagehide';
+
+/** Ends the logbook session via a request that can complete after the page unloads. */
+function endLogbookSessionKeepalive(entryId: string): void {
+  fetch(`${API_BASE_URL}/logbook/${entryId}/timeout`, {
+    method: 'PATCH',
+    body: JSON.stringify({}),
+    headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
+  }).catch(() => {
+    // Best-effort while the page is unloading.
+  });
+  clearLogbookSession();
+}
+
+let unloadListenersRegistered = false;
+
+function registerBrowserUnloadListeners(
+  getIsUpdating: () => boolean,
+  getIsOnExperience: () => boolean
+): void {
+  if (unloadListenersRegistered || typeof window === 'undefined') return;
+  unloadListenersRegistered = true;
+
+  const markReloadIntent = (event: KeyboardEvent) => {
+    if (event.key !== 'F5' && !((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'r')) {
+      return;
+    }
+    sessionStorage.setItem(LOGBOOK_SKIP_PAGEHIDE_KEY, '1');
+  };
+
+  const onPageShow = () => {
+    sessionStorage.removeItem(LOGBOOK_SKIP_PAGEHIDE_KEY);
+  };
+
+  const onPageHide = (event: PageTransitionEvent) => {
+    if (event.persisted || !getIsOnExperience()) return;
+
+    if (sessionStorage.getItem(LOGBOOK_SKIP_PAGEHIDE_KEY)) {
+      sessionStorage.removeItem(LOGBOOK_SKIP_PAGEHIDE_KEY);
+      return;
+    }
+
+    const entryId = localStorage.getItem(LOGBOOK_ENTRY_ID_KEY);
+    if (!entryId || getIsUpdating()) return;
+
+    endLogbookSessionKeepalive(entryId);
+  };
+
+  window.addEventListener('keydown', markReloadIntent);
+  window.addEventListener('pageshow', onPageShow);
+  window.addEventListener('pagehide', onPageHide);
+}
 
 export const useLogbookTimeout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isUpdatingRef = useRef(false);
+  const isOnExperienceRef = useRef(location.pathname === '/experience');
   const previousPathRef = useRef<string | null>(null);
+
+  isOnExperienceRef.current = location.pathname === '/experience';
 
   const updateTimeout = useCallback(async (shouldNavigate = false) => {
     const entryId = localStorage.getItem(LOGBOOK_ENTRY_ID_KEY);
@@ -20,59 +79,44 @@ export const useLogbookTimeout = () => {
 
     try {
       await logbookAPI.updateTimeout(entryId);
-      // Clear localStorage after successful timeout update
-      localStorage.removeItem(LOGBOOK_ENTRY_ID_KEY);
-      localStorage.removeItem(LOGBOOK_TIME_IN_KEY);
+      clearLogbookSession();
       
       if (shouldNavigate) {
         navigate('/');
       }
     } catch (error) {
       console.error('Failed to update timeout:', error);
-      // Still clear localStorage even if API call fails
-      localStorage.removeItem(LOGBOOK_ENTRY_ID_KEY);
-      localStorage.removeItem(LOGBOOK_TIME_IN_KEY);
+      clearLogbookSession();
     } finally {
       isUpdatingRef.current = false;
     }
   }, [navigate]);
 
-  // Initialize previous path on mount
+  useEffect(() => {
+    registerBrowserUnloadListeners(
+      () => isUpdatingRef.current,
+      () => isOnExperienceRef.current
+    );
+  }, []);
+
   useEffect(() => {
     if (previousPathRef.current === null) {
       previousPathRef.current = location.pathname;
     }
   }, []);
 
-  // Handle automatic timeout when navigating away from /experience
   useEffect(() => {
     const currentPath = location.pathname;
     const previousPath = previousPathRef.current;
 
-    // If we navigated FROM /experience TO a different route, update timeout
-    // On refresh, both will be /experience, so this won't trigger
     if (previousPath === '/experience' && currentPath !== '/experience') {
       const entryId = localStorage.getItem(LOGBOOK_ENTRY_ID_KEY);
       
       if (entryId && !isUpdatingRef.current) {
-        // User navigated away from /experience - update timeout
-        const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-        fetch(`${apiUrl}/logbook/${entryId}/timeout`, {
-          method: 'PATCH',
-          body: JSON.stringify({}),
-          headers: { 'Content-Type': 'application/json' },
-          keepalive: true
-        }).catch(() => {
-          // Silently fail - we tried our best
-        });
-        
-        // Clear localStorage
-        localStorage.removeItem(LOGBOOK_ENTRY_ID_KEY);
-        localStorage.removeItem(LOGBOOK_TIME_IN_KEY);
+        endLogbookSessionKeepalive(entryId);
       }
     }
 
-    // Update previous path reference
     previousPathRef.current = currentPath;
   }, [location.pathname]);
 

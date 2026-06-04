@@ -90,7 +90,7 @@ export const NavBar = () => {
                       initial={{ opacity: 0, y: -8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
-                      className="min-w-[200px] bg-white border-4 border-black rounded-xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                      className="min-w-[200px] overflow-hidden rounded-xl border-4 border-black bg-white"
                     >
                       {aboutNavLinks.map((link) => (
                         <Link
@@ -115,20 +115,18 @@ export const NavBar = () => {
 
           <div className="hidden md:block">
             <button
+              type="button"
               onClick={() => navigate("/experience")}
-              className="relative bg-black rounded-xl group transition-all"
+              className="inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-6 py-3 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90"
             >
-              <span className="absolute inset-0 bg-black rounded-xl translate-y-1 translate-x-1" />
-              <span className="relative inline-flex items-center gap-2 bg-[#800000] border-2 border-black text-white font-black uppercase text-xs tracking-widest px-6 py-3 rounded-xl -translate-y-1 -translate-x-1 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform">
-                LAUNCH 3D TOUR
-              </span>
+              LAUNCH 3D TOUR
             </button>
           </div>
 
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(true)}
-              className="bg-[#FFD700] border-4 border-black p-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
+              className="rounded-xl border-4 border-ink bg-gold p-2 transition-colors hover:bg-gold/90 active:scale-95"
             >
               <HiOutlineMenu className="text-2xl text-black" />
             </button>
@@ -158,7 +156,7 @@ export const NavBar = () => {
                 <img src={logo} alt="Logo" className="h-7 sm:h-8" />
                 <button
                   onClick={closeMobile}
-                  className="rounded-lg border-2 border-black bg-white p-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:rounded-xl sm:border-4 sm:p-2"
+                  className="rounded-xl border-4 border-ink bg-white p-2 transition-colors hover:bg-muted"
                   aria-label="Close menu"
                 >
                   <HiOutlineX className="text-lg sm:text-xl" />
@@ -234,11 +232,9 @@ export const NavBar = () => {
                       closeMobile();
                       navigate("/experience");
                     }}
-                    className="w-full rounded-xl bg-black p-0.5 sm:rounded-2xl sm:p-1"
+                    className="w-full rounded-xl border-4 border-ink bg-maroon py-3 text-center text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 active:scale-[0.98] sm:rounded-2xl sm:py-4 sm:text-sm"
                   >
-                    <span className="block w-full rounded-lg border-2 border-black bg-[#800000] py-3 text-center text-xs font-black uppercase tracking-widest text-white -translate-x-1 -translate-y-1 transition-transform active:translate-x-0 active:translate-y-0 sm:rounded-xl sm:border-4 sm:py-4 sm:text-sm">
-                      Launch 3D Tour
-                    </span>
+                    Launch 3D Tour
                   </button>
                 </div>
               </div>

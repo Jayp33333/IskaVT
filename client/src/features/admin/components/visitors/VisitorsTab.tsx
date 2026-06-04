@@ -1,4 +1,4 @@
-import { Plus, Search, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import type { LogbookEntry } from "../../../../services/api";
@@ -6,6 +6,15 @@ import { useAdmin } from "../../context/AdminContext";
 import type { ExportRange, VisitorRecord } from "../../types";
 import { exportVisitors, PopupBlockedError } from "../../utils/exporters";
 import { ConfirmDialog } from "../common/ConfirmDialog";
+import {
+  AdminButton,
+  AdminCard,
+  AdminCardHeader,
+  AdminEmptyState,
+  AdminPagination,
+  AdminSearchInput,
+  PageHeader,
+} from "../common/adminUi";
 import { AddVisitorModal } from "./AddVisitorModal";
 import { EditVisitorModal } from "./EditVisitorModal";
 import { ExportDropdown } from "./ExportDropdown";
@@ -116,16 +125,12 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
 
   return (
     <>
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Visitors</h1>
-            <p className="text-sm text-gray-500">
-              Manage and view all visitor records and logbook entries.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <SearchInput
+      <PageHeader
+        description="Manage and view all visitor records and logbook entries."
+        actions={
+          <>
+            <AdminSearchInput
+              placeholder="Search visitors..."
               value={visitors.searchQuery}
               onChange={visitors.setSearchQuery}
             />
@@ -133,64 +138,76 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
               onExport={handleExport}
               onChangeDefault={onChangeExportDefault}
             />
-            <button
+            <AdminButton
+              variant="primary"
               onClick={() => {
                 setAddError(null);
                 setAddOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#660B05] text-white hover:bg-[#8C1007] transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="h-4 w-4" />
               Add Visitor
-            </button>
-          </div>
-        </div>
-      </div>
+            </AdminButton>
+          </>
+        }
+      />
 
-      <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-gray-900">Visitor Records</h2>
-          <Pagination
-            page={visitors.visitorsPage}
-            totalPages={visitors.visitorsTotalPages}
-            onPrev={() =>
-              visitors.loadVisitors(Math.max(1, visitors.visitorsPage - 1))
-            }
-            onNext={() =>
-              visitors.loadVisitors(
-                Math.min(visitors.visitorsTotalPages, visitors.visitorsPage + 1)
-              )
+      <AdminCard padding="none">
+        <div className="border-b border-gray-100 p-4 sm:p-5 sm:pb-4">
+          <AdminCardHeader
+            title="Visitor Records"
+            action={
+              <AdminPagination
+                page={visitors.visitorsPage}
+                totalPages={visitors.visitorsTotalPages}
+                onPrev={() =>
+                  visitors.loadVisitors(Math.max(1, visitors.visitorsPage - 1))
+                }
+                onNext={() =>
+                  visitors.loadVisitors(
+                    Math.min(
+                      visitors.visitorsTotalPages,
+                      visitors.visitorsPage + 1
+                    )
+                  )
+                }
+                size="sm"
+              />
             }
           />
+
+          {visitors.searchQuery && (
+            <div className="rounded-xl bg-[#660B05]/8 px-3 py-2">
+              <p className="text-sm text-gray-700">
+                Found{" "}
+                <span className="font-semibold text-[#660B05]">
+                  {visitors.filteredVisitors.length}
+                </span>{" "}
+                visitor{visitors.filteredVisitors.length !== 1 ? "s" : ""}{" "}
+                matching &ldquo;{visitors.searchQuery}&rdquo;
+              </p>
+            </div>
+          )}
         </div>
 
-        {visitors.searchQuery && (
-          <div className="mb-4 p-3 bg-[#660B05]/10 rounded-lg">
-            <p className="text-sm text-gray-700">
-              Found{" "}
-              <span className="font-semibold text-[#660B05]">
-                {visitors.filteredVisitors.length}
-              </span>{" "}
-              visitor{visitors.filteredVisitors.length !== 1 ? "s" : ""} matching
-              "{visitors.searchQuery}"
-            </p>
-          </div>
-        )}
-
-        {visitors.filteredVisitors.length === 0 ? (
-          <p className="text-sm text-gray-400 py-8 text-center">
-            {visitors.searchQuery
-              ? "No visitors found matching your search."
-              : "No visitors logged yet."}
-          </p>
-        ) : (
-          <VisitorsTable
-            visitors={visitors.filteredVisitors}
-            onEdit={openEditFor}
-            onDelete={openDeleteFor}
-          />
-        )}
-      </section>
+        <div className="p-4 sm:p-5 sm:pt-0">
+          {visitors.filteredVisitors.length === 0 ? (
+            <AdminEmptyState
+              message={
+                visitors.searchQuery
+                  ? "No visitors found matching your search."
+                  : "No visitors logged yet."
+              }
+            />
+          ) : (
+            <VisitorsTable
+              visitors={visitors.filteredVisitors}
+              onEdit={openEditFor}
+              onDelete={openDeleteFor}
+            />
+          )}
+        </div>
+      </AdminCard>
 
       <AddVisitorModal
         open={addOpen}
@@ -224,10 +241,10 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
               <div className="text-sm font-semibold text-gray-900">
                 {visitorToDelete.fullName}
               </div>
-              <div className="text-xs text-gray-600 mt-1">
+              <div className="mt-1 text-xs text-gray-600">
                 {visitorToDelete.visitorType} • {visitorToDelete.destination}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="mt-1 text-xs text-gray-500">
                 {visitorToDelete.timeIn
                   ? new Date(visitorToDelete.timeIn).toLocaleString()
                   : "No time in"}
@@ -242,64 +259,5 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
         onConfirm={handleDelete}
       />
     </>
-  );
-}
-
-type SearchInputProps = {
-  value: string;
-  onChange: (next: string) => void;
-};
-
-function SearchInput({ value, onChange }: SearchInputProps) {
-  return (
-    <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-      <input
-        type="text"
-        placeholder="Search visitors..."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05] min-w-[250px]"
-      />
-      {value && (
-        <button
-          onClick={() => onChange("")}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#660B05]"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
-    </div>
-  );
-}
-
-type PaginationProps = {
-  page: number;
-  totalPages: number;
-  onPrev: () => void;
-  onNext: () => void;
-};
-
-function Pagination({ page, totalPages, onPrev, onNext }: PaginationProps) {
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={onPrev}
-        disabled={page <= 1}
-        className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-white hover:bg-[#660B05]/10 hover:border-[#660B05]/30 hover:text-[#660B05] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-      >
-        Prev
-      </button>
-      <span className="text-sm text-gray-600 px-3">
-        Page {page} / {totalPages}
-      </span>
-      <button
-        onClick={onNext}
-        disabled={page >= totalPages}
-        className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 bg-white hover:bg-[#660B05]/10 hover:border-[#660B05]/30 hover:text-[#660B05] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-      >
-        Next
-      </button>
-    </div>
   );
 }

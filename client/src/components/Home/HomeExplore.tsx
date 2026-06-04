@@ -1,14 +1,52 @@
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
 import { Section, SectionEyebrow } from "../marketing";
-import { homeExploreLocations } from "./data/homeContent";
+import {
+  homeExploreLocations,
+  type HomeExploreLocation,
+} from "./data/homeContent";
+
+function formatHighlights(items: string[]) {
+  return items.map((item) => `• ${item}`).join(" · ");
+}
+
+function HighlightImage({ location }: { location: HomeExploreLocation }) {
+  return (
+    <div className="flex flex-col items-center lg:items-start">
+      <div className="aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-brutal-md sm:max-w-lg sm:rounded-3xl sm:border-4 lg:max-w-none">
+        <img
+          src={location.image}
+          alt={location.name}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <span className="mt-3 text-xs font-black uppercase tracking-widest text-ink/50 sm:text-sm">
+        {location.tag}
+      </span>
+    </div>
+  );
+}
+
+function HighlightContent({ location }: { location: HomeExploreLocation }) {
+  return (
+    <div className="flex flex-col justify-center text-center lg:text-left">
+      <h3 className="mb-3 text-2xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-3xl">
+        {location.name}
+      </h3>
+      <p className="mb-5 text-sm font-bold leading-relaxed text-ink/70 sm:text-base">
+        {location.description}
+      </p>
+      <span className="mx-auto inline-flex max-w-full rounded-full border-2 border-ink bg-white px-4 py-2 text-xs font-bold text-ink/70 shadow-brutal-sm sm:px-5 sm:text-sm lg:mx-0">
+        {formatHighlights(location.highlights)}
+      </span>
+    </div>
+  );
+}
 
 export function HomeExplore() {
   return (
-    <Section id="explore" variant="white">
-      <div className="pointer-events-none absolute -left-16 bottom-10 h-48 w-48 rounded-full bg-maroon/5 blur-3xl" />
-
-      <div className="mb-10 flex flex-col items-center text-center sm:mb-12">
+    <Section id="explore" variant="white" dotGrid>
+      <div className="mb-10 flex flex-col items-center text-center sm:mb-12 lg:mb-14">
         <SectionEyebrow animated>Campus Highlights</SectionEyebrow>
         <h2 className="text-3xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-4xl md:text-5xl">
           Places You Can <span className="text-maroon">Explore</span>
@@ -20,32 +58,36 @@ export function HomeExplore() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-        {homeExploreLocations.map((location, index) => (
-          <motion.article
-            key={location.name}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.05 }}
-            className="rounded-2xl border-2 border-ink bg-cream p-5 shadow-brutal-sm sm:rounded-3xl sm:border-4 sm:p-6"
-          >
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-ink bg-gold sm:h-11 sm:w-11 sm:rounded-xl sm:border-4">
-                <MapPin className="h-4 w-4 text-ink sm:h-5 sm:w-5" />
+      <div className="flex flex-col gap-14 sm:gap-16 lg:gap-20">
+        {homeExploreLocations.map((location, index) => {
+          const imageOnLeft = index % 2 === 0;
+
+          return (
+            <motion.div
+              key={location.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ delay: 0.05 }}
+              className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16"
+            >
+              <div
+                className={
+                  imageOnLeft ? "order-1 lg:order-1" : "order-1 lg:order-2"
+                }
+              >
+                <HighlightImage location={location} />
               </div>
-              <span className="rounded-lg border-2 border-ink bg-white px-2 py-0.5 text-[10px] font-black uppercase sm:text-xs">
-                {location.tag}
-              </span>
-            </div>
-            <h3 className="mb-2 text-base font-black uppercase tracking-tighter text-maroon sm:text-lg">
-              {location.name}
-            </h3>
-            <p className="text-sm font-bold leading-relaxed text-ink/70">
-              {location.description}
-            </p>
-          </motion.article>
-        ))}
+              <div
+                className={
+                  imageOnLeft ? "order-2 lg:order-2" : "order-2 lg:order-1"
+                }
+              >
+                <HighlightContent location={location} />
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </Section>
   );

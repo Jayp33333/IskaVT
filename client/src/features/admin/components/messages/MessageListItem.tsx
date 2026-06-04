@@ -12,10 +12,13 @@ export function MessageListItem({ message, active, onSelect }: MessageListItemPr
   return (
     <li>
       <button
+        type="button"
         onClick={() => onSelect(message)}
-        className={`w-full text-left px-4 py-3 border-b border-gray-100 flex gap-3 transition-colors ${
-          active ? "bg-[#660B05]/10" : "hover:bg-gray-50"
-        } ${!message.isRead ? "bg-[#FFF7EC]" : ""}`}
+        className={`flex w-full gap-3 border-b border-gray-100 px-4 py-3 text-left transition-colors ${
+          active
+            ? "bg-[#660B05]/10 ring-1 ring-inset ring-[#660B05]/20"
+            : "hover:bg-gray-50/80"
+        } ${!message.isRead && !active ? "bg-amber-50/60" : ""}`}
       >
         <div
           className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold ${

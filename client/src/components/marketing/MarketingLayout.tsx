@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavBar } from "../Home/NavBar";
 import { Footer } from "../Home/Footer";
 
@@ -8,6 +9,11 @@ type MarketingLayoutProps = {
 };
 
 export function MarketingLayout({ children, hero = false }: MarketingLayoutProps) {
+  useEffect(() => {
+    document.body.classList.add("marketing-no-shadow");
+    return () => document.body.classList.remove("marketing-no-shadow");
+  }, []);
+
   return (
     <div className="min-h-screen bg-cream text-ink antialiased">
       <NavBar />

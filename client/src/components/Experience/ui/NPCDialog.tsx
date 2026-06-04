@@ -91,13 +91,13 @@ export const NPCDialog = ({
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-2.5 pointer-events-auto sm:gap-3 [@media(orientation:landscape)_and_(max-height:600px)]:max-w-3xl [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5">
             {typingDone && (
               <motion.div
-                className="ml-auto flex w-full max-w-[20rem] flex-col gap-1.5 rounded-2xl border-[3px] border-slate-900 bg-white p-2.5 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] sm:border-[4px] sm:p-3 sm:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[20rem] [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:p-2"
+                className="ml-auto flex w-full max-w-[20rem] flex-col gap-1.5 rounded-2xl border-[3px] border-ink bg-white p-2.5 shadow-brutal-sm sm:border-[4px] sm:p-3 sm:shadow-brutal-md [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[20rem] [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:p-2"
                 initial={{ opacity: 0, x: 18 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 18 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="flex items-center gap-1.5 px-1 text-[9px] font-black uppercase leading-none tracking-widest text-slate-500 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
+                <div className="flex items-center gap-1.5 px-1 text-[9px] font-black uppercase leading-none tracking-widest text-ink/50 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
                   <MessageCircle size={14} strokeWidth={4} />
                   Your Reply
                 </div>
@@ -106,7 +106,7 @@ export const NPCDialog = ({
                     <button
                       key={i}
                       type="button"
-                      className="rounded-xl border-[3px] border-slate-900 bg-yellow-400 px-3 py-2 text-left text-xs font-extrabold leading-snug text-slate-900 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] transition-all hover:bg-yellow-300 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
+                      className="rounded-xl border-[3px] border-ink bg-gold px-3 py-2 text-left text-xs font-extrabold leading-snug text-ink shadow-brutal-sm transition-all hover:bg-gold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
                       onClick={opt.onClick}
                     >
                       {opt.label}
@@ -115,7 +115,7 @@ export const NPCDialog = ({
                 ) : (
                   <button
                     type="button"
-                    className="rounded-xl border-[3px] border-slate-900 bg-[#D43F3F] px-3 py-2 text-xs font-black uppercase tracking-wide text-white shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
+                    className="rounded-xl border-[3px] border-ink bg-maroon px-3 py-2 text-xs font-black uppercase tracking-wide text-white shadow-brutal-sm transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
                     onClick={onClose}
                   >
                     Close
@@ -125,13 +125,13 @@ export const NPCDialog = ({
             )}
 
             <div
-              className="relative overflow-hidden rounded-[1.5rem] border-[4px] border-slate-900 bg-[#FFFDF9] shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] sm:rounded-[1.75rem] sm:border-[5px] sm:shadow-[7px_7px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]"
+              className="relative overflow-hidden rounded-[1.5rem] border-[4px] border-ink bg-cream shadow-brutal-md sm:rounded-[1.75rem] sm:border-[5px] sm:shadow-brutal-md [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-brutal-sm"
               onClick={handleMessageClick}
               role="dialog"
               aria-label={`${title} dialog`}
             >
-              <div className="flex items-center gap-3 border-b-[4px] border-slate-900 bg-[#D43F3F] px-3.5 py-2.5 text-white sm:gap-4 sm:px-5 sm:py-3.5 [@media(orientation:landscape)_and_(max-height:600px)]:gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[3px] border-slate-900 bg-yellow-400 text-lg font-black leading-none text-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] sm:h-12 sm:w-12 sm:rounded-2xl sm:text-xl sm:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:600px)]:h-8 [@media(orientation:landscape)_and_(max-height:600px)]:w-8 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:text-sm">
+              <div className="flex items-center gap-3 border-b-[4px] border-ink bg-maroon px-3.5 py-2.5 text-white sm:gap-4 sm:px-5 sm:py-3.5 [@media(orientation:landscape)_and_(max-height:600px)]:gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-[3px] border-ink bg-gold text-lg font-black leading-none text-ink shadow-brutal-sm sm:h-12 sm:w-12 sm:rounded-2xl sm:text-xl sm:shadow-brutal-sm [@media(orientation:landscape)_and_(max-height:600px)]:h-8 [@media(orientation:landscape)_and_(max-height:600px)]:w-8 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:text-sm">
                   {speakerInitial}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -141,7 +141,7 @@ export const NPCDialog = ({
                 </div>
                 <button
                   type="button"
-                  className="shrink-0 rounded-xl border-[3px] border-slate-900 bg-white p-1.5 text-slate-900 transition-transform active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"
+                  className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1.5 text-ink transition-transform active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"
                   onClick={(event) => {
                     event.stopPropagation();
                     onClose();
@@ -153,11 +153,11 @@ export const NPCDialog = ({
               </div>
 
               <div className="px-4 py-3.5 sm:px-6 sm:py-5 [@media(orientation:landscape)_and_(max-height:600px)]:px-4 [@media(orientation:landscape)_and_(max-height:600px)]:py-2.5">
-                <p className="min-h-[3rem] text-[13px] font-bold leading-6 text-slate-800 sm:min-h-[3.25rem] sm:text-sm sm:leading-7 [@media(orientation:landscape)_and_(max-height:600px)]:min-h-[2rem] [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:600px)]:leading-4">
+                <p className="min-h-[3rem] text-[13px] font-bold leading-6 text-ink sm:min-h-[3.25rem] sm:text-sm sm:leading-7 [@media(orientation:landscape)_and_(max-height:600px)]:min-h-[2rem] [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:600px)]:leading-4">
                   {displayedText}
                   <span className={typingDone ? "opacity-0" : "animate-pulse"}>|</span>
                 </p>
-                <p className="mt-2.5 text-[10px] font-black uppercase leading-none tracking-wider text-slate-400 sm:mt-3 [@media(orientation:landscape)_and_(max-height:600px)]:mt-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
+                <p className="mt-2.5 text-[10px] font-black uppercase leading-none tracking-wider text-ink/40 sm:mt-3 [@media(orientation:landscape)_and_(max-height:600px)]:mt-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
                   {typingDone ? "Choose a reply to continue" : "Click dialog to skip typing"}
                 </p>
               </div>

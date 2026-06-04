@@ -39,6 +39,11 @@ export default function ExperienceScene() {
     void enterKioskLandscape();
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add("experience-no-shadow");
+    return () => document.body.classList.remove("experience-no-shadow");
+  }, []);
+
   // Keyboard shortcut:
   // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
   useEffect(() => {
@@ -54,13 +59,14 @@ export default function ExperienceScene() {
         const {
           showMiniMap,
           showLogHistory,
+          showFeedback,
           activeNPCDialog,
           npcsInRange,
           triggerNearestNPCTalk,
           triggerDoorOpen,
         } = useWorld.getState() as any;
 
-        if (showMiniMap || showLogHistory || activeNPCDialog) return;
+        if (showMiniMap || showLogHistory || showFeedback || activeNPCDialog) return;
 
         // If an NPC is in range, use F to talk.
         if (npcsInRange && npcsInRange.size > 0) {
@@ -211,7 +217,7 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      <UI tourGuideDialogOpen={showWelcome} />
+      <UI tourGuideDialogOpen={showWelcome} experienceStarted={loadingFinished} />
 
       {/* <Map2D /> */}
       

@@ -101,21 +101,18 @@ export function ContactForm({
           <button
             type="submit"
             disabled={submitting}
-            className="group relative rounded-xl border-2 border-black bg-[#800000] px-6 py-3 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:rounded-2xl sm:border-4 sm:px-8 sm:py-3.5"
+            className="group inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-6 py-3 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon/90 disabled:cursor-not-allowed disabled:opacity-70 sm:gap-3 sm:px-8 sm:py-3.5 sm:text-base"
           >
-            <div className="flex items-center gap-2 text-sm font-black uppercase tracking-tighter text-white sm:gap-3 sm:text-base">
-              {submitting ? (
-                <>
-                  Sending <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
-                </>
-              ) : (
-                <>
-                  Send Message{" "}
-                  <Send className="h-4 w-4 transition-transform group-hover:rotate-12 sm:h-5 sm:w-5" />
-                </>
-              )}
-            </div>
-            <div className="absolute top-0 right-0 h-4 w-4 rounded-bl-lg border-b-2 border-l-2 border-black bg-white sm:h-5 sm:w-5 sm:rounded-bl-xl sm:border-b-4 sm:border-l-4" />
+            {submitting ? (
+              <>
+                Sending <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" />
+              </>
+            ) : (
+              <>
+                Send Message{" "}
+                <Send className="h-4 w-4 transition-transform group-hover:rotate-12 sm:h-5 sm:w-5" />
+              </>
+            )}
           </button>
         </div>
       </form>

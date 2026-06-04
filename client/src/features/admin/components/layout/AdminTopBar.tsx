@@ -1,5 +1,6 @@
-import { FileText } from "lucide-react";
 import { useState } from "react";
+import { useAdmin } from "../../context/AdminContext";
+import { ADMIN_TAB_META } from "../common/adminUi";
 import { AccountDropdown } from "./AccountDropdown";
 import { EmailDropdown } from "./EmailDropdown";
 import { NotificationsDropdown } from "./NotificationsDropdown";
@@ -12,20 +13,28 @@ type AdminTopBarProps = {
 type ActiveDropdown = "email" | "notifications" | "account" | null;
 
 export function AdminTopBar({ onOpenSettings, onOpenHelp }: AdminTopBarProps) {
+  const { tab } = useAdmin();
   const [active, setActive] = useState<ActiveDropdown>(null);
+  const meta = ADMIN_TAB_META[tab];
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
-      <div className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6 flex-1">
-          <div className="md:hidden">
-            <div className="w-8 h-8 rounded-full bg-[#660B05] flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-          </div>
+    <header className="sticky top-0 z-30 border-b border-gray-200/80 bg-white/85 backdrop-blur-md">
+      <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="min-w-0 md:hidden">
+          <h1 className="truncate text-base font-bold text-gray-900">
+            {meta.title}
+          </h1>
+          <p className="truncate text-xs text-gray-500">{meta.subtitle}</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="hidden min-w-0 flex-1 md:block">
+          <h1 className="text-lg font-bold tracking-tight text-gray-900">
+            {meta.title}
+          </h1>
+          <p className="text-sm text-gray-500">{meta.subtitle}</p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <EmailDropdown
             open={active === "email"}
             onToggle={(next) => setActive(next ? "email" : null)}

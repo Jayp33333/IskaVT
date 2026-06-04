@@ -57,7 +57,7 @@ export const LogHistory = () => {
             {isOpen && (
               <>
                 <motion.div
-                  className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm"
+                  className="fixed inset-0 z-[2000] bg-ink/85"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -71,7 +71,7 @@ export const LogHistory = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
                   <div
-                    className="pointer-events-auto flex w-full max-w-6xl flex-col overflow-hidden rounded-[24px] border-[4px] border-black bg-[#FFFBEB] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] h-[85vh] max-h-[90dvh] [@media(max-height:500px)]:max-h-[94dvh] [@media(orientation:landscape)_and_(max-height:600px)]:h-auto [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[92dvh] [@media(orientation:landscape)_and_(max-height:600px)]:w-[min(96vw,56rem)] [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl"
+                    className="pointer-events-auto flex w-full max-w-6xl flex-col overflow-hidden rounded-[24px] border-[4px] border-black bg-[#FFFBEB] shadow-brutal-lg h-[85vh] max-h-[90dvh] [@media(max-height:500px)]:max-h-[94dvh] [@media(orientation:landscape)_and_(max-height:600px)]:h-auto [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[92dvh] [@media(orientation:landscape)_and_(max-height:600px)]:w-[min(96vw,56rem)] [@media(orientation:landscape)_and_(max-height:600px)]:rounded-2xl"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Header */}
@@ -136,7 +136,7 @@ export const LogHistory = () => {
                                     <p className="break-words font-bold text-[10px] text-black sm:text-[11px]">
                                       {entry.fullName}
                                     </p>
-                                    <span className="mt-0.5 inline-block rounded border border-black bg-yellow-300 px-1 py-px text-[7px] font-black uppercase sm:text-[8px]">
+                                    <span className="mt-0.5 inline-block rounded border border-black bg-gold px-1 py-px text-[7px] font-black uppercase sm:text-[8px]">
                                       {entry.visitorType}
                                     </span>
                                   </td>
@@ -230,7 +230,7 @@ export const LogHistory = () => {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-slate-900 bg-yellow-300 text-[#660B05] shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] transition-all hover:bg-yellow-200 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)]"
+        className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
         title="Open log history"
         aria-label="Open log history"
         aria-expanded={isOpen}

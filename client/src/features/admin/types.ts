@@ -1,10 +1,16 @@
-import type { LogbookRecord, ContactMessageRecord } from "../../services/api";
+import type {
+  LogbookRecord,
+  ContactMessageRecord,
+  FeedbackRecord as ApiFeedbackRecord,
+} from "../../services/api";
 
-export type AdminTab = "dashboard" | "visitors" | "messages";
+export type AdminTab = "dashboard" | "visitors" | "messages" | "feedback";
 
 export type VisitorPeriod = "daily" | "weekly" | "monthly" | "yearly";
 
 export type MessageFilter = "all" | "unread" | "read";
+
+export type FeedbackFilter = "all" | "unread" | "read";
 
 export type ToastKind = "success" | "error";
 
@@ -43,3 +49,4 @@ export type AggregatedTimelinePoint = {
 
 export type VisitorRecord = LogbookRecord;
 export type MessageRecord = ContactMessageRecord;
+export type FeedbackRecord = ApiFeedbackRecord;

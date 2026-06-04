@@ -32,7 +32,7 @@ export const FullScreenButton = () => {
   return (
     <button
       onClick={toggleFullScreen}
-      className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-slate-900 bg-yellow-300 text-[#660B05] hover:bg-yellow-200 transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none ${
+      className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-ink bg-gold text-maroon hover:bg-gold/90 transition-all flex items-center justify-center shadow-brutal-sm [@media(max-height:500px)]:shadow-brutal-sm active:translate-y-1 active:shadow-none ${
         showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""
       }`}
       title={isFullScreen ? "Exit full screen" : "Enter full screen"}

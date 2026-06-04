@@ -68,6 +68,10 @@ export const logbookAPI = {
     });
   },
 
+  getEntry(entryId: string) {
+    return apiRequest<LogbookEntryResponse>(`/logbook/${entryId}`);
+  },
+
   getEntries(page = 1, limit = 50) {
     return apiRequest<LogbookListResponse>(
       `/logbook${buildQuery({ page, limit })}`

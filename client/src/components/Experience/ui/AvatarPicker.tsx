@@ -51,7 +51,7 @@ export const AvatarPicker = () => {
     <div className="relative">
       {/* Current Avatar Button */}
       <button
-        className={`group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border-[3px] border-slate-900 bg-yellow-300 text-[#660B05] shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] transition-all hover:bg-yellow-200 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] ${
+        className={`group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm ${
           showLogHistory ? "pointer-events-none blur-sm opacity-50" : ""
         }`}
         onClick={() => setOpenMenu(!openMenu)}
@@ -76,13 +76,13 @@ export const AvatarPicker = () => {
       <AnimatePresence>
         {openMenu && (
           <motion.div
-            className="absolute left-0 top-12 z-[1500] w-[min(92vw,19rem)] overflow-hidden rounded-[1.5rem] border-[4px] border-slate-900 bg-[#FFFDF9] text-slate-900 shadow-[7px_7px_0px_0px_rgba(15,23,42,1)] [@media(max-width:360px)]:w-[min(88vw,17rem)] [@media(max-height:500px)]:top-10 [@media(max-height:500px)]:w-[min(80vw,20rem)] [@media(max-height:500px)]:rounded-2xl [@media(max-height:500px)]:border-[3px] [@media(max-height:500px)]:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:500px)]:w-[min(50vw,18rem)]"
+            className="absolute left-0 top-12 z-[1500] w-[min(92vw,19rem)] overflow-hidden rounded-[1.5rem] border-[4px] border-ink bg-cream text-ink shadow-brutal-md [@media(max-width:360px)]:w-[min(88vw,17rem)] [@media(max-height:500px)]:top-10 [@media(max-height:500px)]:w-[min(80vw,20rem)] [@media(max-height:500px)]:rounded-2xl [@media(max-height:500px)]:border-[3px] [@media(max-height:500px)]:shadow-brutal-md [@media(orientation:landscape)_and_(max-height:500px)]:w-[min(50vw,18rem)]"
             initial={{ opacity: 0, scale: 0.92, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: -6 }}
             transition={{ type: "spring", damping: 22, stiffness: 280 }}
           >
-            <div className="flex items-center justify-between gap-3 border-b-[4px] border-slate-900 bg-[#D43F3F] px-4 py-3 [@media(max-height:500px)]:border-b-[3px] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:py-1.5">
+            <div className="flex items-center justify-between gap-3 border-b-[4px] border-ink bg-maroon px-4 py-3 [@media(max-height:500px)]:border-b-[3px] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:py-1.5">
               <div className="min-w-0">
                 <p className="text-[9px] font-black uppercase tracking-wider text-yellow-200 [@media(max-height:500px)]:hidden">
                   Player Style
@@ -93,7 +93,7 @@ export const AvatarPicker = () => {
               </div>
               <button
                 onClick={() => setOpenMenu(false)}
-                className="shrink-0 rounded-xl border-[3px] border-slate-900 bg-white p-1 text-slate-900 transition-transform hover:bg-slate-100 active:scale-90 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5"
+                className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1 text-ink transition-transform hover:bg-muted active:scale-90 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5"
                 aria-label="Close avatar picker"
                 type="button"
               >
@@ -102,8 +102,8 @@ export const AvatarPicker = () => {
             </div>
 
             <div className="max-h-[min(62dvh,22rem)] overflow-y-auto p-3 custom-scrollbar [@media(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-3.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:p-1.5">
-              <div className="mb-3 rounded-2xl border-[3px] border-slate-900 bg-white p-1.5 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:500px)]:mb-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
-                <p className="mb-1.5 px-1 text-[9px] font-black uppercase tracking-wide text-slate-500 [@media(max-height:500px)]:hidden">
+              <div className="mb-3 rounded-2xl border-[3px] border-ink bg-white p-1.5 shadow-brutal-sm [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:500px)]:mb-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:shadow-brutal-sm">
+                <p className="mb-1.5 px-1 text-[9px] font-black uppercase tracking-wide text-ink/50 [@media(max-height:500px)]:hidden">
                   Camera View
                 </p>
                 <div className="grid grid-cols-2 gap-1.5 [@media(max-height:500px)]:gap-1 [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5">
@@ -114,10 +114,10 @@ export const AvatarPicker = () => {
                       <button
                         key={mode}
                         onClick={() => setCameraMode(mode)}
-                        className={`flex items-center justify-center gap-1.5 rounded-xl border-[2px] border-slate-900 px-2 py-2 text-[10px] font-black uppercase transition-all active:translate-y-0.5 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:py-1.5 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:py-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px] ${
+                        className={`flex items-center justify-center gap-1.5 rounded-xl border-[2px] border-ink px-2 py-2 text-[10px] font-black uppercase transition-all active:translate-y-0.5 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:py-1.5 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:py-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px] ${
                           isActive
-                            ? "bg-[#D43F3F] text-white shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]"
-                            : "bg-yellow-100 text-slate-800 hover:bg-yellow-200"
+                            ? "bg-maroon text-white shadow-brutal-sm"
+                            : "bg-gold/25 text-ink hover:bg-gold/90"
                         }`}
                         type="button"
                         aria-pressed={isActive}
@@ -144,25 +144,25 @@ export const AvatarPicker = () => {
                       onClick={() => handleSelectAvatar(avatar)}
                       className={`group/avatar relative flex flex-col items-center gap-2 rounded-2xl border-[3px] p-2 text-center transition-all active:translate-y-1 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:p-1 ${
                         isSelected
-                          ? "border-slate-900 bg-yellow-300 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]"
-                          : "border-slate-900 bg-white shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:bg-yellow-50"
+                          ? "border-ink bg-gold shadow-brutal-sm"
+                          : "border-ink bg-white shadow-brutal-sm hover:bg-cream"
                       }`}
                       type="button"
                       aria-pressed={isSelected}
                     >
-                      <span className="relative h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-slate-900 bg-slate-100 [@media(max-height:500px)]:h-11 [@media(max-height:500px)]:w-11 [@media(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:h-9 [@media(orientation:landscape)_and_(max-height:500px)]:w-9 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px]">
+                      <span className="relative h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-ink bg-muted [@media(max-height:500px)]:h-11 [@media(max-height:500px)]:w-11 [@media(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:h-9 [@media(orientation:landscape)_and_(max-height:500px)]:w-9 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px]">
                         <img
                           src={avatar.headIconUrl}
                           alt="Avatar option"
                           className="h-full w-full object-cover transition-transform duration-200 group-hover/avatar:scale-105"
                         />
                         {isSelected && (
-                          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full border-[2px] border-slate-900 bg-emerald-300 [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-4 [@media(orientation:landscape)_and_(max-height:500px)]:right-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:top-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-3.5">
-                            <Check className="h-3 w-3 text-slate-900 [@media(max-height:500px)]:h-2.5 [@media(max-height:500px)]:w-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-2 [@media(orientation:landscape)_and_(max-height:500px)]:w-2" strokeWidth={4} />
+                          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full border-[2px] border-ink bg-emerald-300 [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-4 [@media(orientation:landscape)_and_(max-height:500px)]:right-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:top-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-3.5">
+                            <Check className="h-3 w-3 text-ink [@media(max-height:500px)]:h-2.5 [@media(max-height:500px)]:w-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-2 [@media(orientation:landscape)_and_(max-height:500px)]:w-2" strokeWidth={4} />
                           </span>
                         )}
                       </span>
-                      <span className="text-[10px] font-black uppercase tracking-wide text-slate-700 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]">
+                      <span className="text-[10px] font-black uppercase tracking-wide text-ink/80 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]">
                         {isSelected ? "Selected" : "Select"}
                       </span>
                     </button>

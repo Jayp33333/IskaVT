@@ -79,10 +79,10 @@ export const DestinationPicker = () => {
           setOpen(true);
           useWorld.getState().setShowDestinationPicker(true);
         }}
-        className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-slate-900 transition-all flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none ${
+        className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-ink transition-all flex items-center justify-center shadow-brutal-sm [@media(max-height:500px)]:shadow-brutal-sm active:translate-y-1 active:shadow-none ${
           selectedDestination
-            ? "bg-[#D43F3F] text-white"
-            : "bg-yellow-300 text-[#660B05] hover:bg-yellow-200"
+            ? "bg-maroon text-white"
+            : "bg-gold text-maroon hover:bg-gold/90"
         } ${showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""}`}
         title={selectedDestination ? `Destination: ${selectedDestination}` : "Select destination"}
         aria-label="Select destination"
@@ -96,29 +96,29 @@ export const DestinationPicker = () => {
         <AnimatePresence>
           {open && (
             <motion.div
-              className="fixed inset-0 z-[1600] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 [@media(max-height:500px)]:p-2 pointer-events-auto"
+              className="fixed inset-0 z-[1600] flex items-end sm:items-center justify-center bg-ink/85 p-0 sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2 pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
           >
             <motion.div
-              className="relative w-full max-w-[460px] [@media(max-height:500px)]:max-w-[92vw] [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(92vw,560px)] bg-[#FFFDF9] text-slate-800 rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 flex flex-col max-h-[88vh] [@media(max-height:500px)]:max-h-[96dvh] overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0, y: 40 }}
+              className="relative w-full max-w-[460px] sm:max-w-[460px] max-sm:max-w-none max-sm:rounded-t-[1.75rem] max-sm:rounded-b-none bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none border-[4px] sm:border-[6px] border-ink max-sm:border-b-0 flex flex-col max-h-[88vh] max-sm:max-h-[92dvh] [@media(max-height:500px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] overflow-hidden"
+              initial={{ scale: 0.98, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 40 }}
+              exit={{ scale: 0.98, opacity: 0, y: 24 }}
               transition={{ type: "spring", damping: 20, stiffness: 250 }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="bg-[#D43F3F] border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-slate-900 px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
+              <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-yellow-300 border-[3px] border-slate-900 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] shrink-0">
-                      <Navigation className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-slate-900" strokeWidth={3.5} />
+                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
+                      <Navigation className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-ink" strokeWidth={3.5} />
                     </div>
                     <div className="min-w-0">
-                      <p className="inline-block rounded-full bg-yellow-300 border-[3px] border-slate-900 px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-slate-900">
+                      <p className="inline-block rounded-full bg-gold border-[3px] border-ink px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-ink">
                         Campus Navigation
                       </p>
                       <h2 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-base font-black italic text-white leading-tight truncate">
@@ -128,7 +128,7 @@ export const DestinationPicker = () => {
                   </div>
                   <button
                     onClick={close}
-                    className="bg-white border-[3px] border-slate-900 p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-slate-100 transition-transform active:scale-90 shrink-0"
+                    className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
                     aria-label="Close"
                     type="button"
                   >
@@ -142,21 +142,21 @@ export const DestinationPicker = () => {
 
               {/* Active pin */}
               {selectedDestination && (
-                <div className="mx-4 mt-4 [@media(max-height:500px)]:mx-3 [@media(max-height:500px)]:mt-2 flex items-center justify-between gap-3 p-3 [@media(max-height:500px)]:p-2 rounded-2xl bg-emerald-300 border-[3px] border-slate-900 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] shrink-0">
+                <div className="mx-4 mt-4 [@media(max-height:500px)]:mx-3 [@media(max-height:500px)]:mt-2 flex items-center justify-between gap-3 p-3 [@media(max-height:500px)]:p-2 rounded-2xl bg-emerald-300 border-[3px] border-ink shadow-brutal-sm shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
-                    <MapPinned className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-slate-900 shrink-0" strokeWidth={3} />
+                    <MapPinned className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-ink shrink-0" strokeWidth={3} />
                     <div className="min-w-0">
                       <p className="text-[10px] [@media(max-height:500px)]:text-[8px] font-black uppercase text-emerald-950 tracking-wide">
                         Pinned
                       </p>
-                      <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-slate-900 truncate">
+                      <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-ink truncate">
                         {selectedDestination}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={handleUnpin}
-                    className="shrink-0 px-3 py-1.5 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase rounded-xl bg-white border-[3px] border-slate-900 text-slate-800 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all"
+                    className="shrink-0 px-3 py-1.5 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase rounded-xl bg-white border-[3px] border-ink text-ink shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all"
                     type="button"
                   >
                     Unpin
@@ -168,19 +168,19 @@ export const DestinationPicker = () => {
               <div className="px-4 pt-4 pb-2 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-1 shrink-0">
                 <div className="relative">
                   <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-[#D43F3F] pointer-events-none"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-maroon pointer-events-none"
                     strokeWidth={3}
                   />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search buildings, rooms, facilities..."
-                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-slate-800 bg-white border-[3px] border-slate-900 rounded-2xl outline-none focus:bg-yellow-50 placeholder:text-slate-400"
+                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-ink bg-white border-[3px] border-ink rounded-2xl outline-none focus:bg-cream placeholder:text-ink/40"
                   />
                   {query && (
                     <button
                       onClick={() => setQuery("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-xl hover:bg-slate-100 text-slate-700"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-xl hover:bg-muted text-ink/80"
                       title="Clear search"
                       type="button"
                     >
@@ -188,48 +188,51 @@ export const DestinationPicker = () => {
                     </button>
                   )}
                 </div>
-                <p className="mt-3 [@media(max-height:500px)]:mt-2 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase tracking-wide text-slate-500 px-0.5">
+                <p className="mt-3 [@media(max-height:500px)]:mt-2 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase tracking-wide text-ink/50 px-0.5">
                   {filteredDestinations.length} location
                   {filteredDestinations.length !== 1 ? "s" : ""} found
                 </p>
               </div>
 
               {/* List */}
-              <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:pb-2 custom-scrollbar">
+              <div className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 pb-4 pb-[max(1rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:pb-2 [@media(orientation:landscape)_and_(max-height:768px)]:px-2.5 custom-scrollbar">
                 {filteredDestinations.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-10 [@media(max-height:500px)]:py-4 text-center">
-                    <div className="p-4 [@media(max-height:500px)]:p-2 rounded-2xl bg-yellow-100 border-[3px] border-dashed border-slate-900 mb-3 [@media(max-height:500px)]:mb-2">
-                      <MapPin className="w-7 h-7 [@media(max-height:500px)]:w-5 [@media(max-height:500px)]:h-5 text-[#D43F3F]" strokeWidth={3} />
-                    </div>
-                    <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-slate-800">No locations found</p>
-                    <p className="text-xs [@media(max-height:500px)]:text-[10px] font-bold text-slate-500 mt-1">Try a different search term</p>
+                    <MapPin
+                      className="w-10 h-10 [@media(max-height:500px)]:w-8 [@media(max-height:500px)]:h-8 text-maroon/40 mb-3 [@media(max-height:500px)]:mb-2"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-ink">No locations found</p>
+                    <p className="text-xs [@media(max-height:500px)]:text-[10px] font-bold text-ink/50 mt-1">Try a different search term</p>
                   </div>
                 ) : (
-                  <ul className="space-y-2 [@media(max-height:500px)]:space-y-1.5">
+                  <ul className="divide-y divide-ink/15">
                     {filteredDestinations.map((d) => {
                       const isActive = selectedDestination === d.name;
                       return (
                         <li key={d.id}>
                           <button
                             onClick={() => handleSelect(d)}
-                            className={`w-full flex items-center gap-3 [@media(max-height:500px)]:gap-2 p-3 [@media(max-height:500px)]:p-2 rounded-2xl border-[3px] border-slate-900 text-left transition-colors ${
-                              isActive ? "bg-yellow-300" : "bg-white hover:bg-yellow-50"
+                            className={`w-full flex items-center gap-3 sm:gap-3.5 px-2 sm:px-2.5 py-3 sm:py-3.5 [@media(max-height:500px)]:gap-2.5 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-2 rounded-lg text-left transition-colors ${
+                              isActive ? "bg-gold/40" : "hover:bg-muted active:bg-muted"
                             }`}
                             type="button"
                           >
-                            <span
-                              className={`flex items-center justify-center w-9 h-9 [@media(max-height:500px)]:w-7 [@media(max-height:500px)]:h-7 rounded-xl border-[3px] border-slate-900 shrink-0 ${
-                                isActive ? "bg-[#D43F3F] text-white" : "bg-pink-100 text-[#D43F3F]"
+                            <MapPin
+                              className={`w-5 h-5 sm:w-[1.35rem] sm:h-[1.35rem] shrink-0 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 ${
+                                isActive ? "text-maroon" : "text-maroon/70"
                               }`}
-                            >
-                              <MapPin className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5" strokeWidth={3.5} />
-                            </span>
+                              strokeWidth={2.25}
+                              fill={isActive ? "currentColor" : "none"}
+                              aria-hidden
+                            />
                             <span className="flex-1 min-w-0">
-                              <span className="block text-sm [@media(max-height:500px)]:text-xs font-black text-slate-900 leading-snug">
+                              <span className="block text-sm sm:text-[0.9375rem] [@media(max-height:500px)]:text-xs font-bold text-ink leading-snug break-words">
                                 {d.name}
                               </span>
                               {isActive && (
-                                <span className="text-[10px] [@media(max-height:500px)]:text-[8px] font-black uppercase text-[#D43F3F] tracking-wide">
+                                <span className="mt-0.5 block text-[10px] sm:text-[11px] [@media(max-height:500px)]:text-[8px] font-bold uppercase text-maroon tracking-wide">
                                   Currently pinned
                                 </span>
                               )}

@@ -19,7 +19,7 @@ type FeaturesProps = {
 
 export function Features({ showExtendedContent = false }: FeaturesProps) {
   return (
-    <Section id="features">
+    <Section id="features" dotGrid>
       <PageHeader
         title={
           <>
@@ -47,7 +47,7 @@ export function Features({ showExtendedContent = false }: FeaturesProps) {
               transition={{ duration: 0.45, delay: index * 0.08 }}
               viewport={{ once: true }}
               whileHover={{ y: -6, x: -4 }}
-              className="group relative rounded-2xl border-2 border-ink bg-white p-5 shadow-brutal-md transition-all duration-300 hover:shadow-brutal-maroon sm:rounded-3xl sm:border-4 sm:p-6 lg:p-7"
+              className="rounded-2xl border-2 border-ink bg-white p-5 shadow-brutal-md transition-all duration-300 hover:shadow-brutal-maroon sm:rounded-3xl sm:border-4 sm:p-6 lg:p-7"
             >
               <div
                 className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl border-2 border-ink shadow-brutal-sm transition-transform group-hover:rotate-6 sm:mb-5 sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4 ${bgClass}`}
@@ -70,8 +70,6 @@ export function Features({ showExtendedContent = false }: FeaturesProps) {
                   {feature.details}
                 </p>
               )}
-
-              <div className="absolute top-0 right-0 h-6 w-6 rounded-bl-xl border-b-2 border-l-2 border-ink bg-cream sm:h-8 sm:w-8 sm:rounded-bl-2xl sm:border-b-4 sm:border-l-4" />
             </motion.div>
           );
         })}

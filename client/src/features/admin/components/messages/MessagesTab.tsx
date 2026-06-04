@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAdmin } from "../../context/AdminContext";
 import type { MessageRecord } from "../../types";
+import { AdminCard } from "../common/adminUi";
 import { ConfirmDialog } from "../common/ConfirmDialog";
 import { MessageDetail } from "./MessageDetail";
 import { MessageList } from "./MessageList";
@@ -12,6 +13,8 @@ export function MessagesTab() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<MessageRecord | null>(null);
+
+  const showDetailMobile = !!messages.selectedMessage;
 
   const handleToggleRead = async (m: MessageRecord) => {
     try {
@@ -54,36 +57,45 @@ export function MessagesTab() {
         onRefresh={() => messages.loadMessages(messages.messagesPage).catch(() => {})}
       />
 
-      <section className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,380px)_1fr] min-h-[60vh]">
-          <MessageList
-            messages={messages.messages}
-            loading={messages.messagesLoading}
-            filter={messages.messageFilter}
-            search={messages.messageSearch}
-            selectedId={messages.selectedMessage?._id}
-            page={messages.messagesPage}
-            totalPages={messages.messagesTotalPages}
-            onSelect={(m) => messages.openMessage(m).catch(() => {})}
-            onPrev={() =>
-              messages.loadMessages(Math.max(1, messages.messagesPage - 1)).catch(() => {})
-            }
-            onNext={() =>
-              messages
-                .loadMessages(
-                  Math.min(messages.messagesTotalPages, messages.messagesPage + 1)
-                )
-                .catch(() => {})
-            }
-          />
+      <AdminCard padding="none" className="overflow-hidden">
+        <div className="grid min-h-[min(70vh,640px)] grid-cols-1 lg:grid-cols-[minmax(0,340px)_1fr] xl:grid-cols-[minmax(0,380px)_1fr]">
+          <div className={showDetailMobile ? "hidden lg:block" : "block"}>
+            <MessageList
+              messages={messages.messages}
+              loading={messages.messagesLoading}
+              filter={messages.messageFilter}
+              search={messages.messageSearch}
+              selectedId={messages.selectedMessage?._id}
+              page={messages.messagesPage}
+              totalPages={messages.messagesTotalPages}
+              onSelect={(m) => messages.openMessage(m).catch(() => {})}
+              onPrev={() =>
+                messages.loadMessages(Math.max(1, messages.messagesPage - 1)).catch(() => {})
+              }
+              onNext={() =>
+                messages
+                  .loadMessages(
+                    Math.min(messages.messagesTotalPages, messages.messagesPage + 1)
+                  )
+                  .catch(() => {})
+              }
+            />
+          </div>
 
-          <MessageDetail
-            message={messages.selectedMessage}
-            onToggleRead={handleToggleRead}
-            onDelete={requestDelete}
-          />
+          <div
+            className={`border-gray-200 lg:border-l ${
+              showDetailMobile ? "block" : "hidden lg:block"
+            }`}
+          >
+            <MessageDetail
+              message={messages.selectedMessage}
+              onToggleRead={handleToggleRead}
+              onDelete={requestDelete}
+              onBack={() => messages.setSelectedMessage(null)}
+            />
+          </div>
         </div>
-      </section>
+      </AdminCard>
 
       <ConfirmDialog
         open={deleteOpen && !!messageToDelete}
@@ -97,8 +109,8 @@ export function MessagesTab() {
               <div className="text-sm font-semibold text-gray-900">
                 {messageToDelete.name}
               </div>
-              <div className="text-xs text-gray-600 mt-1">{messageToDelete.email}</div>
-              <div className="text-xs text-gray-500 mt-2 line-clamp-3">
+              <div className="mt-1 text-xs text-gray-600">{messageToDelete.email}</div>
+              <div className="mt-2 line-clamp-3 text-xs text-gray-500">
                 {messageToDelete.message}
               </div>
             </>

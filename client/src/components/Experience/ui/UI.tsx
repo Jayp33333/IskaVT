@@ -1,3 +1,4 @@
+import { useState } from "react";
 import useWorld from "../../../hooks/useWorld";
 
 import { AvatarPicker } from "./AvatarPicker";
@@ -9,6 +10,7 @@ import { FloorLabel } from "./FloorLabel";
 import { AreaInfo } from "./AreaInfo";
 
 import { LogHistory } from "./LogHistory";
+import { Feedback } from "./Feedback";
 import { ExitTourButton } from "./ExitTourButton";
 import { FullScreenButton } from "./FullScreenButton";
 import Map2D from "../Map2D"; 
@@ -16,14 +18,17 @@ import { NPCDialog } from "./NPCDialog";
 
 type UIProps = {
   tourGuideDialogOpen?: boolean;
+  experienceStarted?: boolean;
 };
 
-export const UI = ({ tourGuideDialogOpen = false }: UIProps) => {
+export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: UIProps) => {
+  const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
   const { pinPosition, isPinConfirmed, activeNPCDialog, map2DOpen } = useWorld(
     (s: any) => s
   );
   const npcFocus = !!activeNPCDialog;
-  const hideAreaInfo = npcFocus || map2DOpen || tourGuideDialogOpen;
+  const hideAreaInfo =
+    npcFocus || map2DOpen || tourGuideDialogOpen || exitTourConfirmOpen;
 
   return (
     <>
@@ -32,10 +37,11 @@ export const UI = ({ tourGuideDialogOpen = false }: UIProps) => {
         <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-[300] flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
           <div className="flex max-w-full flex-wrap items-start gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
             <AvatarPicker />
-            <ExitTourButton />
+            <ExitTourButton onConfirmOpenChange={setExitTourConfirmOpen} />
             <FullScreenButton />
             <DestinationPicker />
             <LogHistory />
+            <Feedback experienceStarted={experienceStarted} />
           </div>
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
@@ -55,8 +61,8 @@ export const UI = ({ tourGuideDialogOpen = false }: UIProps) => {
         />
       )}
 
-      {/* Map — hidden during NPC dialog */}
-      {!npcFocus && <Map2D />}
+      {/* Map — hidden during NPC dialog or exit tour confirm */}
+      {!npcFocus && !exitTourConfirmOpen && <Map2D />}
     </>
   );
 };

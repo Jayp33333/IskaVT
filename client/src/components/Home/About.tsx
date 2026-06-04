@@ -124,9 +124,7 @@ export function About() {
   const page = aboutContent[section];
 
   return (
-    <Section id="about">
-      <div className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 h-96 w-96 rounded-full bg-gold/10 blur-[120px]" />
-
+    <Section id="about" dotGrid>
       <PageHeader
         title={
           <>

@@ -17,6 +17,7 @@ interface WorldState {
   showMiniMap: boolean;
   showDestinationPicker: boolean;
   showLogHistory: boolean;
+  showFeedback: boolean;
   map2DOpen: boolean;
   query: string;
   /** NPCs in range: id -> { position, onTalk }. Used for F-key interaction. */
@@ -71,6 +72,7 @@ interface WorldState {
   setShowMiniMap: (value: boolean) => void;
   setShowDestinationPicker: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
+  setShowFeedback: (value: boolean) => void;
   setMap2DOpen: (value: boolean) => void;
   setQuery: (query: string) => void;
   setLoading: (isLoading: boolean, message?: string) => void;
@@ -93,6 +95,7 @@ const useWorld = create<WorldState>((set) => ({
   showMiniMap: false,
   showDestinationPicker: false,
   showLogHistory: false,
+  showFeedback: false,
   map2DOpen: false,
   query: "",
   isLoading: false,
@@ -194,6 +197,7 @@ const useWorld = create<WorldState>((set) => ({
         : { showDestinationPicker }
     ),
   setShowLogHistory: (showLogHistory) => set({ showLogHistory }),
+  setShowFeedback: (showFeedback) => set({ showFeedback }),
   setMap2DOpen: (map2DOpen) =>
     set((state) => (state.map2DOpen === map2DOpen ? state : { map2DOpen })),
   setQuery: (query) => set({ query }),

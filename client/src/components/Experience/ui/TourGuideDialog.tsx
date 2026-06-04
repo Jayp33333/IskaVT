@@ -36,7 +36,7 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[1300] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 [@media(max-height:500px)]:p-2"
+          className="fixed inset-0 z-[1300] flex items-center justify-center bg-ink/85 p-4 [@media(max-height:500px)]:p-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -44,9 +44,9 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
           <motion.div
             className="
               relative w-full max-w-[440px] [@media(max-height:500px)]:max-w-[440px] rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl
-              bg-[#FFFDF9] text-slate-800 
-              border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-slate-900 
-              shadow-[6px_6px_0px_0px_rgba(15,23,42,1)] sm:shadow-[10px_10px_0px_0px_rgba(15,23,42,1)] [@media(max-height:500px)]:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)]
+              bg-cream text-ink 
+              border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink 
+              shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md
               flex flex-col max-h-[85vh] sm:max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] overflow-hidden
             "
             initial={{ scale: 0.9, opacity: 0, y: 50 }}
@@ -55,17 +55,17 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
             transition={{ type: "spring", damping: 20, stiffness: 250 }}
           >
             {/* Header - Resizes font and padding for mobile */}
-            <div className="bg-[#D43F3F] border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-slate-900 p-4 sm:p-5 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
+            <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink p-4 sm:p-5 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="bg-yellow-400 border-[3px] border-slate-900 px-2 py-0.5 rounded-full mb-1 [@media(max-height:500px)]:hidden inline-block">
-                    <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900">Tutorial</p>
+                  <div className="bg-gold border-[3px] border-ink px-2 py-0.5 rounded-full mb-1 [@media(max-height:500px)]:hidden inline-block">
+                    <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-ink">Tutorial</p>
                   </div>
                   <h2 className="text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight">CAMPUS GUIDE</h2>
                 </div>
                 <button 
                   onClick={onClose}
-                  className="bg-white border-[3px] border-slate-900 p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-slate-100 transition-transform active:scale-90"
+                  className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90"
                 >
                   <X size={20} strokeWidth={4} />
                 </button>
@@ -84,7 +84,7 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
                 >
                   {page === 0 ? (
                     <>
-                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-slate-500 px-1 uppercase tracking-tight">Basic Controls</p>
+                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-ink/50 px-1 uppercase tracking-tight">Basic Controls</p>
                       <ControlCard label="Movement" desc="WASD / Arrows" color="bg-blue-400">
                         <Move size={20} strokeWidth={3} />
                       </ControlCard>
@@ -97,7 +97,7 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
                     </>
                   ) : (
                     <>
-                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-slate-500 px-1 uppercase tracking-tight">Special Features</p>
+                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-ink/50 px-1 uppercase tracking-tight">Special Features</p>
                       <ControlCard label="Navigation" desc="Mini-Map Teleport" color="bg-emerald-400">
                         <MapIcon size={20} strokeWidth={3} />
                       </ControlCard>
@@ -117,13 +117,13 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
 
               {/* Avatar Dialogue - Shrinks on mobile */}
               {portraitSrc && (
-                <div className="bg-slate-100 border-[3px] border-slate-900 p-3 [@media(max-height:500px)]:p-2 rounded-2xl flex items-center gap-3 [@media(max-height:500px)]:gap-2">
+                <div className="bg-muted border-[3px] border-ink p-3 [@media(max-height:500px)]:p-2 rounded-2xl flex items-center gap-3 [@media(max-height:500px)]:gap-2">
                   <img 
                     src={portraitSrc} 
-                    className="h-10 w-10 sm:h-12 sm:w-12 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 rounded-xl border-[3px] border-slate-900 bg-white shrink-0" 
+                    className="h-10 w-10 sm:h-12 sm:w-12 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 rounded-xl border-[3px] border-ink bg-white shrink-0" 
                     alt="Guide" 
                   />
-                  <p className="text-[11px] sm:text-[12px] [@media(max-height:500px)]:text-[9px] font-bold italic text-slate-700 leading-tight">
+                  <p className="text-[11px] sm:text-[12px] [@media(max-height:500px)]:text-[9px] font-bold italic text-ink/80 leading-tight">
                     Check the map to find buildings faster!
                   </p>
                 </div>
@@ -131,11 +131,11 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
             </div>
 
             {/* Footer Buttons - Full width stack on tiny screens if needed */}
-            <div className="p-4 sm:p-5 [@media(max-height:500px)]:p-2.5 bg-white border-t-[4px] sm:border-t-[6px] [@media(max-height:500px)]:border-t-[4px] border-slate-900 flex items-center gap-3 [@media(max-height:500px)]:gap-2 shrink-0">
+            <div className="p-4 sm:p-5 [@media(max-height:500px)]:p-2.5 bg-white border-t-[4px] sm:border-t-[6px] [@media(max-height:500px)]:border-t-[4px] border-ink flex items-center gap-3 [@media(max-height:500px)]:gap-2 shrink-0">
               {page === 1 && (
                 <button
                   onClick={handlePrev}
-                  className="p-3 [@media(max-height:500px)]:p-2 bg-white border-[3px] border-slate-900 rounded-xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all shrink-0"
+                  className="p-3 [@media(max-height:500px)]:p-2 bg-white border-[3px] border-ink rounded-xl shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all shrink-0"
                 >
                   <ArrowLeft size={20} strokeWidth={4} />
                 </button>
@@ -143,7 +143,7 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
               
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 [@media(max-height:500px)]:py-2 bg-[#D43F3F] text-white border-[3px] border-slate-900 rounded-xl text-sm sm:text-lg [@media(max-height:500px)]:text-[11px] font-black italic shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
+                className="flex-1 py-3 [@media(max-height:500px)]:py-2 bg-maroon text-white border-[3px] border-ink rounded-xl text-sm sm:text-lg [@media(max-height:500px)]:text-[11px] font-black italic shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
               >
                 {isLastPage ? "Start Tour!" : "Next Tip"}
                 {!isLastPage && <ArrowRight size={18} strokeWidth={4} />}
@@ -159,12 +159,12 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
 /* Mini Component for Responsive Cards */
 const ControlCard = ({ label, desc, children, color }: { label: string; desc: string; children: React.ReactNode; color: string }) => (
   <div className="flex items-center gap-3 [@media(max-height:500px)]:gap-2 p-1 [@media(max-height:500px)]:p-0.5">
-    <div className={`${color} border-[3px] border-slate-900 p-2 sm:p-2.5 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] shrink-0`}>
+    <div className={`${color} border-[3px] border-ink p-2 sm:p-2.5 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-brutal-sm shrink-0`}>
       {children}
     </div>
     <div className="flex flex-col min-w-0">
-      <span className="text-[9px] [@media(max-height:500px)]:text-[7px] font-black uppercase text-slate-400 tracking-wider truncate">{label}</span>
-      <span className="text-xs sm:text-sm [@media(max-height:500px)]:text-[10px] font-extrabold text-slate-800 truncate">{desc}</span>
+      <span className="text-[9px] [@media(max-height:500px)]:text-[7px] font-black uppercase text-ink/40 tracking-wider truncate">{label}</span>
+      <span className="text-xs sm:text-sm [@media(max-height:500px)]:text-[10px] font-extrabold text-ink truncate">{desc}</span>
     </div>
   </div>
 );

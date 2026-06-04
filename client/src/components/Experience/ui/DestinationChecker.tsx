@@ -77,13 +77,13 @@ export const DestinationChecker = () => {
           exit={{ opacity: 0, y: -10, scale: 0.96 }}
           transition={{ type: "spring", damping: 18, stiffness: 260 }}
         >
-          <div className="flex items-center gap-3 rounded-[1.35rem] border-[4px] border-slate-900 bg-[#FFFDF9] px-4 py-3 text-slate-900 shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] [@media(orientation:landscape)_and_(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:500px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:500px)]:px-3 [@media(orientation:landscape)_and_(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:500px)]:shadow-[4px_4px_0px_0px_rgba(15,23,42,1)]">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-slate-900 bg-emerald-300 [@media(orientation:landscape)_and_(max-height:500px)]:h-8 [@media(orientation:landscape)_and_(max-height:500px)]:w-8 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px]">
-              <CheckCircle2 className="h-5 w-5 text-slate-900 [@media(orientation:landscape)_and_(max-height:500px)]:h-4 [@media(orientation:landscape)_and_(max-height:500px)]:w-4" strokeWidth={3.25} />
+          <div className="flex items-center gap-3 rounded-[1.35rem] border-[4px] border-ink bg-cream px-4 py-3 text-ink shadow-brutal-md [@media(orientation:landscape)_and_(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-2xl [@media(orientation:landscape)_and_(max-height:500px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:500px)]:px-3 [@media(orientation:landscape)_and_(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:500px)]:shadow-brutal-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-emerald-300 [@media(orientation:landscape)_and_(max-height:500px)]:h-8 [@media(orientation:landscape)_and_(max-height:500px)]:w-8 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px]">
+              <CheckCircle2 className="h-5 w-5 text-ink [@media(orientation:landscape)_and_(max-height:500px)]:h-4 [@media(orientation:landscape)_and_(max-height:500px)]:w-4" strokeWidth={3.25} />
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-base font-black leading-tight text-[#D43F3F] [@media(orientation:landscape)_and_(max-height:500px)]:text-sm">
+              <p className="text-base font-black leading-tight text-maroon [@media(orientation:landscape)_and_(max-height:500px)]:text-sm">
                 Destination reached
               </p>
               <p className="mt-0.5 truncate text-xs font-bold text-slate-600 [@media(orientation:landscape)_and_(max-height:500px)]:text-[10px]">
@@ -93,7 +93,7 @@ export const DestinationChecker = () => {
 
             <button
               onClick={dismiss}
-              className="shrink-0 rounded-full border-[2px] border-slate-900 bg-white p-1 text-slate-900 transition hover:bg-yellow-100 active:scale-90 [@media(orientation:landscape)_and_(max-height:500px)]:border [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5"
+              className="shrink-0 rounded-full border-[2px] border-ink bg-white p-1 text-ink transition hover:bg-gold/25 active:scale-90 [@media(orientation:landscape)_and_(max-height:500px)]:border [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5"
               type="button"
               aria-label="Dismiss destination message"
             >

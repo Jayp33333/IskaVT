@@ -19,9 +19,7 @@ export function ContactSection({
   const form = useContactForm();
 
   return (
-    <Section id="contact">
-      <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-maroon/5 blur-[100px] sm:h-80 sm:w-80" />
-
+    <Section id="contact" dotGrid>
       {showPageHeader && (
         <PageHeader
           title={
