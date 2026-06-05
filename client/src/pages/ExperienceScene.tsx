@@ -13,6 +13,7 @@ import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
 import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
 import useWorld from "../hooks/useWorld";
+import { useAltCursorReveal } from "../hooks/useAltCursorReveal";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
@@ -33,6 +34,7 @@ export default function ExperienceScene() {
   
   // Initialize logbook timeout handling (automatic cleanup on unmount)
   useLogbookTimeout();
+  useAltCursorReveal();
 
   useEffect(() => {
     // Attempt fullscreen + landscape lock on load (may require a user gesture in some browsers)

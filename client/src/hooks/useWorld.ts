@@ -60,6 +60,9 @@ interface WorldState {
   setLoading: (isLoading: boolean, message?: string) => void;
   isLoading: boolean;
   loadingMessage: string;
+  /** True while Alt is held to temporarily show the system cursor. */
+  cursorRevealedByAlt: boolean;
+  setCursorRevealedByAlt: (value: boolean) => void;
 }
 
 const useWorld = create<WorldState>((set) => ({
@@ -82,6 +85,7 @@ const useWorld = create<WorldState>((set) => ({
   query: "",
   isLoading: false,
   loadingMessage: "",
+  cursorRevealedByAlt: false,
   npcsInRange: new Map(),
   activeNPCDialog: null,
 
@@ -154,6 +158,7 @@ const useWorld = create<WorldState>((set) => ({
   setQuery: (query) => set({ query }),
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),
+  setCursorRevealedByAlt: (cursorRevealedByAlt) => set({ cursorRevealedByAlt }),
 }));
 
 export default useWorld;

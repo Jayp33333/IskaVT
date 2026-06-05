@@ -23,8 +23,14 @@ type UIProps = {
 
 export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: UIProps) => {
   const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
-  const { pinPosition, isPinConfirmed, activeNPCDialog, map2DOpen, cameraMode } =
-    useWorld((s: any) => s);
+  const {
+    pinPosition,
+    isPinConfirmed,
+    activeNPCDialog,
+    map2DOpen,
+    cameraMode,
+    cursorRevealedByAlt,
+  } = useWorld((s: any) => s);
   const npcFocus = !!activeNPCDialog;
   const hideAreaInfo =
     npcFocus || map2DOpen || tourGuideDialogOpen || exitTourConfirmOpen;
@@ -33,7 +39,8 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
     !npcFocus &&
     !map2DOpen &&
     !tourGuideDialogOpen &&
-    !exitTourConfirmOpen;
+    !exitTourConfirmOpen &&
+    !cursorRevealedByAlt;
 
   return (
     <>

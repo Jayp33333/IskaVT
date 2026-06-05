@@ -8,7 +8,6 @@ import {
   Heart,
 } from "lucide-react";
 import { SectionDotGrid } from "../marketing/SectionDotGrid";
-import { homeWelcomeContent } from "./data/homeContent";
 export function Footer() {
   const navigateToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -107,7 +106,7 @@ export function Footer() {
           <p className="flex items-center gap-2 text-xs font-bold text-ink/60 sm:text-sm">
             © 2026 Made with{" "}
             <Heart className="h-3.5 w-3.5 fill-maroon text-maroon sm:h-4 sm:w-4" />{" "}
-            by {homeWelcomeContent.projectDevelopers.members[0].name} & Team
+            by DIT Student
           </p>
 
           <button

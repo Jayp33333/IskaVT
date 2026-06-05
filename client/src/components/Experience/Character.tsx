@@ -25,6 +25,7 @@ const Character = () => {
   );
   const setCameraRotation = useWorld((s: any) => s.setCameraRotation);
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
+  const cursorRevealedByAlt = useWorld((s: any) => s.cursorRevealedByAlt);
 
   const interactionLocked = !!activeNPCDialog;
 
@@ -32,9 +33,9 @@ const Character = () => {
 
   usePointerLockRotateZoomActionBindings({
     // While talking to an NPC, do not allow acquiring pointer lock
-    lockOnClick: !isMobile && !interactionLocked,
-    // Also effectively freeze camera rotation while in dialog
-    rotationSpeed: interactionLocked ? 0 : 0.1,
+    lockOnClick: !isMobile && !interactionLocked && !cursorRevealedByAlt,
+    // Freeze camera rotation while in dialog or while Alt reveals the cursor
+    rotationSpeed: interactionLocked || cursorRevealedByAlt ? 0 : 0.1,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
 
