@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { SectionDotGrid } from "../marketing/SectionDotGrid";
 import { homeWelcomeContent } from "./data/homeContent";
-
 export function Footer() {
   const navigateToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

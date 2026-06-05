@@ -67,7 +67,7 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
-    console.log("Character position:", character.position);
+    // console.log("Character position:", character.position);
 
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());

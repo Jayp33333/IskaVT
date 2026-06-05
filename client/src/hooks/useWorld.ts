@@ -29,15 +29,6 @@ interface WorldState {
     options?: { label: string; onClick: () => void }[];
     onClose: () => void;
   } | null;
-  /** Door interactables for F-key (desktop). getPosition returns current world position. */
-  doorInteractables: Map<
-    string,
-    {
-      getPosition: () => Vector3;
-      onOpen: () => void;
-    }
-  >;
-
   setAvatar: (avatar: any) => void;
   setActiveNPCDialog: (
     d: {
@@ -50,15 +41,6 @@ interface WorldState {
   registerNPCInRange: (id: string, position: Vector3, onTalk: () => void) => void;
   unregisterNPCInRange: (id: string) => void;
   triggerNearestNPCTalk: () => void;
-  registerDoorInteractable: (
-    id: string,
-    d: {
-      getPosition: () => Vector3;
-      onOpen: () => void;
-    }
-  ) => void;
-  unregisterDoorInteractable: (id: string) => void;
-  triggerDoorOpen: () => void;
   setCharacterPosition: (position: Vector3) => void;
   setCharacterPositionOnFloorLabel: (position: Vector3) => void;
   setPinPosition: (position: Vector3 | null) => void;
@@ -102,7 +84,6 @@ const useWorld = create<WorldState>((set) => ({
   loadingMessage: "",
   npcsInRange: new Map(),
   activeNPCDialog: null,
-  doorInteractables: new Map(),
 
   setAvatar: (avatar) => set({ avatar }),
   setActiveNPCDialog: (activeNPCDialog) => set({ activeNPCDialog }),
@@ -131,36 +112,6 @@ const useWorld = create<WorldState>((set) => ({
       }
     }
     if (nearest) nearest.onTalk();
-  },
-  registerDoorInteractable: (id, door) =>
-    set((s) => {
-      const next = new Map(s.doorInteractables);
-      next.set(id, door);
-      return { doorInteractables: next };
-    }),
-  unregisterDoorInteractable: (id) =>
-    set((s) => {
-      const next = new Map(s.doorInteractables);
-      next.delete(id);
-      return { doorInteractables: next };
-    }),
-  triggerDoorOpen: () => {
-    const { doorInteractables, characterPosition } = useWorld.getState();
-    if (!doorInteractables || doorInteractables.size === 0 || !characterPosition) return;
-    const DOOR_INTERACT_DISTANCE = 3;
-    let nearest: { onOpen: () => void } | null = null;
-    let minDist = Infinity;
-
-    for (const { getPosition, onOpen } of doorInteractables.values()) {
-      const pos = getPosition();
-      const d = pos.distanceTo(characterPosition);
-      if (d < DOOR_INTERACT_DISTANCE && d < minDist) {
-        minDist = d;
-        nearest = { onOpen };
-      }
-    }
-
-    if (nearest) nearest.onOpen();
   },
   setCharacterPosition: (characterPosition) =>
     set((state) =>

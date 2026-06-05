@@ -273,8 +273,7 @@ export const NavBar = () => {
                           : "text-ink hover:bg-muted hover:text-maroon"
                       }`}
                     >
-                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
-                      {link.name}
+{link.name}
                     </Link>
                   ))}
 
@@ -288,8 +287,7 @@ export const NavBar = () => {
                           : "text-ink hover:bg-muted hover:text-maroon"
                       }`}
                     >
-                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
-                      About PUPLQ
+About PUPLQ
                       <HiChevronDown
                         className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`}
                       />
@@ -334,8 +332,7 @@ export const NavBar = () => {
                           : "text-ink hover:bg-muted hover:text-maroon"
                       }`}
                     >
-                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
-                      Resources
+Resources
                       <HiChevronDown
                         className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileResourcesOpen ? "rotate-180" : ""}`}
                       />
@@ -379,8 +376,7 @@ export const NavBar = () => {
                         : "text-ink hover:bg-muted hover:text-maroon"
                     }`}
                   >
-                    <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
-                    Contact
+Contact
                   </Link>
                 </div>
 

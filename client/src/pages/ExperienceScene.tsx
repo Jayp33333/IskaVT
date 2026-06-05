@@ -44,17 +44,37 @@ export default function ExperienceScene() {
     return () => document.body.classList.remove("experience-no-shadow");
   }, []);
 
-  // Keyboard shortcut:
+  // Keyboard shortcuts:
   // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
+  // - M: toggle campus minimap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only trigger if not typing in an input field
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return;
-      }   
+      }
 
-      // Press F to interact: NPC (if in range) or door (desktop; mobile uses tap only)
+      if (e.key === 'm' || e.key === 'M') {
+        if (!loadingFinished || logbookOpen || showWelcome) return;
+
+        const {
+          showLogHistory,
+          showFeedback,
+          activeNPCDialog,
+          showDestinationPicker,
+          map2DOpen,
+          setMap2DOpen,
+        } = useWorld.getState() as any;
+
+        if (showLogHistory || showFeedback || activeNPCDialog || showDestinationPicker) return;
+
+        e.preventDefault();
+        setMap2DOpen(!map2DOpen);
+        return;
+      }
+
+      // Press F to talk to nearest NPC in range
       if (e.key === 'f' || e.key === 'F') {
         const {
           showMiniMap,
@@ -63,26 +83,19 @@ export default function ExperienceScene() {
           activeNPCDialog,
           npcsInRange,
           triggerNearestNPCTalk,
-          triggerDoorOpen,
         } = useWorld.getState() as any;
 
         if (showMiniMap || showLogHistory || showFeedback || activeNPCDialog) return;
 
-        // If an NPC is in range, use F to talk.
         if (npcsInRange && npcsInRange.size > 0) {
           e.preventDefault();
           triggerNearestNPCTalk();
-          return;
-        }
-        if (triggerDoorOpen) {
-          e.preventDefault();
-          triggerDoorOpen();
         }
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [loadingFinished, logbookOpen, showWelcome]);
 
   // While logbook is required, block movement keys so the user can't "tour" early.
   useEffect(() => {

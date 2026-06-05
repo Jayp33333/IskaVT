@@ -8,6 +8,8 @@ import GameState from "../../hooks/useWorld";
 import { audioManager } from "../../services/AudioManager";
 import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
 import { FixedLocationModal } from "./ui/FixedLocationModal";
+import { EnterTransitionOverlay } from "./ui/EnterTransitionOverlay";
+import { runTeleportTransition } from "../../utils/teleportTransition";
 
 // Expanded-map zoom limits + step
 const MAP_MIN_ZOOM = 1;
@@ -66,17 +68,15 @@ export default function Map2D() {
   const setSelectedDestination = GameState((s: any) => s.setSelectedDestination);
   const setQuery = GameState((s: any) => s.setQuery);
   const showDestinationPicker = GameState((s: any) => s.showDestinationPicker);
+  const map2DOpen = GameState((s: any) => s.map2DOpen);
   const setMap2DOpen = GameState((s: any) => s.setMap2DOpen);
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    setMap2DOpen(isOpen);
-    return () => setMap2DOpen(false);
-  }, [isOpen, setMap2DOpen]);
+  useEffect(() => () => setMap2DOpen(false), [setMap2DOpen]);
 
   // Selected fixed location (shows the info modal with image / rooms / floors)
   const [selectedFixedPin, setSelectedFixedPin] = useState<FixedLocationPin | null>(null);
+  const [teleporting, setTeleporting] = useState(false);
+  const teleportLockRef = useRef(false);
 
   // Ref to the expanded-map <img> so pointerup can compute click position
   // against the actual rendered image rectangle (after any zoom/pan transform).
@@ -107,11 +107,11 @@ export default function Map2D() {
 
   // Reset zoom/pan whenever the modal is opened
   useEffect(() => {
-    if (isOpen) {
+    if (map2DOpen) {
       setZoom(1);
       setPan({ x: 0, y: 0 });
     }
-  }, [isOpen]);
+  }, [map2DOpen]);
 
   const zoomIn = () => setZoom((z) => clamp(z + MAP_ZOOM_STEP, MAP_MIN_ZOOM, MAP_MAX_ZOOM));
   const zoomOut = () =>
@@ -160,19 +160,19 @@ export default function Map2D() {
   };
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!map2DOpen) return;
     applyPanLimits();
-  }, [zoom, isOpen]);
+  }, [zoom, map2DOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!map2DOpen) return;
     const viewport = mapViewportRef.current;
     if (!viewport) return;
 
     const ro = new ResizeObserver(() => applyPanLimits());
     ro.observe(viewport);
     return () => ro.disconnect();
-  }, [isOpen, zoom]);
+  }, [map2DOpen, zoom]);
 
   // Player marker position (in % of the map image) + rotation
   const { normX, normY, rotationY } = useMemo(() => {
@@ -224,20 +224,33 @@ export default function Map2D() {
     setSelectedFixedPin(pin);
   };
 
+  const runMapTeleport = (performTeleport: () => void) => {
+    if (teleportLockRef.current) return;
+    teleportLockRef.current = true;
+    setTeleporting(true);
+
+    void runTeleportTransition(performTeleport).then(() => {
+      setTeleporting(false);
+      teleportLockRef.current = false;
+    });
+  };
+
   // Visit a fixed location (or a specific room inside a building) — teleports
   const handleVisit = (target: { name: string; position: Vector3 }) => {
-    setPinPosition(target.position.clone());
-    setIsPinConfirmed(false);
-    setCharacterPosition({
-      x: target.position.x,
-      y: 0.2,
-      z: target.position.z,
-    } as any);
-    setIsPinTeleported(true);
-    setSelectedDestination(target.name);
-    audioManager?.play?.("teleported");
-    setSelectedFixedPin(null);
-    setIsOpen(false);
+    runMapTeleport(() => {
+      setPinPosition(target.position.clone());
+      setIsPinConfirmed(false);
+      setCharacterPosition({
+        x: target.position.x,
+        y: 0.2,
+        z: target.position.z,
+      } as any);
+      setIsPinTeleported(true);
+      setSelectedDestination(target.name);
+      audioManager?.play?.("teleported");
+      setSelectedFixedPin(null);
+      setMap2DOpen(false);
+    });
   };
 
   // Drop a pin at the given client coords (computed against the image rect)
@@ -350,7 +363,7 @@ export default function Map2D() {
 
   useEffect(() => {
     const viewport = mapViewportRef.current;
-    if (!viewport || !isOpen) return;
+    if (!viewport || !map2DOpen) return;
 
     viewport.addEventListener("wheel", handleWheel, { passive: false });
     viewport.addEventListener("touchmove", handleTouchMove, { passive: false });
@@ -359,19 +372,21 @@ export default function Map2D() {
       viewport.removeEventListener("wheel", handleWheel);
       viewport.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [isOpen, handleWheel, handleTouchMove]);
+  }, [map2DOpen, handleWheel, handleTouchMove]);
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length < 2) pinchRef.current = null;
   };
 
   const handleTeleport = () => {
-    if (!pinPosition) return;
-    setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
-    setIsPinConfirmed(false);
-    setIsPinTeleported(true);
-    audioManager?.play?.("teleported");
-    setIsOpen(false);
+    if (!pinPosition || teleporting) return;
+    runMapTeleport(() => {
+      setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
+      setIsPinConfirmed(false);
+      setIsPinTeleported(true);
+      audioManager?.play?.("teleported");
+      setMap2DOpen(false);
+    });
   };
 
   const handleUnpin = () => {
@@ -389,7 +404,7 @@ export default function Map2D() {
       {/* Mini circular campus map preview (top-right corner) */}
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => setMap2DOpen(true)}
         title="Open campus map"
         aria-label="Open campus map"
         className="
@@ -486,13 +501,13 @@ export default function Map2D() {
 
       {/* Expanded fullscreen map modal */}
       <AnimatePresence>
-        {isOpen && (
+        {map2DOpen && (
           <motion.div
             className="fixed inset-0 z-[1150] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
+            onClick={() => setMap2DOpen(false)}
           >
             <motion.div
               className="
@@ -527,7 +542,7 @@ export default function Map2D() {
                   </h2>
                 </div>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setMap2DOpen(false)}
                   className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:600px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
                   aria-label="Close map"
                   type="button"
@@ -776,7 +791,7 @@ export default function Map2D() {
 
                   <button
                     onClick={handleTeleport}
-                    disabled={!pinPosition}
+                    disabled={!pinPosition || teleporting}
                     className={`py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-1.5 ${
                       pinPosition
                         ? "bg-gold text-ink hover:bg-gold"
@@ -789,7 +804,7 @@ export default function Map2D() {
                   </button>
 
                   <button
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setMap2DOpen(false)}
                     className="py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-maroon text-white border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
                     type="button"
                   >
@@ -808,6 +823,8 @@ export default function Map2D() {
         onClose={() => setSelectedFixedPin(null)}
         onVisit={handleVisit}
       />
+
+      {teleporting && <EnterTransitionOverlay zIndexClass="z-[1200]" />}
     </>
   );
 }
