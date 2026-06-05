@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Award } from "lucide-react";
 import { PageHeader, Section } from "../marketing";
 import {
   undergraduateDegreeCourses,
@@ -8,116 +7,127 @@ import {
   type ProgramOffer,
 } from "./data/pupLopezContent";
 
-type ProgramCardProps = {
+type ProgramCategory = {
+  id: string;
+  title: string;
+  tagline: string;
+  items: ProgramOffer[];
+  asideClass: string;
+  bodyClass: string;
+  tileClass: string;
+};
+
+const categories: ProgramCategory[] = [
+  {
+    id: "degree",
+    title: "Degree Programs",
+    tagline: "Undergraduate bachelor's tracks",
+    items: undergraduateDegreeCourses,
+    asideClass: "bg-gold text-ink",
+    bodyClass: "bg-cream",
+    tileClass: "border-ink bg-surface hover:border-maroon",
+  },
+  {
+    id: "diploma",
+    title: "Diploma Programs",
+    tagline: "Technology & office management",
+    items: undergraduateDiplomaCourses,
+    asideClass: "bg-maroon text-white",
+    bodyClass: "bg-surface",
+    tileClass: "border-ink bg-cream hover:border-maroon",
+  },
+  {
+    id: "graduate",
+    title: "Graduate Programs",
+    tagline: "PUP Open University offerings",
+    items: graduatePrograms,
+    asideClass: "bg-dark-panel text-gold",
+    bodyClass: "bg-muted",
+    tileClass: "border-ink bg-surface hover:border-gold",
+  },
+];
+
+function ProgramTile({
+  program,
+  index,
+  tileClass,
+}: {
   program: ProgramOffer;
   index: number;
-  accent: "gold" | "maroon" | "cream";
-};
-
-const accentStyles = {
-  gold: {
-    badge: "bg-[#FFD700] text-black",
-    card: "bg-[#FFFDF5] hover:shadow-[8px_8px_0px_0px_rgba(255,215,0,1)]",
-  },
-  maroon: {
-    badge: "bg-[#800000] text-white",
-    card: "bg-white hover:shadow-[8px_8px_0px_0px_rgba(128,0,0,1)]",
-  },
-  cream: {
-    badge: "bg-white text-[#800000]",
-    card: "bg-[#FFFDF5] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
-  },
-};
-
-function ProgramCard({ program, index, accent }: ProgramCardProps) {
-  const styles = accentStyles[accent];
-  const tilt = index % 2 === 0 ? -1.5 : 1.5;
-
+  tileClass: string;
+}) {
   return (
     <motion.li
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.98 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.04 }}
-      whileHover={{ y: -4, x: -2 }}
-      style={{ rotate: tilt }}
-      className={`list-none rounded-2xl border-2 border-black p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow sm:rounded-3xl sm:border-4 sm:p-4 ${styles.card}`}
+      transition={{ delay: index * 0.03 }}
+      className={`rounded-xl border-2 p-3 transition-colors sm:rounded-2xl sm:border-[3px] sm:p-4 ${tileClass}`}
     >
-      <div className="mb-2">
-        <span
-          className={`inline-block rounded-lg border-2 border-black px-2 py-0.5 text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:text-xs ${styles.badge}`}
-        >
-          {program.code}
-        </span>
-      </div>
-      <p className="text-xs font-bold leading-snug text-black/80 sm:text-sm">
+      <p className="font-mono text-[10px] font-black uppercase text-maroon sm:text-xs">
+        {program.code}
+      </p>
+      <p className="mt-1.5 text-xs font-bold leading-snug text-ink/85 sm:text-sm">
         {program.title}
       </p>
     </motion.li>
   );
 }
 
-type ProgramSectionProps = {
-  title: string;
-  items: ProgramOffer[];
-  accent: "gold" | "maroon" | "cream";
-  delay?: number;
-};
-
-function ProgramSection({
-  title,
-  items,
-  accent,
-  delay = 0,
-}: ProgramSectionProps) {
-  const titleColor =
-    accent === "gold"
-      ? "text-[#FFD700] drop-shadow-[1px_1px_0_rgba(0,0,0,1)]"
-      : accent === "maroon"
-        ? "text-[#800000]"
-        : "text-black";
-
-  const dashColor = accent === "gold" ? "bg-[#FFD700]" : "bg-[#800000]";
-
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-      className="overflow-hidden rounded-2xl sm:rounded-[2rem]"
+function CategoryBlock({ category }: { category: ProgramCategory }) {
+  const aside = (
+    <aside
+      className={`flex flex-col justify-between border-b-2 border-ink p-5 sm:p-6 lg:border-b-0 lg:border-r-2 lg:p-8 ${category.asideClass}`}
     >
-      <div className="flex items-center gap-3 px-4 py-4 sm:gap-4 sm:px-6 sm:py-5">
-        <span
-          aria-hidden
-          className={`h-8 w-1.5 shrink-0 rounded-full sm:h-10 sm:w-2 ${dashColor}`}
-        />
-        <h3
-          className={`text-xl font-black uppercase tracking-tighter sm:text-2xl md:text-3xl ${titleColor}`}
-        >
-          {title}
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.22em] opacity-75 sm:text-xs">
+          {category.tagline}
+        </p>
+        <h3 className="mt-2 text-xl font-black uppercase tracking-tighter sm:text-2xl lg:text-3xl">
+          {category.title}
         </h3>
       </div>
+      <p className="mt-6 text-sm font-black tabular-nums sm:text-base">
+        {category.items.length} programs
+      </p>
+    </aside>
+  );
 
-      <ul className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:gap-4 sm:p-6 lg:grid-cols-3">
-        {items.map((program, index) => (
-          <ProgramCard
-            key={`${program.code}-${program.title}`}
-            program={program}
-            index={index}
-            accent={accent}
-          />
-        ))}
-      </ul>
-    </motion.section>
+  const body = (
+    <ul
+      className={`grid grid-cols-1 gap-2.5 p-4 sm:grid-cols-2 sm:gap-3 sm:p-5 lg:grid-cols-2 lg:gap-4 lg:p-6 xl:grid-cols-3 ${category.bodyClass}`}
+    >
+      {category.items.map((program, index) => (
+        <ProgramTile
+          key={`${program.code}-${program.title}`}
+          program={program}
+          index={index}
+          tileClass={category.tileClass}
+        />
+      ))}
+    </ul>
+  );
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      className="overflow-hidden rounded-2xl border-2 border-ink shadow-brutal-md sm:rounded-3xl sm:border-4"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,13rem)_1fr] xl:grid-cols-[minmax(0,15rem)_1fr]">
+        {aside}
+        {body}
+      </div>
+    </motion.article>
   );
 }
 
 export function Programs() {
-  const totalPrograms =
-    undergraduateDegreeCourses.length +
-    undergraduateDiplomaCourses.length +
-    graduatePrograms.length;
+  const degreeCount = undergraduateDegreeCourses.length;
+  const diplomaCount = undergraduateDiplomaCourses.length;
+  const graduateCount = graduatePrograms.length;
+  const totalPrograms = degreeCount + diplomaCount + graduateCount;
 
   return (
     <Section id="programs" dotGrid>
@@ -130,110 +140,54 @@ export function Programs() {
         description="Explore undergraduate and graduate offerings designed to meet local and international standards of quality and excellence."
       />
 
-      <div className="mt-6 flex flex-wrap justify-center gap-3 sm:mt-0 sm:gap-4">
-            {[
-              {
-                label: "Degree",
-                count: undergraduateDegreeCourses.length,
-                color: "bg-[#FFD700]",
-              },
-              {
-                label: "Diploma",
-                count: undergraduateDiplomaCourses.length,
-                color: "bg-white",
-              },
-              {
-                label: "Graduate",
-                count: graduatePrograms.length,
-                color: "bg-[#800000] text-white",
-              },
-              {
-                label: "Total",
-                count: totalPrograms,
-                color: "bg-black text-[#FFD700]",
-              },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className={`rounded-xl border-2 border-black px-4 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:rounded-2xl sm:border-4 sm:px-5 sm:py-3 ${stat.color}`}
-              >
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-80 sm:text-xs">
-                  {stat.label}
-                </p>
-                <p className="text-xl font-black sm:text-2xl">{stat.count}</p>
-              </div>
-            ))}
-      </div>
-
-      <div className="space-y-6 sm:space-y-8">
-          <motion.article
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="overflow-hidden rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:rounded-[2rem] sm:border-4"
-          >
-            <div className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:gap-5 sm:px-6 sm:py-5">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black bg-[#FFD700] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4">
-                <GraduationCap className="h-6 w-6 text-black sm:h-7 sm:w-7" />
-              </div>
-              <div className="text-black">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/60 sm:text-xs">
-                  PUP Lopez Campus
-                </p>
-                <h3 className="text-xl font-black uppercase tracking-tighter text-[#800000] sm:text-2xl md:text-3xl">
-                  Undergraduate Programs
-                </h3>
-              </div>
-            </div>
-
-            <div className="space-y-6 p-4 sm:space-y-8 sm:p-6">
-              <ProgramSection
-                title="Degree Programs"
-                items={undergraduateDegreeCourses}
-                accent="gold"
-              />
-              <ProgramSection
-                title="Diploma Programs"
-                items={undergraduateDiplomaCourses}
-                accent="maroon"
-                delay={0.05}
-              />
-            </div>
-          </motion.article>
-
-          <motion.article
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="overflow-hidden rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:rounded-[2rem] sm:border-4"
-          >
-            <div className="flex flex-col gap-4 border-b-2 border-black bg-[#FFD700] px-4 py-4 sm:flex-row sm:items-center sm:gap-5 sm:border-b-4 sm:px-6 sm:py-5">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4">
-                <Award className="h-6 w-6 text-[#800000] sm:h-7 sm:w-7" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/60 sm:text-xs">
-                  PUP Open University
-                </p>
-                <h3 className="text-xl font-black uppercase tracking-tighter text-black sm:text-2xl md:text-3xl">
-                  Graduate Programs
-                </h3>
-              </div>
-            </div>
-
-            <ul className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 sm:gap-4 sm:p-6">
-              {graduatePrograms.map((program, index) => (
-                <ProgramCard
-                  key={`${program.code}-${program.title}`}
-                  program={program}
-                  index={index}
-                  accent="gold"
-                />
-              ))}
-            </ul>
-          </motion.article>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mb-8 grid grid-cols-2 gap-3 sm:mb-10 sm:gap-4 lg:grid-cols-4 lg:grid-rows-2"
+      >
+        <div className="col-span-2 row-span-2 flex flex-col justify-between rounded-2xl border-2 border-ink bg-ink p-5 text-gold shadow-brutal-lg sm:rounded-3xl sm:border-4 sm:p-6 lg:col-span-1">
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gold/70 sm:text-xs">
+            All programs
+          </p>
+          <p className="mt-2 font-black tabular-nums leading-none text-6xl sm:text-7xl lg:text-8xl">
+            {totalPrograms}
+          </p>
+          <p className="mt-3 text-xs font-bold text-gold/80 sm:text-sm">
+            Degree, diploma &amp; graduate combined
+          </p>
         </div>
+
+        {[
+          { label: "Degree", value: degreeCount, className: "bg-gold text-ink" },
+          { label: "Diploma", value: diplomaCount, className: "bg-maroon text-white" },
+          { label: "Graduate", value: graduateCount, className: "bg-surface text-ink" },
+        ].map((stat, index) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.06 }}
+            className={`flex items-center justify-between rounded-2xl border-2 border-ink px-4 py-4 shadow-brutal-sm sm:rounded-3xl sm:border-4 sm:px-5 sm:py-5 lg:col-span-1 ${stat.className} ${
+              index === 2 ? "col-span-2 lg:col-span-1" : ""
+            }`}
+          >
+            <span className="text-xs font-black uppercase tracking-widest opacity-80 sm:text-sm">
+              {stat.label}
+            </span>
+            <span className="text-3xl font-black tabular-nums sm:text-4xl">
+              {stat.value}
+            </span>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
+        {categories.map((category) => (
+          <CategoryBlock key={category.id} category={category} />
+        ))}
+      </div>
     </Section>
   );
 }

@@ -26,6 +26,65 @@ export const homeWelcomeContent = {
     bio: "Built by DIT students who wanted future Iskolar ng Bayan to feel at home on campus even before day one.",
     credit: "DIT Students",
   },
+  projectDevelopers: {
+    title: "Developed By",
+    intro:
+      "ISKA VT was designed and built by students from the Diploma in Information Technology (DIT) program at Polytechnic University of the Philippines Lopez.",
+    program: "Diploma in Information Technology (DIT)",
+    institution: "Polytechnic University of the Philippines — Lopez, Quezon",
+    members: [
+      {
+        name: "John Paul Jamito",
+        role: "Lead Developer",
+        slug: "john-paul-jamito",
+        image: "/images/developers/JohnPaulJamito.jpg",
+        bio: "Leads the overall development of ISKA VT, coordinating frontend, 3D, and backend work to keep the platform stable and on track.",
+        focus: ["System architecture", "Integration", "Code review"],
+        socials: [
+          {
+            platform: "facebook",
+            url: "https://www.facebook.com/johnpaul.jamito.585",
+          },
+        ],
+      },
+      {
+        name: "Jaz Mostoles",
+        role: "3D Developer",
+        slug: "jaz-mostoles",
+        image: "/images/developers/JazMostoles.jpg",
+        bio: "Develops the 3D campus experience — character movement, building models, mini-map, and in-tour interactions.",
+        focus: ["Three.js", "3D campus", "Tour mechanics"],
+        socials: [
+          { platform: "facebook", url: "https://www.facebook.com/jaz.selotsom" },
+        ],
+      },
+      {
+        name: "John Rainer Espineda",
+        role: "Frontend Developer",
+        slug: "john-rainer-espineda",
+        image: "/images/developers/JohnRainerEspineda.jpg",
+        bio: "Builds the marketing pages, UI components, and user-facing flows that make the virtual tour easy to discover and navigate.",
+        focus: ["React UI", "Responsive design", "User experience"],
+        socials: [
+          { platform: "facebook", url: "https://www.facebook.com/rainier.69" },
+        ],
+      },
+      {
+        name: "Gilbert Velarde",
+        role: "Backend Developer",
+        slug: "gilbert-velarde",
+        image: "/images/developers/GilbertVelarde.jpg",
+        bio: "Handles the server, database, and APIs that power the logbook, feedback, contact messages, and admin dashboard.",
+        focus: ["Node.js APIs", "Database", "Admin tools"],
+        socials: [
+          {
+            platform: "facebook",
+            url: "https://www.facebook.com/gilbertdandan.velarde",
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export type HomeHowItWorksStep = {

@@ -4,7 +4,6 @@ import { CONTACT_PAGE_INTRO } from "../constants";
 import { ContactForm } from "./ContactForm";
 import { ContactInfoPanel } from "./ContactInfoPanel";
 import { ContactDepartments } from "./ContactDepartments";
-import { ContactFaq } from "./ContactFaq";
 import { ContactLocation } from "./ContactLocation";
 
 type ContactSectionProps = {
@@ -40,7 +39,6 @@ export function ContactSection({
         <>
           <ContactDepartments />
           <ContactLocation />
-          <ContactFaq />
         </>
       )}
     </Section>

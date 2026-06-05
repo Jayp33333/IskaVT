@@ -73,7 +73,7 @@ export const CONTACT_FAQ_ITEMS: ContactFaqItem[] = [
   {
     question: "Who should I contact for enrollment questions?",
     answer:
-      "Reach out to the Registrar's Office using the contact details above. Include your full name, program of interest, and any supporting documents.",
+      "Reach out to the Registrar's Office through the Contact page. Include your full name, program of interest, and any supporting documents.",
   },
   {
     question: "How long does it take to get a response?",

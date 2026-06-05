@@ -8,6 +8,7 @@ import {
   Heart,
 } from "lucide-react";
 import { SectionDotGrid } from "../marketing/SectionDotGrid";
+import { homeWelcomeContent } from "./data/homeContent";
 
 export function Footer() {
   const navigateToTop = () => {
@@ -15,27 +16,10 @@ export function Footer() {
   };
 
   const socialLinks = [
-    {
-      icon: Facebook,
-      href: "#",
-      hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]",
-    },
-    {
-      icon: Twitter,
-      href: "#",
-      hover: "hover:bg-[#1DA1F2] hover:text-white hover:border-[#1DA1F2]",
-    },
-    {
-      icon: Instagram,
-      href: "#",
-      hover:
-        "hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:text-white hover:border-transparent",
-    },
-    {
-      icon: Github,
-      href: "#",
-      hover: "hover:bg-ink hover:text-white hover:border-ink",
-    },
+    { icon: Facebook, href: "#" },
+    { icon: Twitter, href: "#" },
+    { icon: Instagram, href: "#" },
+    { icon: Github, href: "#" },
   ];
 
   return (
@@ -73,9 +57,9 @@ export function Footer() {
                     key={i}
                     href={item.href}
                     whileHover={{ y: -4, rotate: 5 }}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg border-2 border-ink bg-white shadow-brutal-sm transition-all sm:h-11 sm:w-11 sm:rounded-xl sm:border-4 ${item.hover}`}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-ink bg-white text-ink shadow-brutal-sm transition-colors hover:border-ink hover:bg-ink hover:text-white sm:h-11 sm:w-11 sm:rounded-xl sm:border-4"
                   >
-                    <Icon className="h-4 w-4 text-ink sm:h-5 sm:w-5" />
+                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                   </motion.a>
                 );
               })}
@@ -124,7 +108,7 @@ export function Footer() {
           <p className="flex items-center gap-2 text-xs font-bold text-ink/60 sm:text-sm">
             © 2026 Made with{" "}
             <Heart className="h-3.5 w-3.5 fill-maroon text-maroon sm:h-4 sm:w-4" />{" "}
-            by DIT Students
+            by {homeWelcomeContent.projectDevelopers.members[0].name} & Team
           </p>
 
           <button

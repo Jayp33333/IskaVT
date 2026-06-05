@@ -85,9 +85,6 @@ export function HomeWelcome() {
               <p className="mt-4 text-sm font-bold leading-[1.75] text-ink/70 sm:text-base sm:leading-[1.8]">
                 {projectCard.bio}
               </p>
-              <p className="mt-4 text-xs font-black uppercase tracking-wide text-maroon sm:text-sm">
-                {projectCard.credit}
-              </p>
             </div>
           </div>
         </motion.aside>

@@ -1,5 +1,6 @@
 import { useProgress } from "@react-three/drei";
 import { useEffect, useState } from "react";
+import { SectionDotGrid } from "../../marketing/SectionDotGrid";
 
 export default function LoadingOverlay({
   onFinished,
@@ -42,8 +43,9 @@ export default function LoadingOverlay({
           : "opacity-100 pointer-events-auto"
       }`}
     >
-      {/* Soft Background Accents */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      {/* Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <SectionDotGrid tone="light" />
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-red-100 rounded-full blur-3xl opacity-50" />
         <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-red-200 rounded-full blur-3xl opacity-50" />
       </div>
@@ -51,32 +53,23 @@ export default function LoadingOverlay({
       {/* Content */}
       <div className="relative flex flex-col items-center">
         {/* Logo */}
-        <div className="flex justify-center items-center mb-10">
+        <div className="flex justify-center items-center mb-6 sm:mb-8 md:mb-10 px-4">
           <img
             src={logo}
             alt="ISKA Logo"
-            className="h-16 sm:h-20 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.05)]"
+            className="h-10 w-auto max-w-[min(72vw,12rem)] sm:h-14 sm:max-w-none md:h-16 lg:h-20 drop-shadow-[4px_4px_0px_rgba(0,0,0,0.05)]"
           />
         </div>
 
-        {/* Progress Bar */}
-        <div className="relative w-64 h-8 bg-white border-4 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <div
-            className="h-full bg-[#9b1c1c] transition-all duration-300 ease-out"
-            style={{
-              width: `${progress}%`,
-              backgroundImage:
-                "linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent)",
-              backgroundSize: "30px 30px",
-            }}
-          />
-        </div>
-
-        {/* Percentage */}
-        <div className="mt-6">
-          <span className="text-[#9b1c1c] font-black text-lg tracking-tight italic">
-            {progress < 100 ? `${progress.toFixed(0)}%` : "READY!"}
-          </span>
+        {/* Waving dots */}
+        <div className="flex items-end justify-center gap-2.5 h-8">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="block h-3.5 w-3.5 rounded-full bg-[#9b1c1c] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] loading-dot-wave"
+              style={{ animationDelay: `${i * 0.18}s` }}
+            />
+          ))}
         </div>
       </div>
 

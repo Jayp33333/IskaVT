@@ -26,12 +26,14 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
         headIconUrl: "images/iska-head-icon.png",
         id: 1,
         vrmUrl: "models/avatars/Iska.vrm",
+        displayName: "ISKA",
       },
 
       {
         headIconUrl: "images/isko-head-icon.png",
         id: 2,
         vrmUrl: "models/avatars/Isko.vrm",
+        displayName: "ISKO",
       },
     ]
   : [
@@ -39,12 +41,14 @@ export const SAMPLE_AVATAR_LIST = IS_DEV
         headIconUrl: "images/iska-head-icon.png",
         id: 1,
         vrmUrl: "models/avatars/Iska.vrm",
+        displayName: "ISKA",
       },
 
       {
         headIconUrl: "images/isko-head-icon.png",
         id: 2,
         vrmUrl: "models/avatars/Isko.vrm",
+        displayName: "ISKO",
       },
     ];
 

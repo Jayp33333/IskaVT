@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Mail, Sparkles } from "lucide-react";
 import { Section } from "../marketing";
-import { homeCtaContent } from "./data/homeContent";
+import { homeCtaContent, homeWelcomeContent } from "./data/homeContent";
 
 export function HomeCta() {
   const navigate = useNavigate();
@@ -53,6 +53,16 @@ export function HomeCta() {
                 Contact Us
               </Link>
             </div>
+
+            <p className="mt-6 text-xs font-bold leading-relaxed text-ink/50 sm:text-sm">
+              Developed by{" "}
+              <span className="font-black text-ink/70">
+                {homeWelcomeContent.projectDevelopers.members
+                  .map((member) => member.name)
+                  .join(", ")}
+              </span>{" "}
+              — {homeWelcomeContent.projectDevelopers.program}
+            </p>
           </div>
 
           <div className="relative min-h-[200px] border-t-2 border-ink bg-muted lg:border-l-2 lg:border-t-0">

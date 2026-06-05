@@ -5,17 +5,23 @@ import { CONTACT_FAQ_ITEMS } from "../constants";
 const FAQ_SUBTITLE =
   "Everything you need to know about the virtual tour and campus inquiries.";
 
-export function ContactFaq() {
+type ContactFaqProps = {
+  showHeader?: boolean;
+};
+
+export function ContactFaq({ showHeader = true }: ContactFaqProps) {
   return (
-    <section className="mt-12 sm:mt-16">
-      <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
-        <h2 className="text-2xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-3xl md:text-4xl">
-          Frequently Asked <span className="text-maroon">Questions</span>
-        </h2>
-        <p className="mt-3 max-w-xl text-sm font-bold text-ink/60 sm:text-base">
-          {FAQ_SUBTITLE}
-        </p>
-      </div>
+    <section className={showHeader ? "mt-12 sm:mt-16" : undefined}>
+      {showHeader && (
+        <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
+          <h2 className="text-2xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-3xl md:text-4xl">
+            Frequently Asked <span className="text-maroon">Questions</span>
+          </h2>
+          <p className="mt-3 max-w-xl text-sm font-bold text-ink/60 sm:text-base">
+            {FAQ_SUBTITLE}
+          </p>
+        </div>
+      )}
 
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5">
         {CONTACT_FAQ_ITEMS.map((item, index) => (

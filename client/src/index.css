@@ -42,6 +42,21 @@ body {
   animation: teleportFlash 0.8s forwards;
 }
 
+@keyframes loading-dot-wave {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.loading-dot-wave {
+  animation: loading-dot-wave 1.1s ease-in-out infinite;
+}
+
 @keyframes teleportFlash {
   0% {
     opacity: 0;

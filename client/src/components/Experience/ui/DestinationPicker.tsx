@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, X, Search, Navigation, MapPinned } from "lucide-react";
+import { MapPin, X, Search, MapPinned } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { DESTINATIONS } from "../../../sampleData";
 
@@ -103,7 +103,7 @@ export const DestinationPicker = () => {
             onClick={close}
           >
             <motion.div
-              className="relative w-full max-w-[460px] sm:max-w-[460px] max-sm:max-w-none max-sm:rounded-t-[1.75rem] max-sm:rounded-b-none bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none border-[4px] sm:border-[6px] border-ink max-sm:border-b-0 flex flex-col max-h-[88vh] max-sm:max-h-[92dvh] [@media(max-height:500px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] overflow-hidden"
+              className="relative w-full max-w-[460px] sm:max-w-[460px] max-sm:max-w-none max-sm:rounded-t-[1.75rem] max-sm:rounded-b-none bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none border-[4px] sm:border-[6px] border-ink max-sm:border-b-0 flex flex-col max-h-[88vh] max-sm:max-h-[92dvh] [@media(max-height:500px)]:max-h-[96dvh] shadow-brutal-lg [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] overflow-hidden"
               initial={{ scale: 0.98, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.98, opacity: 0, y: 24 }}
@@ -114,21 +114,22 @@ export const DestinationPicker = () => {
               <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
-                      <Navigation className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-ink" strokeWidth={3.5} />
+                    <div className="flex shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-surface p-1.5 shadow-brutal-sm [@media(max-height:500px)]:p-1">
+                      <img
+                        src="/images/pup-logo.png"
+                        alt="PUP Logo"
+                        className="h-8 w-8 object-contain [@media(max-height:500px)]:h-7 [@media(max-height:500px)]:w-7"
+                      />
                     </div>
                     <div className="min-w-0">
-                      <p className="inline-block rounded-full bg-gold border-[3px] border-ink px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-ink">
-                        Campus Navigation
-                      </p>
-                      <h2 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-base font-black italic text-white leading-tight truncate">
+                      <h2 className="text-xl sm:text-2xl [@media(max-height:500px)]:text-base font-black italic text-white leading-tight truncate">
                         Choose Destination
                       </h2>
                     </div>
                   </div>
                   <button
                     onClick={close}
-                    className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
+                    className="bg-surface border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
                     aria-label="Close"
                     type="button"
                   >
@@ -142,11 +143,11 @@ export const DestinationPicker = () => {
 
               {/* Active pin */}
               {selectedDestination && (
-                <div className="mx-4 mt-4 [@media(max-height:500px)]:mx-3 [@media(max-height:500px)]:mt-2 flex items-center justify-between gap-3 p-3 [@media(max-height:500px)]:p-2 rounded-2xl bg-emerald-300 border-[3px] border-ink shadow-brutal-sm shrink-0">
+                <div className="mx-4 mt-4 [@media(max-height:500px)]:mx-3 [@media(max-height:500px)]:mt-2 flex items-center justify-between gap-3 p-3 [@media(max-height:500px)]:p-2 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
-                    <MapPinned className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-ink shrink-0" strokeWidth={3} />
+                    <MapPinned className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-maroon shrink-0" strokeWidth={3} />
                     <div className="min-w-0">
-                      <p className="text-[10px] [@media(max-height:500px)]:text-[8px] font-black uppercase text-emerald-950 tracking-wide">
+                      <p className="text-[10px] [@media(max-height:500px)]:text-[8px] font-black uppercase text-maroon tracking-wide">
                         Pinned
                       </p>
                       <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-ink truncate">
@@ -156,7 +157,7 @@ export const DestinationPicker = () => {
                   </div>
                   <button
                     onClick={handleUnpin}
-                    className="shrink-0 px-3 py-1.5 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase rounded-xl bg-white border-[3px] border-ink text-ink shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all"
+                    className="shrink-0 px-3 py-1.5 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase italic rounded-xl bg-surface border-[3px] border-ink text-maroon shadow-brutal-sm hover:bg-cream active:translate-y-1 active:shadow-none transition-all"
                     type="button"
                   >
                     Unpin
@@ -175,7 +176,7 @@ export const DestinationPicker = () => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search buildings, rooms, facilities..."
-                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-ink bg-white border-[3px] border-ink rounded-2xl outline-none focus:bg-cream placeholder:text-ink/40"
+                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-ink bg-surface border-[3px] border-ink rounded-2xl shadow-brutal-sm outline-none focus:bg-cream placeholder:text-ink/40"
                   />
                   {query && (
                     <button
@@ -214,8 +215,10 @@ export const DestinationPicker = () => {
                         <li key={d.id}>
                           <button
                             onClick={() => handleSelect(d)}
-                            className={`w-full flex items-center gap-3 sm:gap-3.5 px-2 sm:px-2.5 py-3 sm:py-3.5 [@media(max-height:500px)]:gap-2.5 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-2 rounded-lg text-left transition-colors ${
-                              isActive ? "bg-gold/40" : "hover:bg-muted active:bg-muted"
+                            className={`w-full flex items-center gap-3 sm:gap-3.5 px-2 sm:px-2.5 py-3 sm:py-3.5 [@media(max-height:500px)]:gap-2.5 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-2 rounded-xl border-[3px] text-left transition-colors ${
+                              isActive
+                                ? "border-ink bg-gold shadow-brutal-sm"
+                                : "border-transparent hover:bg-muted active:bg-muted"
                             }`}
                             type="button"
                           >

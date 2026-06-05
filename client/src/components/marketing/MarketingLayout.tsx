@@ -17,7 +17,9 @@ export function MarketingLayout({ children, hero = false }: MarketingLayoutProps
   return (
     <div className="min-h-screen bg-cream text-ink antialiased">
       <NavBar />
-      <main className={hero ? undefined : "pt-20"}>{children}</main>
+      <main className={hero ? undefined : "pt-14 sm:pt-16 lg:pt-[4.5rem] xl:pt-20"}>
+        {children}
+      </main>
       <Footer />
     </div>
   );

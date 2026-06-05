@@ -10,7 +10,20 @@ type AvatarOption = {
   id: string | number;
   headIconUrl: string;
   vrmUrl?: string;
+  displayName?: string;
 };
+
+function getAvatarDisplayName(avatar: AvatarOption): string {
+  if (avatar.displayName) return avatar.displayName;
+
+  const haystack = `${avatar.headIconUrl ?? ""} ${avatar.vrmUrl ?? ""}`.toLowerCase();
+  if (haystack.includes("isko")) return "ISKO";
+  if (haystack.includes("iska")) return "ISKA";
+  if (avatar.id === 189084 || avatar.id === 1) return "ISKA";
+  if (avatar.id === 2) return "ISKO";
+
+  return "Avatar";
+}
 
 export const AvatarPicker = () => {
   const avatarList = (useViverseAvatarList() || SAMPLE_AVATAR_LIST) as AvatarOption[];
@@ -137,6 +150,7 @@ export const AvatarPicker = () => {
               <div className="grid grid-cols-2 gap-2 [@media(max-height:500px)]:grid-cols-[repeat(auto-fit,minmax(4.5rem,1fr))] [@media(max-height:500px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[repeat(auto-fit,minmax(3.75rem,1fr))] [@media(orientation:landscape)_and_(max-height:500px)]:gap-1">
                 {avatarList.map((avatar) => {
                   const isSelected = currentAvatar?.id === avatar.id;
+                  const displayName = getAvatarDisplayName(avatar);
 
                   return (
                     <button
@@ -153,7 +167,7 @@ export const AvatarPicker = () => {
                       <span className="relative h-16 w-16 overflow-hidden rounded-2xl border-[3px] border-ink bg-muted [@media(max-height:500px)]:h-11 [@media(max-height:500px)]:w-11 [@media(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:h-9 [@media(orientation:landscape)_and_(max-height:500px)]:w-9 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px]">
                         <img
                           src={avatar.headIconUrl}
-                          alt="Avatar option"
+                          alt={displayName}
                           className="h-full w-full object-cover transition-transform duration-200 group-hover/avatar:scale-105"
                         />
                         {isSelected && (
@@ -162,8 +176,12 @@ export const AvatarPicker = () => {
                           </span>
                         )}
                       </span>
-                      <span className="text-[10px] font-black uppercase tracking-wide text-ink/80 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]">
-                        {isSelected ? "Selected" : "Select"}
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wide [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px] ${
+                          isSelected ? "text-maroon" : "text-ink/80"
+                        }`}
+                      >
+                        {displayName}
                       </span>
                     </button>
                   );

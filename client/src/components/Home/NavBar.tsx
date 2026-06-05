@@ -1,14 +1,94 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { HiChevronDown } from "react-icons/hi2";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { aboutNavLinks } from "./data/pupLopezContent";
+import { resourceNavLinks } from "./data/resourcesContent";
+
+type NavDropdownProps = {
+  label: string;
+  active: boolean;
+  open: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  onToggle: () => void;
+  links: { name: string; path: string }[];
+  pathname: string;
+  align?: "left" | "right";
+};
+
+function NavDropdown({
+  label,
+  active,
+  open,
+  onOpen,
+  onClose,
+  onToggle,
+  links,
+  pathname,
+  align = "left",
+}: NavDropdownProps) {
+  return (
+    <div
+      className="relative shrink-0"
+      onMouseEnter={onOpen}
+      onMouseLeave={onClose}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-haspopup="true"
+        className={`flex items-center gap-0.5 rounded-md px-1 py-1 font-black uppercase tracking-tighter transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream lg:text-xs xl:text-sm ${
+          active ? "text-maroon" : "text-ink hover:text-maroon"
+        }`}
+      >
+        <span className="relative whitespace-nowrap">{label}</span>
+        <HiChevronDown
+          className={`h-3.5 w-3.5 shrink-0 transition-transform xl:h-4 xl:w-4 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <div
+            className={`absolute top-full z-50 pt-2 ${align === "right" ? "right-0" : "left-0"}`}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="max-h-[min(70vh,24rem)] min-w-[12.5rem] overflow-y-auto rounded-xl border-4 border-ink bg-white shadow-brutal-md"
+            >
+              {links.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={onClose}
+                  className={`block border-b-2 border-ink/10 px-4 py-2.5 font-black uppercase tracking-tight transition-colors last:border-b-0 lg:text-[10px] xl:px-5 xl:py-3 xl:text-xs ${
+                    pathname === link.path
+                      ? "bg-maroon text-white"
+                      : "text-ink hover:bg-gold"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const logo = "/images/iska-logo.png";
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -17,118 +97,134 @@ export const NavBar = () => {
   const isAboutPupSection =
     pathname.startsWith("/about") || pathname === "/programs";
   const isContactPage = pathname === "/contact";
+  const isResourcesSection = pathname.startsWith("/resources");
 
-  const homeNavLinks = [
-    { name: "Home", href: "/home", isRoute: true, active: isHomePage },
-    { name: "Features", href: "/features", isRoute: true, active: isFeaturesPage },
-    { name: "Contact", href: "/contact", isRoute: true, active: isContactPage },
+  const primaryNavLinks = [
+    { name: "Home", href: "/home", active: isHomePage },
+    { name: "Features", href: "/features", active: isFeaturesPage },
   ];
 
   const navLinkClass = (active: boolean) =>
-    `font-black uppercase text-sm tracking-tighter transition-colors relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream ${
+    `relative shrink-0 whitespace-nowrap rounded-md px-1 py-1 font-black uppercase tracking-tighter transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream lg:text-xs xl:text-sm ${
       active ? "text-maroon" : "text-ink hover:text-maroon"
     }`;
 
   const closeMobile = () => {
     setIsOpen(false);
     setMobileAboutOpen(false);
+    setMobileResourcesOpen(false);
   };
 
+  const closeDesktopDropdowns = () => {
+    setAboutOpen(false);
+    setResourcesOpen(false);
+  };
+
+  useEffect(() => {
+    closeMobile();
+    closeDesktopDropdowns();
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   return (
-    <nav className="fixed top-0 z-100 w-full border-b-4 border-ink bg-cream">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <div
-            className="shrink-0 group cursor-pointer"
+    <nav className="fixed top-0 z-100 w-full border-b-2 border-ink bg-cream sm:border-b-4">
+      <div className="mx-auto max-w-7xl px-3 sm:px-5 lg:px-6 xl:px-8">
+        <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-3 lg:h-[4.5rem] xl:h-20">
+          <button
+            type="button"
+            className="group shrink-0 cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon"
             onClick={() => navigate("/home")}
+            aria-label="Go to home"
           >
             <div className="relative">
               <img
                 src={logo}
-                alt="Logo"
-                className="h-8 md:h-10 relative z-10"
+                alt="ISKA Virtual Tour"
+                className="relative z-10 h-7 w-auto sm:h-8 lg:h-9 xl:h-10"
               />
-              <div className="absolute -inset-2 bg-[#FFD700] rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 z-0" />
+              <div className="absolute -inset-2 z-0 scale-0 rounded-full bg-gold transition-transform duration-300 group-hover:scale-100" />
             </div>
-          </div>
+          </button>
 
-          <div className="hidden md:flex items-center space-x-10">
-            {homeNavLinks.map((link) => (
+          <div className="hidden min-w-0 flex-1 items-center justify-center gap-3 lg:flex xl:gap-5 2xl:gap-8">
+            {primaryNavLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
                 className={navLinkClass(link.active)}
               >
                 {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-1 bg-[#FFD700] transition-all group-hover:w-full" />
               </Link>
             ))}
 
-            <div
-              className="relative"
-              onMouseEnter={() => setAboutOpen(true)}
-              onMouseLeave={() => setAboutOpen(false)}
-            >
-              <div className="flex items-center gap-1 select-none">
-                <span
-                  className={`font-black uppercase text-sm tracking-tighter relative group ${
-                    isAboutPupSection ? "text-[#800000]" : "text-black"
-                  }`}
-                >
-                  ABOUT PUPLQ
-                  <span className="absolute -bottom-1 left-0 w-0 h-1 bg-[#FFD700] transition-all group-hover:w-full" />
-                </span>
-                <HiChevronDown
-                  className={`w-4 h-4 text-black transition-transform ${aboutOpen ? "rotate-180" : ""}`}
-                />
-              </div>
+            <NavDropdown
+              label="About PUPLQ"
+              active={isAboutPupSection}
+              open={aboutOpen}
+              onOpen={() => {
+                setResourcesOpen(false);
+                setAboutOpen(true);
+              }}
+              onClose={() => setAboutOpen(false)}
+              onToggle={() => {
+                setResourcesOpen(false);
+                setAboutOpen((open) => !open);
+              }}
+              links={aboutNavLinks}
+              pathname={pathname}
+            />
 
-              <AnimatePresence>
-                {aboutOpen && (
-                  <div className="absolute top-full left-0 pt-3">
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="min-w-[200px] overflow-hidden rounded-xl border-4 border-black bg-white"
-                    >
-                      {aboutNavLinks.map((link) => (
-                        <Link
-                          key={link.path}
-                          to={link.path}
-                          onClick={() => setAboutOpen(false)}
-                          className={`block px-5 py-3 font-black uppercase text-xs tracking-tight transition-colors border-b-2 border-black/10 last:border-b-0 ${
-                            pathname === link.path
-                              ? "bg-[#800000] text-white"
-                              : "text-black hover:bg-[#FFD700]"
-                          }`}
-                        >
-                          {link.name}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  </div>
-                )}
-              </AnimatePresence>
-            </div>
+            <NavDropdown
+              label="Resources"
+              active={isResourcesSection}
+              open={resourcesOpen}
+              onOpen={() => {
+                setAboutOpen(false);
+                setResourcesOpen(true);
+              }}
+              onClose={() => setResourcesOpen(false)}
+              onToggle={() => {
+                setAboutOpen(false);
+                setResourcesOpen((open) => !open);
+              }}
+              links={resourceNavLinks}
+              pathname={pathname}
+              align="right"
+            />
+
+            <Link to="/contact" className={navLinkClass(isContactPage)}>
+              Contact
+            </Link>
           </div>
 
-          <div className="hidden md:block">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => navigate("/experience")}
-              className="inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-6 py-3 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90"
+              className="hidden items-center gap-1.5 rounded-lg border-2 border-ink bg-maroon px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 sm:rounded-xl sm:border-4 sm:px-4 sm:py-2.5 lg:inline-flex xl:gap-2 xl:px-6 xl:py-3 xl:text-xs"
             >
-              LAUNCH 3D TOUR
+              <span className="lg:inline xl:hidden">3D Tour</span>
+              <span className="hidden xl:inline">Launch 3D Tour</span>
             </button>
-          </div>
 
-          <div className="md:hidden">
             <button
+              type="button"
               onClick={() => setIsOpen(true)}
-              className="rounded-xl border-4 border-ink bg-gold p-2 transition-colors hover:bg-gold/90 active:scale-95"
+              className="rounded-lg border-2 border-ink bg-gold p-2 transition-colors hover:bg-gold/90 active:scale-95 sm:rounded-xl sm:border-4 lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={isOpen}
             >
-              <HiOutlineMenu className="text-2xl text-black" />
+              <HiOutlineMenu className="text-xl text-ink sm:text-2xl" />
             </button>
           </div>
         </div>
@@ -142,7 +238,7 @@ export const NavBar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMobile}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-110"
+              className="fixed inset-0 z-110 bg-black/60 backdrop-blur-sm lg:hidden"
             />
 
             <motion.div
@@ -150,51 +246,52 @@ export const NavBar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 flex h-full w-[min(88vw,300px)] flex-col border-l-4 border-black bg-[#FFFDF5] z-120 sm:w-[min(80vw,320px)] sm:border-l-8"
+              className="fixed inset-y-0 right-0 z-120 flex h-[100dvh] w-[min(92vw,20rem)] flex-col border-l-4 border-ink bg-cream pb-[env(safe-area-inset-bottom)] sm:w-[min(85vw,22rem)] lg:hidden"
             >
-              <div className="flex shrink-0 items-center justify-between border-b-2 border-black/10 px-4 py-4 sm:px-6 sm:py-5">
-                <img src={logo} alt="Logo" className="h-7 sm:h-8" />
+              <div className="flex shrink-0 items-center justify-between border-b-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
+                <img src={logo} alt="ISKA Virtual Tour" className="h-7 sm:h-8" />
                 <button
+                  type="button"
                   onClick={closeMobile}
-                  className="rounded-xl border-4 border-ink bg-white p-2 transition-colors hover:bg-muted"
+                  className="rounded-lg border-2 border-ink bg-white p-2 transition-colors hover:bg-muted sm:rounded-xl sm:border-4"
                   aria-label="Close menu"
                 >
                   <HiOutlineX className="text-lg sm:text-xl" />
                 </button>
               </div>
 
-              <div className="flex flex-1 flex-col overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  {homeNavLinks.map((link) => (
+              <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 sm:py-5">
+                <div className="flex flex-col gap-1 sm:gap-2">
+                  {primaryNavLinks.map((link) => (
                     <Link
                       key={link.name}
                       to={link.href}
                       onClick={closeMobile}
-                      className={`group flex items-center gap-3 text-xl font-black uppercase tracking-tighter sm:text-2xl ${
+                      className={`flex min-h-11 items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
                         link.active
-                          ? "text-[#800000]"
-                          : "text-black hover:text-[#800000]"
+                          ? "bg-maroon/10 text-maroon"
+                          : "text-ink hover:bg-muted hover:text-maroon"
                       }`}
                     >
-                      <span className="h-3 w-0 bg-[#FFD700] transition-all group-hover:w-5 sm:group-hover:w-6" />
+                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
                       {link.name}
                     </Link>
                   ))}
 
-                  <div>
+                  <div className="pt-1">
                     <button
                       type="button"
                       onClick={() => setMobileAboutOpen((open) => !open)}
-                      className={`group flex w-full items-center gap-3 text-xl font-black uppercase tracking-tighter sm:text-2xl ${
+                      className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
                         isAboutPupSection
-                          ? "text-[#800000]"
-                          : "text-black hover:text-[#800000]"
+                          ? "bg-maroon/10 text-maroon"
+                          : "text-ink hover:bg-muted hover:text-maroon"
                       }`}
                     >
-                      <span className="h-3 w-0 bg-[#FFD700] transition-all group-hover:w-5 sm:group-hover:w-6" />
-                      ABOUT PUPLQ
+                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
+                      About PUPLQ
                       <HiChevronDown
-                        className={`ml-auto h-5 w-5 shrink-0 transition-transform sm:h-6 sm:w-6 ${mobileAboutOpen ? "rotate-180" : ""}`}
+                        className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`}
                       />
                     </button>
 
@@ -204,43 +301,105 @@ export const NavBar = () => {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="mt-2 space-y-2 overflow-hidden pl-8 sm:mt-3 sm:pl-10"
+                          className="overflow-hidden pl-5 sm:pl-6"
                         >
-                          {aboutNavLinks.map((link) => (
-                            <Link
-                              key={link.path}
-                              to={link.path}
-                              onClick={closeMobile}
-                              className={`block text-sm font-black uppercase tracking-tight sm:text-base ${
-                                pathname === link.path
-                                  ? "text-[#800000]"
-                                  : "text-black/70 hover:text-[#800000]"
-                              }`}
-                            >
-                              {link.name}
-                            </Link>
-                          ))}
+                          <div className="mt-1 space-y-1 border-l-2 border-ink/15 py-1 pl-4">
+                            {aboutNavLinks.map((link) => (
+                              <Link
+                                key={link.path}
+                                to={link.path}
+                                onClick={closeMobile}
+                                className={`flex min-h-10 items-center text-sm font-black uppercase tracking-tight sm:text-base ${
+                                  pathname === link.path
+                                    ? "text-maroon"
+                                    : "text-ink/70 hover:text-maroon"
+                                }`}
+                              >
+                                {link.name}
+                              </Link>
+                            ))}
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
+
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setMobileResourcesOpen((open) => !open)}
+                      className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
+                        isResourcesSection
+                          ? "bg-maroon/10 text-maroon"
+                          : "text-ink hover:bg-muted hover:text-maroon"
+                      }`}
+                    >
+                      <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
+                      Resources
+                      <HiChevronDown
+                        className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileResourcesOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {mobileResourcesOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden pl-5 sm:pl-6"
+                        >
+                          <div className="mt-1 space-y-1 border-l-2 border-ink/15 py-1 pl-4">
+                            {resourceNavLinks.map((link) => (
+                              <Link
+                                key={link.path}
+                                to={link.path}
+                                onClick={closeMobile}
+                                className={`flex min-h-10 items-center text-sm font-black uppercase tracking-tight sm:text-base ${
+                                  pathname === link.path
+                                    ? "text-maroon"
+                                    : "text-ink/70 hover:text-maroon"
+                                }`}
+                              >
+                                {link.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <Link
+                    to="/contact"
+                    onClick={closeMobile}
+                    className={`flex min-h-11 items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
+                      isContactPage
+                        ? "bg-maroon/10 text-maroon"
+                        : "text-ink hover:bg-muted hover:text-maroon"
+                    }`}
+                  >
+                    <span className="h-2.5 w-1 shrink-0 rounded-full bg-gold" />
+                    Contact
+                  </Link>
                 </div>
 
-                <div className="mt-6 sm:mt-8">
+                <div className="mt-5 sm:mt-6">
                   <button
+                    type="button"
                     onClick={() => {
                       closeMobile();
                       navigate("/experience");
                     }}
-                    className="w-full rounded-xl border-4 border-ink bg-maroon py-3 text-center text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 active:scale-[0.98] sm:rounded-2xl sm:py-4 sm:text-sm"
+                    className="w-full rounded-xl border-4 border-ink bg-maroon py-3 text-center text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 active:scale-[0.98] sm:py-3.5 sm:text-sm"
                   >
                     Launch 3D Tour
                   </button>
                 </div>
               </div>
 
-              <div className="shrink-0 border-t-2 border-black/10 px-4 py-4 sm:px-6 sm:py-5">
-                <div className="rounded-xl border-2 border-black bg-[#FFD700] px-4 py-3 sm:rounded-2xl sm:border-4 sm:px-5 sm:py-4">
+              <div className="shrink-0 border-t-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
+                <div className="rounded-xl border-2 border-ink bg-gold px-3 py-2.5 sm:rounded-2xl sm:border-4 sm:px-4 sm:py-3">
                   <p className="text-center text-[10px] font-black uppercase tracking-widest sm:text-xs">
                     PUP Lopez Campus v2.0
                   </p>

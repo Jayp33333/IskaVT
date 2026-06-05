@@ -8,6 +8,8 @@ import AboutOverviewPage from "./pages/AboutOverviewPage";
 import ContactPage from "./pages/ContactPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ProgramsPage from "./pages/ProgramsPage";
+import FaqPage from "./pages/FaqPage";
+import DevelopersPage from "./pages/DevelopersPage";
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/about" element={<AboutOverviewPage />} />
         <Route path="/about/:section" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/resources/faq" element={<FaqPage />} />
+        <Route path="/resources/developers" element={<DevelopersPage />} />
         <Route path="/experience" element={<ExperienceScene />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>

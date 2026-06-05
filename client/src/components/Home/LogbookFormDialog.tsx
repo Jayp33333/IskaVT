@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
-import { ClipboardList, X } from "lucide-react";
+import { X } from "lucide-react";
 import {
   LOGBOOK_ENTRY_ID_KEY,
   LOGBOOK_TIME_IN_KEY,
@@ -91,7 +91,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-[500px] [@media(max-height:500px)]:max-w-[500px] max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md overflow-hidden pointer-events-auto flex flex-col"
+              className="mx-auto w-[min(100%,20rem)] sm:w-[min(100%,22rem)] [@media(max-height:500px)]:w-[min(92vw,18rem)] max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md overflow-hidden pointer-events-auto flex flex-col shrink-0"
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 40 }}
@@ -100,14 +100,15 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
               <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
-                      <ClipboardList className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-ink" strokeWidth={3.5} />
+                    <div className="p-1.5 [@media(max-height:500px)]:p-1 rounded-2xl bg-surface border-[3px] border-ink shadow-brutal-sm shrink-0 flex items-center justify-center">
+                      <img
+                        src="/images/pup-logo.png"
+                        alt="PUP Logo"
+                        className="h-9 w-9 [@media(max-height:500px)]:h-7 [@media(max-height:500px)]:w-7 object-contain"
+                      />
                     </div>
                     <div className="min-w-0">
-                      <p className="inline-block rounded-full bg-gold border-[3px] border-ink px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-ink">
-                        Visitor Check-In
-                      </p>
-                      <h2 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight truncate">
+                      <h2 className="text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight truncate">
                         Visitor Logbook
                       </h2>
                     </div>
@@ -132,7 +133,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                 <form onSubmit={handleSubmit} className="space-y-5 [@media(max-height:500px)]:space-y-3">
                   {/* Full Name */}
                   <div>
-                    <label className={labelBase}>Your Name</label>
+                    <label className={labelBase}>Full Name</label>
                     <input
                       type="text"
                       name="fullName"
@@ -140,12 +141,12 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                       onChange={handleChange}
                       required
                       className={inputBase}
-                      placeholder="e.g. John Doe"
+                      placeholder="e.g Juan Dela Cruz"
                     />
                   </div>
 
                   {/* Two Column for Type & Destination */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 [@media(max-height:500px)]:gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 [@media(max-height:500px)]:gap-3">
                     <div>
                       <label className={labelBase}>Who are you?</label>
                       <select name="visitorType" value={formData.visitorType} onChange={handleChange} required className={inputBase}>
@@ -189,7 +190,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                     disabled={isSubmitting}
                     className="w-full py-4 [@media(max-height:500px)]:py-2.5 bg-maroon hover:bg-[#c93333] text-white border-[3px] border-ink rounded-2xl font-black text-lg [@media(max-height:500px)]:text-xs italic uppercase tracking-wide shadow-brutal-md active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Checking In..." : "Start Tour"}
+                    {isSubmitting ? "Starting..." : "Start Tour"}
                   </button>
                 </form>
               </div>

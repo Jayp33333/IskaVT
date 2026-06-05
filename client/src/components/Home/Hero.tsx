@@ -10,7 +10,7 @@ export function Hero() {
   const [mapOpen, setMapOpen] = useState(false);
   return (
     <section
-      className="relative flex min-h-[calc(100vh-5rem)] flex-col justify-center overflow-x-hidden bg-cream px-4 pb-16 pt-24 sm:px-6 sm:pb-12 sm:pt-28 lg:min-h-[calc(100vh-5rem)] lg:items-center lg:px-12 lg:pt-24 xl:px-20"
+      className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col justify-center overflow-x-hidden bg-cream px-4 pb-16 pt-20 sm:min-h-[calc(100dvh-4rem)] sm:px-6 sm:pb-12 sm:pt-24 lg:min-h-[calc(100dvh-4.5rem)] lg:items-center lg:px-12 lg:pt-24 xl:min-h-[calc(100dvh-5rem)] xl:px-20"
       id="home"
     >
       <HeroNeoBackground />
