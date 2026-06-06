@@ -56,6 +56,8 @@ export const LATEST_VISITOR_COLORS = [
 
 export const SETTINGS_STORAGE_KEY = "admin_settings";
 
+export const ADMIN_AUTH_SESSION_KEY = "iska_admin_auth";
+
 export const NOTIFICATIONS_SEEN_KEY = "admin_notifications_last_seen_at";
 
 export const DEFAULT_SETTINGS: AdminSettings = {

@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { PageHeader, Section } from "../marketing";
+import { PageHeader, Section, SpeakTextButton } from "../marketing";
 import { InspiredValuesGrid } from "./InspiredValuesGrid";
 import { StrategicGoalsGrid } from "./StrategicGoalsGrid";
 import { HymnsContent } from "./HymnsContent";
@@ -122,6 +122,10 @@ export function About() {
   }
 
   const page = aboutContent[section];
+  const historySpeechText =
+    section === "history" && page.content.type === "paragraphs"
+      ? [page.title, ...page.content.items].join(". ")
+      : null;
 
   return (
     <Section id="about" dotGrid>
@@ -147,9 +151,12 @@ export function About() {
         }`}
       >
           {section !== "hymn" && (
-            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-[#800000] mb-6">
-              {page.title}
-            </h3>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h3 className="text-3xl font-black uppercase tracking-tighter text-[#800000] md:text-4xl">
+                {page.title}
+              </h3>
+              {historySpeechText && <SpeakTextButton text={historySpeechText} />}
+            </div>
           )}
           {renderContent(page.content)}
         </motion.div>

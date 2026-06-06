@@ -2,29 +2,19 @@ import type { LucideIcon } from "lucide-react";
 import { Building2, Footprints, Map, MonitorPlay } from "lucide-react";
 
 export const homeWelcomeContent = {
-  headline:
-    "Get to know PUP Lopez before your first day—explore the campus online, at your own pace.",
+  headline: "Explore PUP Lopez online before your visit.",
   image: "/images/campus-renderer.png",
   imageAlt: "ISKA Virtual Tour 3D campus preview",
-  projectTitle: "About Our Project",
-  projectIntro:
-    "ISKA Virtual Tour (ISKA VT) is a 3D campus tour of PUP Lopez created by students in the Diploma in Information Technology program. You can walk through major areas, check building details, and learn where things are before you visit in person.",
-  projectPurpose: {
-    title: "Purpose",
-    body: "Starting at a new school can feel overwhelming when you do not know where classrooms, offices, or landmarks are yet. ISKA VT helps prospective students, fresh enrollees, parents, alumni, and guests feel prepared with clear maps, routes, and location info in one place.",
-  },
-  projectVision: {
-    title: "Vision",
-    body: "We want ISKA VT to be the go-to online guide for PUP Lopez—friendly, easy to follow, and open to anyone who wants an honest preview of the campus, whether you are nearby or miles away.",
-  },
-  projectMission: {
-    title: "Mission",
-    body: "We keep the tour accurate and easy to use by combining 3D exploration with tools you can rely on—the mini-map, location pins, building info, tour guides, and avatars that help you find your way step by step.",
-  },
+  intro:
+    "ISKA Virtual Tour (ISKA VT) is a 3D campus guide developed by DIT students at PUP Lopez. Navigate key buildings, view location details, and plan your route before arriving on campus.",
+  highlights: [
+    "Interactive 3D walkthrough of major campus areas",
+    "Mini-map, location pins, and building information",
+    "Free public access — no account required",
+  ],
   projectCard: {
     role: "PUP Lopez Virtual Campus Tour",
-    bio: "Built by DIT students who wanted future Iskolar ng Bayan to feel at home on campus even before day one.",
-    credit: "DIT Students",
+    tagline: "For prospective students, parents, and visitors.",
   },
   projectDevelopers: {
     title: "Developed By",
@@ -128,6 +118,10 @@ export type HomeExploreLocation = {
   description: string;
 };
 
+export const homeExploreIntro = {
+  headline: "Key buildings and landmarks available in the virtual tour.",
+};
+
 export const homeExploreLocations: HomeExploreLocation[] = [
   {
     name: "Administration Building",
@@ -135,15 +129,15 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/AdminBuilding.webp",
     highlights: ["Enrollment", "Registrar", "Accounting"],
     description:
-      "The main hub for enrollment, registrar services, accounting, and student transactions.",
+      "Central offices for enrollment, registrar services, and student transactions.",
   },
   {
     name: "Pylon",
     tag: "Landmark",
     image: "/images/campus-image.jpg",
-    highlights: ["Campus icon", "Photo spot", "Central landmark"],
+    highlights: ["Campus icon", "Photo spot", "Landmark"],
     description:
-      "The iconic campus pylon — a recognizable landmark at the heart of PUP Lopez.",
+      "The iconic campus pylon at the heart of PUP Lopez.",
   },
   {
     name: "Yumul Building",
@@ -151,7 +145,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/YumulBuilding.png",
     highlights: ["Lectures", "Faculty offices", "Classrooms"],
     description:
-      "A historically significant building named after the Yumul family, home to classrooms and academic offices.",
+      "Named after the Yumul family — home to classrooms and faculty offices.",
   },
   {
     name: "Comlab 1",
@@ -159,7 +153,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/Comlab1.jpg",
     highlights: ["Programming", "Research", "BSIT labs"],
     description:
-      "Computer laboratory for programming, research, and IT-related coursework by BSIT and other programs.",
+      "Computer lab for programming, research, and IT coursework.",
   },
   {
     name: "Comlab 2",
@@ -167,7 +161,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/Comlab2.jpg",
     highlights: ["Digital projects", "Practical work", "Tech subjects"],
     description:
-      "Additional computer lab space for digital projects, practical exercises, and technology subjects.",
+      "Additional lab space for digital projects and technology subjects.",
   },
   {
     name: "Engineering Building",
@@ -175,7 +169,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/EngineeringBuilding.webp",
     highlights: ["Labs", "Drafting", "Technology programs"],
     description:
-      "Home to engineering, architecture, and technology programs with labs, drafting areas, and specialized classes.",
+      "Engineering, architecture, and technology programs with specialized labs.",
   },
   {
     name: "Education Building",
@@ -183,7 +177,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/EducationBuilding.png",
     highlights: ["Lectures", "Seminars", "Public admin"],
     description:
-      "Used for education and public administration programs, lectures, demonstrations, and seminars.",
+      "Education and public administration lectures, demos, and seminars.",
   },
   {
     name: "Health and Sciences Building",
@@ -191,7 +185,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/HealthSciencesBuilding.webp",
     highlights: ["Science labs", "Major classes", "Research"],
     description:
-      "Main venue for science-related subjects, laboratory activities, and major program classes.",
+      "Science laboratories, major program classes, and research activities.",
   },
   {
     name: "Nantes Building",
@@ -199,7 +193,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/NantesBuilding.webp",
     highlights: ["Lectures", "Minor subjects", "Study halls"],
     description:
-      "Classroom building for regular lectures, minor subjects, and academic activities across programs.",
+      "Classrooms for lectures, minor subjects, and daily academic activities.",
   },
   {
     name: "Gymnasium",
@@ -207,7 +201,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/Gymnasium.jpg",
     highlights: ["Sports", "PE classes", "Assemblies"],
     description:
-      "The main venue for sports, PE classes, assemblies, intramurals, and large campus gatherings.",
+      "Sports events, PE classes, assemblies, and campus gatherings.",
   },
   {
     name: "Grandstand",
@@ -215,7 +209,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     image: "/images/buildings/Grandstand.jpg",
     highlights: ["Events", "Assemblies", "Outdoor activities"],
     description:
-      "Open-air space for major events, assemblies, and outdoor campus activities.",
+      "Open-air venue for major events and outdoor campus activities.",
   },
 ];
 

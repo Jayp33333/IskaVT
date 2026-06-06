@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
 import ExperienceScene from "./pages/ExperienceScene";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLoginPage from "./pages/AdminLoginPage";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import AboutOverviewPage from "./pages/AboutOverviewPage";
@@ -9,6 +11,7 @@ import ContactPage from "./pages/ContactPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ProgramsPage from "./pages/ProgramsPage";
 import FaqPage from "./pages/FaqPage";
+import HandbookPage from "./pages/HandbookPage";
 import DevelopersPage from "./pages/DevelopersPage";
 
 export default function App() {
@@ -24,9 +27,18 @@ export default function App() {
         <Route path="/about/:section" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/resources/faq" element={<FaqPage />} />
+        <Route path="/resources/handbook" element={<HandbookPage />} />
         <Route path="/resources/developers" element={<DevelopersPage />} />
         <Route path="/experience" element={<ExperienceScene />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

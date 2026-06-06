@@ -2,12 +2,6 @@ import { motion } from "framer-motion";
 import { Section, SectionEyebrow } from "../marketing";
 import { homeWelcomeContent } from "./data/homeContent";
 
-const projectSections = [
-  homeWelcomeContent.projectPurpose,
-  homeWelcomeContent.projectVision,
-  homeWelcomeContent.projectMission,
-] as const;
-
 export function HomeWelcome() {
   const { projectCard } = homeWelcomeContent;
 
@@ -25,35 +19,28 @@ export function HomeWelcome() {
           </SectionEyebrow>
 
           <h2 className="mb-4 text-3xl font-black uppercase leading-[1.1] tracking-tighter text-ink sm:mb-5 sm:text-4xl md:text-5xl md:leading-[1.12]">
-            Welcome to the{" "}
-            <span className="text-maroon">Virtual Campus</span>
+            Virtual <span className="text-maroon">Campus Tour</span>
           </h2>
 
-          <p className="mb-6 text-sm font-bold text-ink/60 sm:mb-8 sm:text-base">
+          <p className="mb-4 text-sm font-bold text-ink/60 sm:mb-5 sm:text-base">
             {homeWelcomeContent.headline}
           </p>
 
-          <div className="space-y-6 sm:space-y-7">
-            <div>
-              <h3 className="mb-2 text-sm font-black uppercase tracking-tighter text-maroon sm:text-base">
-                {homeWelcomeContent.projectTitle}
-              </h3>
-              <p className="text-sm font-bold leading-[1.75] text-ink/75 sm:text-base sm:leading-[1.8]">
-                {homeWelcomeContent.projectIntro}
-              </p>
-            </div>
+          <p className="mb-6 text-sm font-bold leading-relaxed text-ink/75 sm:mb-8 sm:text-base">
+            {homeWelcomeContent.intro}
+          </p>
 
-            {projectSections.map((section) => (
-              <div key={section.title}>
-                <h4 className="mb-2 text-sm font-black uppercase tracking-tighter text-maroon sm:text-base">
-                  {section.title}
-                </h4>
-                <p className="text-sm font-bold leading-[1.75] text-ink/75 sm:text-base sm:leading-[1.8]">
-                  {section.body}
-                </p>
-              </div>
+          <ul className="space-y-3 border-t-2 border-ink/10 pt-6 sm:space-y-3.5 sm:pt-7">
+            {homeWelcomeContent.highlights.map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-3 text-sm font-bold text-ink/75 sm:text-base"
+              >
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full border border-ink bg-gold" />
+                {item}
+              </li>
             ))}
-          </div>
+          </ul>
         </motion.div>
 
         <motion.aside
@@ -82,8 +69,8 @@ export function HomeWelcome() {
               <p className="mt-1 text-sm font-bold text-ink/60 sm:text-base">
                 {projectCard.role}
               </p>
-              <p className="mt-4 text-sm font-bold leading-[1.75] text-ink/70 sm:text-base sm:leading-[1.8]">
-                {projectCard.bio}
+              <p className="mt-3 text-sm font-medium text-ink/55 sm:text-base">
+                {projectCard.tagline}
               </p>
             </div>
           </div>

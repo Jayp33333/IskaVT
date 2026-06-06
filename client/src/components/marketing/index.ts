@@ -4,3 +4,4 @@ export { Section } from "./Section";
 export { SectionEyebrow } from "./SectionEyebrow";
 export { GoldUnderline } from "./GoldUnderline";
 export { BrutalCard } from "./BrutalCard";
+export { SpeakTextButton } from "./SpeakTextButton";

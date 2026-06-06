@@ -5,6 +5,7 @@ import {
   type ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearAdminSession } from "../utils/adminAuth";
 
 import { TOAST_ACTIVITY_DURATION_MS } from "../constants";
 import { useAdminLifecycle } from "../hooks/useAdminLifecycle";
@@ -74,7 +75,8 @@ export function AdminProvider({ children }: AdminProviderProps) {
   });
 
   const logout = useCallback(() => {
-    navigate("/");
+    clearAdminSession();
+    navigate("/admin/login");
   }, [navigate]);
 
   const value = useMemo<AdminContextValue>(

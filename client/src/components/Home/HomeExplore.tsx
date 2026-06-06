@@ -1,45 +1,63 @@
 import { motion } from "framer-motion";
+import { MapPin } from "lucide-react";
 import { Section, SectionEyebrow } from "../marketing";
 import {
+  homeExploreIntro,
   homeExploreLocations,
   type HomeExploreLocation,
 } from "./data/homeContent";
 
-function formatHighlights(items: string[]) {
-  return items.map((item) => `• ${item}`).join(" · ");
-}
-
-function HighlightImage({ location }: { location: HomeExploreLocation }) {
+function HighlightCard({
+  location,
+  index,
+}: {
+  location: HomeExploreLocation;
+  index: number;
+}) {
   return (
-    <div className="flex flex-col items-center lg:items-start">
-      <div className="aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-brutal-md sm:max-w-lg sm:rounded-3xl sm:border-4 lg:max-w-none">
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ delay: (index % 3) * 0.06 }}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-brutal-md transition-transform duration-300 hover:-translate-x-1 hover:-translate-y-1 sm:rounded-3xl sm:border-4"
+    >
+      <div className="relative aspect-[4/3] overflow-hidden border-b-2 border-ink sm:border-b-4">
         <img
           src={location.image}
           alt={location.name}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           loading="lazy"
         />
+        <span className="absolute left-3 top-3 rounded-full border-2 border-ink bg-gold px-3 py-1 text-[10px] font-black uppercase tracking-wider text-ink sm:left-4 sm:top-4 sm:text-xs">
+          {location.tag}
+        </span>
       </div>
-      <span className="mt-3 text-xs font-black uppercase tracking-widest text-ink/50 sm:text-sm">
-        {location.tag}
-      </span>
-    </div>
-  );
-}
 
-function HighlightContent({ location }: { location: HomeExploreLocation }) {
-  return (
-    <div className="flex flex-col justify-center text-center lg:text-left">
-      <h3 className="mb-3 text-2xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-3xl">
-        {location.name}
-      </h3>
-      <p className="mb-5 text-sm font-bold leading-relaxed text-ink/70 sm:text-base">
-        {location.description}
-      </p>
-      <span className="mx-auto inline-flex max-w-full rounded-full border-2 border-ink bg-white px-4 py-2 text-xs font-bold text-ink/70 shadow-brutal-sm sm:px-5 sm:text-sm lg:mx-0">
-        {formatHighlights(location.highlights)}
-      </span>
-    </div>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <div className="mb-2 flex items-start gap-2">
+          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-maroon" />
+          <h3 className="text-lg font-black uppercase leading-tight tracking-tighter text-ink sm:text-xl">
+            {location.name}
+          </h3>
+        </div>
+
+        <p className="mb-4 flex-1 text-sm font-bold leading-relaxed text-ink/65">
+          {location.description}
+        </p>
+
+        <ul className="flex flex-wrap gap-2 border-t-2 border-ink/10 pt-4">
+          {location.highlights.map((item) => (
+            <li
+              key={item}
+              className="rounded-lg border-2 border-ink bg-cream px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-ink/75 sm:text-xs"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.article>
   );
 }
 
@@ -49,45 +67,21 @@ export function HomeExplore() {
       <div className="mb-10 flex flex-col items-center text-center sm:mb-12 lg:mb-14">
         <SectionEyebrow animated>Campus Highlights</SectionEyebrow>
         <h2 className="text-3xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-4xl md:text-5xl">
-          Places You Can <span className="text-maroon">Explore</span>
+          Places to <span className="text-maroon">Explore</span>
         </h2>
         <p className="mt-4 max-w-2xl text-sm font-bold text-ink/60 sm:text-base">
-          Walk through major academic buildings, laboratories, offices, and
-          landmarks modeled in the virtual campus — from Engineering and
-          Education to Health Sciences and more.
+          {homeExploreIntro.headline}
         </p>
       </div>
 
-      <div className="flex flex-col gap-14 sm:gap-16 lg:gap-20">
-        {homeExploreLocations.map((location, index) => {
-          const imageOnLeft = index % 2 === 0;
-
-          return (
-            <motion.div
-              key={location.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: 0.05 }}
-              className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16"
-            >
-              <div
-                className={
-                  imageOnLeft ? "order-1 lg:order-1" : "order-1 lg:order-2"
-                }
-              >
-                <HighlightImage location={location} />
-              </div>
-              <div
-                className={
-                  imageOnLeft ? "order-2 lg:order-2" : "order-2 lg:order-1"
-                }
-              >
-                <HighlightContent location={location} />
-              </div>
-            </motion.div>
-          );
-        })}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+        {homeExploreLocations.map((location, index) => (
+          <HighlightCard
+            key={location.name}
+            location={location}
+            index={index}
+          />
+        ))}
       </div>
     </Section>
   );

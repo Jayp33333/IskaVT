@@ -208,6 +208,17 @@ export const NavBar = () => {
           </div>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <Link
+              to="/admin/login"
+              className={`hidden rounded-lg border-2 border-ink px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors sm:rounded-xl sm:border-4 sm:px-4 sm:py-2.5 lg:inline-flex xl:text-xs ${
+                pathname.startsWith("/admin")
+                  ? "bg-maroon text-white"
+                  : "bg-white text-ink hover:bg-muted"
+              }`}
+            >
+              Login
+            </Link>
+
             <button
               type="button"
               onClick={() => navigate("/experience")}
@@ -380,7 +391,19 @@ Contact
                   </Link>
                 </div>
 
-                <div className="mt-5 sm:mt-6">
+                <div className="mt-5 flex flex-col gap-3 sm:mt-6">
+                  <Link
+                    to="/admin/login"
+                    onClick={closeMobile}
+                    className={`w-full rounded-xl border-4 border-ink py-3 text-center text-xs font-black uppercase tracking-widest transition-colors active:scale-[0.98] sm:py-3.5 sm:text-sm ${
+                      pathname.startsWith("/admin")
+                        ? "bg-maroon text-white"
+                        : "bg-white text-ink hover:bg-muted"
+                    }`}
+                  >
+                    Admin Login
+                  </Link>
+
                   <button
                     type="button"
                     onClick={() => {
