@@ -18,6 +18,7 @@ export const DestinationPicker = () => {
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
   const setDistance = useWorld((s: any) => s.setDistance);
   const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
+  const setSelectedDestinationId = useWorld((s: any) => s.setSelectedDestinationId);
   const setQuery = useWorld((s: any) => s.setQuery);
 
   const filteredDestinations = useMemo(
@@ -51,6 +52,7 @@ export const DestinationPicker = () => {
     setIsPinTeleported(false);
     setDistance(Math.hypot(dx, dy, dz));
     setSelectedDestination(destination.name);
+    setSelectedDestinationId(destination.id);
     setOpen(false);
     useWorld.getState().setShowDestinationPicker(false);
     setQuery("");
@@ -60,6 +62,7 @@ export const DestinationPicker = () => {
     setPinPosition(null);
     setIsPinConfirmed(false);
     setSelectedDestination(null);
+    setSelectedDestinationId(null);
     setIsPinTeleported(false);
     setQuery("");
   };

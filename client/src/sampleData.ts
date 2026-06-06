@@ -57,11 +57,15 @@ export const DESTINATIONS = [
   // { id: "canteen", name: "Canteen", position: new THREE.Vector3(0, 0, 0) },
   // { id: "enrollment", name: "Enrollment", position: new THREE.Vector3(0, 0, 0) },
   // { id: "library", name: "Library", position: new THREE.Vector3(0, 0, 0) },
-  // { id: "gymnasium", name: "Gymnasium", position: new THREE.Vector3(-59.93, 0, 20) },
+  {
+    id: "gymnasium",
+    name: "PUP Gymnasium",
+    position: new THREE.Vector3(41, 0.2, -148),
+  },
   {
     id: "grandstand",
     name: "Grandstand",
-    position: new THREE.Vector3(-4.93, 0.1, -101.34),
+    position: new THREE.Vector3(6, 2.5  , -119),
   },
   // { id: "eco-park", name: "Eco Park", position: new THREE.Vector3(0, 0, 0) },
   // { id: "comfort-room", name: "Comfort Room", position: new THREE.Vector3(0, 0, 0) },
@@ -110,12 +114,12 @@ export const DESTINATIONS = [
   {
     id: "room-103",
     name: "Room 103 (ICT Laboratory 1)",
-    position: new THREE.Vector3(1.65, 0.1, -6.5),
+    position: new THREE.Vector3(3.5, 0.105, -12.5),
   },
   {
     id: "room-104",
     name: "Room 104 (ICT Laboratory 2)",
-    position: new THREE.Vector3(11.56, 0.1, -19.84),
+    position: new THREE.Vector3(13.5, 0.105, -26.05),
   },
   // { id: "room-105", name: "Room 105 (Food Laboratory)", position: new THREE.Vector3(0, 0, 0) },
   // { id: "room-106", name: "Room 106 (Lecture Room)", position: new THREE.Vector3(0, 0, 0) },

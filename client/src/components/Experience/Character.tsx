@@ -18,6 +18,7 @@ const Character = () => {
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
   const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
+  const setSelectedDestinationId = useWorld((s: any) => s.setSelectedDestinationId);
   const setQuery = useWorld((s: any) => s.setQuery);
   const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
   const setCharacterPositionOnFloorLabel = useWorld(
@@ -61,6 +62,7 @@ const Character = () => {
     setPinPosition(null);
     setIsPinTeleported(false);
     setSelectedDestination(null);
+    setSelectedDestinationId(null);
     setQuery("");
   }, [pinPosition]);
 
@@ -68,7 +70,7 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
-    // console.log("Character position:", character.position);
+    console.log("Character position:", character.position);
 
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());

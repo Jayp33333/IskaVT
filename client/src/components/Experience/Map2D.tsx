@@ -66,6 +66,7 @@ export default function Map2D() {
   const setIsPinTeleported = GameState((s: any) => s.setIsPinTeleported);
   const setCharacterPosition = GameState((s: any) => s.setCharacterPosition);
   const setSelectedDestination = GameState((s: any) => s.setSelectedDestination);
+  const setSelectedDestinationId = GameState((s: any) => s.setSelectedDestinationId);
   const setQuery = GameState((s: any) => s.setQuery);
   const showDestinationPicker = GameState((s: any) => s.showDestinationPicker);
   const map2DOpen = GameState((s: any) => s.map2DOpen);
@@ -236,7 +237,7 @@ export default function Map2D() {
   };
 
   // Visit a fixed location (or a specific room inside a building) — teleports
-  const handleVisit = (target: { name: string; position: Vector3 }) => {
+  const handleVisit = (target: { id?: string; name: string; position: Vector3 }) => {
     runMapTeleport(() => {
       setPinPosition(target.position.clone());
       setIsPinConfirmed(false);
@@ -247,6 +248,7 @@ export default function Map2D() {
       } as any);
       setIsPinTeleported(true);
       setSelectedDestination(target.name);
+      setSelectedDestinationId(target.id ?? null);
       audioManager?.play?.("teleported");
       setSelectedFixedPin(null);
       setMap2DOpen(false);
@@ -394,6 +396,7 @@ export default function Map2D() {
     setIsPinConfirmed(false);
     setIsPinTeleported(false);
     setSelectedDestination(null);
+    setSelectedDestinationId(null);
     setQuery("");
   };
 

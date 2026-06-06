@@ -1,10 +1,30 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import useWorld from "../../../hooks/useWorld";
+import {
+  buildGuidePath,
+  createGuideCurve,
+  findDestinationIdForPin,
+  getGuideWaypointsForDestinationId,
+} from "../../../data/guidePaths";
 
-const UP_AXIS = new THREE.Vector3(0, 1, 0);
 const FLOW_DOT_COUNT = 7;
+
+function assignTubeGeometry(
+  mesh: THREE.Mesh | null,
+  geometryRef: React.MutableRefObject<THREE.BufferGeometry | null>,
+  curve: THREE.CatmullRomCurve3,
+  radius: number,
+) {
+  if (!mesh) return;
+
+  geometryRef.current?.dispose();
+  const tubularSegments = Math.max(16, Math.ceil(curve.getLength() * 3));
+  const next = new THREE.TubeGeometry(curve, tubularSegments, radius, 10, false);
+  mesh.geometry = next;
+  geometryRef.current = next;
+}
 
 const GuideLine = () => {
   const guideRef = useRef<THREE.Group>(null);
@@ -12,14 +32,29 @@ const GuideLine = () => {
   const coreRef = useRef<THREE.Mesh>(null);
   const destinationRingRef = useRef<THREE.Mesh>(null);
   const flowDots = useRef<THREE.Mesh[]>([]);
+  const glowGeometryRef = useRef<THREE.BufferGeometry | null>(null);
+  const coreGeometryRef = useRef<THREE.BufferGeometry | null>(null);
+  const curveRef = useRef<THREE.CatmullRomCurve3 | null>(null);
 
   const dotIndexes = useMemo(
     () => Array.from({ length: FLOW_DOT_COUNT }, (_, index) => index),
-    []
+    [],
   );
 
+  useEffect(() => {
+    return () => {
+      glowGeometryRef.current?.dispose();
+      coreGeometryRef.current?.dispose();
+    };
+  }, []);
+
   useFrame(({ clock }) => {
-    const { characterPosition, pinPosition, isPinConfirmed } = useWorld.getState();
+    const {
+      characterPosition,
+      pinPosition,
+      isPinConfirmed,
+      selectedDestinationId,
+    } = useWorld.getState();
     const guide = guideRef.current;
 
     if (!guide) return;
@@ -27,40 +62,40 @@ const GuideLine = () => {
     guide.visible = !!characterPosition && !!pinPosition && isPinConfirmed;
     if (!guide.visible || !characterPosition || !pinPosition) return;
 
-    const start = new THREE.Vector3(characterPosition.x, 0.18, characterPosition.z);
-    const end = new THREE.Vector3(pinPosition.x, 0.18, pinPosition.z);
-    const direction = end.clone().sub(start);
-    const length = direction.length();
+    const destinationId =
+      selectedDestinationId ?? findDestinationIdForPin(pinPosition);
+    const waypoints = getGuideWaypointsForDestinationId(destinationId);
+    const pathPoints = buildGuidePath(characterPosition, pinPosition, waypoints);
 
-    if (length < 0.5) {
+    if (pathPoints.length < 2) {
       guide.visible = false;
       return;
     }
 
-    direction.normalize();
+    const curve = createGuideCurve(pathPoints);
+    curveRef.current = curve;
 
-    const midpoint = start.clone().lerp(end, 0.5);
-    const rotation = new THREE.Quaternion().setFromUnitVectors(UP_AXIS, direction);
-
-    for (const mesh of [glowRef.current, coreRef.current]) {
-      if (!mesh) continue;
-      mesh.position.copy(midpoint);
-      mesh.quaternion.copy(rotation);
-      mesh.scale.set(1, length, 1);
+    const pathLength = curve.getLength();
+    if (pathLength < 0.5) {
+      guide.visible = false;
+      return;
     }
+
+    assignTubeGeometry(glowRef.current, glowGeometryRef, curve, 0.18);
+    assignTubeGeometry(coreRef.current, coreGeometryRef, curve, 0.055);
 
     const elapsed = clock.getElapsedTime();
     flowDots.current.forEach((dot, index) => {
       if (!dot) return;
-      const progress = (elapsed * 0.45 + index / FLOW_DOT_COUNT) % 1;
-      const easedProgress = 0.08 + progress * 0.84;
-      dot.position.copy(start).add(direction.clone().multiplyScalar(length * easedProgress));
+      const progress = (elapsed * 0.35 + index / FLOW_DOT_COUNT) % 1;
+      const easedProgress = 0.06 + progress * 0.88;
+      dot.position.copy(curve.getPointAt(easedProgress));
       dot.scale.setScalar(0.75 + Math.sin(elapsed * 5 + index) * 0.15);
     });
 
     if (destinationRingRef.current) {
       const pulse = 1 + Math.sin(elapsed * 4) * 0.18;
-      destinationRingRef.current.position.copy(end);
+      destinationRingRef.current.position.copy(pathPoints[pathPoints.length - 1]);
       destinationRingRef.current.scale.setScalar(pulse);
     }
   });
@@ -68,7 +103,7 @@ const GuideLine = () => {
   return (
     <group ref={guideRef} visible={false}>
       <mesh ref={glowRef} renderOrder={2}>
-        <cylinderGeometry args={[0.18, 0.18, 1, 16]} />
+        <tubeGeometry args={[new THREE.LineCurve3(new THREE.Vector3(), new THREE.Vector3(0, 1, 0)), 2, 0.18, 8, false]} />
         <meshBasicMaterial
           color="#38bdf8"
           depthWrite={false}
@@ -78,7 +113,7 @@ const GuideLine = () => {
       </mesh>
 
       <mesh ref={coreRef} renderOrder={3}>
-        <cylinderGeometry args={[0.055, 0.055, 1, 12]} />
+        <tubeGeometry args={[new THREE.LineCurve3(new THREE.Vector3(), new THREE.Vector3(0, 1, 0)), 2, 0.055, 8, false]} />
         <meshBasicMaterial
           color="#67e8f9"
           depthWrite={false}

@@ -10,7 +10,7 @@ import type { FixedLocationPin, FixedLocationRoom } from "../../../sampleData";
 type FixedLocationModalProps = {
   pin: FixedLocationPin | null;
   onClose: () => void;
-  onVisit: (target: { name: string; position: Vector3 }) => void;
+  onVisit: (target: { id?: string; name: string; position: Vector3 }) => void;
 };
 
 export function FixedLocationModal({

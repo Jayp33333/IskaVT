@@ -13,6 +13,7 @@ export const DestinationChecker = () => {
   const setIsPinConfirmed = useWorld((state: any) => state.setIsPinConfirmed);
   const setPinPosition = useWorld((state: any) => state.setPinPosition);
   const setSelectedDestination = useWorld((state: any) => state.setSelectedDestination);
+  const setSelectedDestinationId = useWorld((state: any) => state.setSelectedDestinationId);
 
   const [showDestinationText, setShowDestinationText] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
@@ -31,6 +32,7 @@ export const DestinationChecker = () => {
         setIsPinConfirmed(false);
         setShowDestinationText(true);
         setSelectedDestination(null);
+        setSelectedDestinationId(null);
         audioManager.play("arrived");
         setTimeout(() => setFadeOut(true), 3000);
         setTimeout(() => {
@@ -52,6 +54,7 @@ export const DestinationChecker = () => {
     setIsPinConfirmed,
     setPinPosition,
     setSelectedDestination,
+    setSelectedDestinationId,
   ]);
 
   const dismiss = () => {

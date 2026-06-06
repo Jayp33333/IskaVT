@@ -14,6 +14,7 @@ interface WorldState {
   cameraRotation: Vector3;
   cameraMode: "first" | "third";
   selectedDestination: any;
+  selectedDestinationId: string | null;
   showMiniMap: boolean;
   showDestinationPicker: boolean;
   showLogHistory: boolean;
@@ -51,6 +52,7 @@ interface WorldState {
   setCameraRotation: (rotation: Vector3) => void;
   setCameraMode: (mode: "first" | "third") => void;
   setSelectedDestination: (destination: any) => void;
+  setSelectedDestinationId: (id: string | null) => void;
   setShowMiniMap: (value: boolean) => void;
   setShowDestinationPicker: (value: boolean) => void;
   setShowLogHistory: (value: boolean) => void;
@@ -77,6 +79,7 @@ const useWorld = create<WorldState>((set) => ({
   cameraRotation: new Vector3(0, 0, 0),
   cameraMode: "first",
   selectedDestination: null,
+  selectedDestinationId: null,
   showMiniMap: false,
   showDestinationPicker: false,
   showLogHistory: false,
@@ -144,6 +147,7 @@ const useWorld = create<WorldState>((set) => ({
   setCameraRotation: (cameraRotation) => set({ cameraRotation }),
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
+  setSelectedDestinationId: (selectedDestinationId) => set({ selectedDestinationId }),
   setShowMiniMap: (showMiniMap) => set({ showMiniMap }),
   setShowDestinationPicker: (showDestinationPicker) =>
     set((state) =>

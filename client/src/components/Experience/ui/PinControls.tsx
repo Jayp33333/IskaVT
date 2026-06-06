@@ -10,6 +10,7 @@ export const PinControls = () => {
     setCharacterPosition,
     setIsPinTeleported,
     setSelectedDestination,
+    setSelectedDestinationId,
     setQuery,
   } = useWorld((s: any) => s);
 
@@ -30,6 +31,7 @@ export const PinControls = () => {
     setPinPosition(null);
     setIsPinConfirmed(false);
     setSelectedDestination(null);
+    setSelectedDestinationId(null);
     setIsPinTeleported(false);
     setQuery("");
   };
