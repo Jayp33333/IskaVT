@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect } from "react";
+import { Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import {
   SimpleCharacter,
@@ -31,6 +32,7 @@ const Character = () => {
   const interactionLocked = !!activeNPCDialog;
 
   const characterRef = useRef<any>(null);
+  const cameraRotationRef = useRef(new Vector3());
 
   usePointerLockRotateZoomActionBindings({
     // While talking to an NPC, do not allow acquiring pointer lock
@@ -70,11 +72,12 @@ const Character = () => {
     const character = characterRef.current;
     if (!character) return;
 
-    console.log("Character position:", character.position);
-
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
-    setCameraRotation(camera.rotation.clone());
+
+    const rot = camera.rotation;
+    cameraRotationRef.current.set(rot.x, rot.y, rot.z);
+    setCameraRotation(cameraRotationRef.current);
 
     if (character.position.y < -10) {
       character.position.set(0, 1, 0);

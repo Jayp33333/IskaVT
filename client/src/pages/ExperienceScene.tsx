@@ -240,6 +240,7 @@ export default function ExperienceScene() {
       
 
       <Canvas
+        dpr={[1, 1.5]}
         style={{
           position: "absolute",
           inset: 0,

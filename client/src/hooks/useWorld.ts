@@ -149,7 +149,18 @@ const useWorld = create<WorldState>((set) => ({
     set((state) => ({
       currentZoom: Math.max(19, Math.min(400, state.currentZoom * zoomChange)), //currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),
     })),
-  setCameraRotation: (cameraRotation) => set({ cameraRotation }),
+  setCameraRotation: (cameraRotation) =>
+    set((state) => {
+      const prev = state.cameraRotation;
+      if (
+        prev.x === cameraRotation.x &&
+        prev.y === cameraRotation.y &&
+        prev.z === cameraRotation.z
+      ) {
+        return state;
+      }
+      return { cameraRotation };
+    }),
   setCameraMode: (cameraMode) => set({ cameraMode }),
   setSelectedDestination: (selectedDestination) => set({ selectedDestination }),
   setSelectedDestinationId: (selectedDestinationId) => set({ selectedDestinationId }),

@@ -1,14 +1,22 @@
 import { useGLTF } from "@react-three/drei";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { isModelUrl } from "../data/modelRegistry";
 
 const DB_NAME = "iska-model-cache-v1";
 const STORE_NAME = "blobs";
+const DRACO_DECODER_PATH =
+  "https://www.gstatic.com/draco/versioned/decoders/1.5.7/";
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
 
 const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
+
 const blobCache = new Map<string, Promise<ArrayBuffer>>();
-const parsedCache = new Map<string, Promise<GLTF>>();
+const preloadCache = new Map<string, Promise<void>>();
 
 export function normalizeModelUrl(url: string): string {
   if (typeof window === "undefined") return url;
@@ -106,16 +114,23 @@ export function preloadModel(url: string | undefined): Promise<void> {
   if (!url || !isModelUrl(url)) return Promise.resolve();
 
   const key = normalizeModelUrl(url);
-  let cached = parsedCache.get(key);
-  if (cached) return cached.then(() => undefined);
+  const cached = preloadCache.get(key);
+  if (cached) return cached;
 
-  if (url.endsWith(".glb")) {
-    useGLTF.preload(url);
-  }
+  const promise = (async () => {
+    if (/\.glb(\?.*)?$/i.test(url)) {
+      useGLTF.preload(url);
+      const buffer = await fetchModelBlob(url);
+      await parseModel(url, buffer);
+      return;
+    }
 
-  cached = fetchModelBlob(url).then((buffer) => parseModel(url, buffer));
-  parsedCache.set(key, cached);
-  return cached.then(() => undefined);
+    // VRM avatars are parsed by the runtime VRM loader; warm the byte cache only.
+    await fetchModelBlob(url);
+  })();
+
+  preloadCache.set(key, promise);
+  return promise;
 }
 
 export function preloadAllModels(urls: readonly string[]): Promise<void[]> {
