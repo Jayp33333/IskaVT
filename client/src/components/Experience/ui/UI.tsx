@@ -5,6 +5,7 @@ import {
   getLatencyTooltip,
   useConnectionLatency,
 } from "../../../hooks/useConnectionLatency";
+import { getFpsColorClass, getFpsTooltip, useFps } from "../../../hooks/useFps";
 
 import { AvatarPicker } from "./AvatarPicker";
 import { DestinationPicker } from "./DestinationPicker";
@@ -30,6 +31,7 @@ type UIProps = {
 export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: UIProps) => {
   const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
   const latencyMs = useConnectionLatency();
+  const fps = useFps();
   const {
     pinPosition,
     isPinConfirmed,
@@ -69,13 +71,25 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
                 <Feedback experienceStarted={experienceStarted} />
               </div>
             </div>
-            <span
-              className={`cursor-help pl-1 text-[7px] font-bold tabular-nums leading-none [@media(max-height:500px)]:text-[6px] ${getLatencyColorClass(latencyMs)}`}
-              title={getLatencyTooltip(latencyMs)}
-              aria-label={getLatencyTooltip(latencyMs)}
-            >
-              {latencyMs === null ? "—" : `${latencyMs}ms`}
-            </span>
+            <div className="flex items-center gap-1.5 pl-1 text-[7px] font-bold tabular-nums leading-none [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:text-[6px]">
+              <span
+                className={`cursor-help ${getLatencyColorClass(latencyMs)}`}
+                title={getLatencyTooltip(latencyMs)}
+                aria-label={getLatencyTooltip(latencyMs)}
+              >
+                {latencyMs === null ? "—" : `${latencyMs}ms`}
+              </span>
+              <span className="text-ink/30" aria-hidden="true">
+                ·
+              </span>
+              <span
+                className={`cursor-help ${getFpsColorClass(fps)}`}
+                title={getFpsTooltip(fps)}
+                aria-label={getFpsTooltip(fps)}
+              >
+                {fps === null ? "—" : `${fps}fps`}
+              </span>
+            </div>
           </div>
           {pinPosition && isPinConfirmed && <DistanceHUD />}
         </div>
