@@ -21,8 +21,8 @@ interface WorldState {
   showFeedback: boolean;
   map2DOpen: boolean;
   query: string;
-  /** NPCs in range: id -> { position, onTalk }. Used for F-key interaction. */
-  npcsInRange: Map<string, { position: Vector3; onTalk: () => void }>;
+  /** NPCs in range: id -> { position, onTalk, name }. Used for talk button and F-key. */
+  npcsInRange: Map<string, { position: Vector3; onTalk: () => void; name: string }>;
   /** Active NPC dialog shown as fixed overlay at bottom (WelcomeDialog style). */
   activeNPCDialog: {
     title: string;
@@ -39,7 +39,12 @@ interface WorldState {
       onClose: () => void;
     } | null
   ) => void;
-  registerNPCInRange: (id: string, position: Vector3, onTalk: () => void) => void;
+  registerNPCInRange: (
+    id: string,
+    position: Vector3,
+    onTalk: () => void,
+    name: string,
+  ) => void;
   unregisterNPCInRange: (id: string) => void;
   triggerNearestNPCTalk: () => void;
   setCharacterPosition: (position: Vector3) => void;
@@ -77,7 +82,7 @@ const useWorld = create<WorldState>((set) => ({
   distance: 0,
   currentZoom: 100,
   cameraRotation: new Vector3(0, 0, 0),
-  cameraMode: "first",
+  cameraMode: "third",
   selectedDestination: null,
   selectedDestinationId: null,
   showMiniMap: false,
@@ -94,10 +99,10 @@ const useWorld = create<WorldState>((set) => ({
 
   setAvatar: (avatar) => set({ avatar }),
   setActiveNPCDialog: (activeNPCDialog) => set({ activeNPCDialog }),
-  registerNPCInRange: (id, position, onTalk) =>
+  registerNPCInRange: (id, position, onTalk, name) =>
     set((s) => {
       const next = new Map(s.npcsInRange);
-      next.set(id, { position: position.clone(), onTalk });
+      next.set(id, { position: position.clone(), onTalk, name });
       return { npcsInRange: next };
     }),
   unregisterNPCInRange: (id) =>

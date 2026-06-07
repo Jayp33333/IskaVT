@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
+import { createPortal } from "react-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { LogOut, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { useLogbookTimeout } from "../../../hooks/useLogbookTimeout";
 
@@ -19,15 +21,24 @@ export const ExitTourButton = ({ onConfirmOpenChange }: ExitTourButtonProps) => 
     onConfirmOpenChange?.(showExitConfirm);
   }, [showExitConfirm, onConfirmOpenChange]);
 
+  useEffect(() => {
+    if (!showExitConfirm) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !isExiting) {
+        setShowExitConfirm(false);
+        setIsExiting(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [showExitConfirm, isExiting]);
+
   const hasActiveEntry =
     typeof window !== "undefined" && localStorage.getItem("logbookEntryId") !== null;
 
   const handleExitTour = async () => {
-    if (!showExitConfirm) {
-      setShowExitConfirm(true);
-      return;
-    }
-
     setIsExiting(true);
     try {
       await updateTimeout(true);
@@ -38,72 +49,128 @@ export const ExitTourButton = ({ onConfirmOpenChange }: ExitTourButtonProps) => 
   };
 
   const handleCancelExit = () => {
+    if (isExiting) return;
     setShowExitConfirm(false);
     setIsExiting(false);
   };
 
   if (!hasActiveEntry || showMiniMap) return null;
 
+  const modal =
+    typeof document !== "undefined"
+      ? createPortal(
+          <AnimatePresence>
+            {showExitConfirm && (
+              <>
+                <motion.div
+                  className="fixed inset-0 z-[1400] bg-ink/85"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={handleCancelExit}
+                />
+
+                <motion.div
+                  className="pointer-events-none fixed inset-0 z-[1401] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <motion.div
+                    className="pointer-events-auto mx-auto flex w-full max-w-md max-sm:max-w-none shrink-0 flex-col overflow-hidden rounded-t-[1.75rem] rounded-b-none border-[4px] border-ink border-b-0 bg-cream text-ink shadow-brutal-lg max-sm:border-b-0 sm:w-[min(100%,22rem)] sm:rounded-[2rem] sm:border-[6px] sm:shadow-brutal-lg max-h-[92dvh] sm:max-h-[90dvh] [@media(max-height:500px)]:max-h-[96dvh] [@media(max-height:500px)]:w-[min(100%,20rem)] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(92vw,22rem)] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:w-[min(88vw,18rem)]"
+                    initial={{ scale: 0.98, opacity: 0, y: 24 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.98, opacity: 0, y: 24 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 250 }}
+                    onClick={(e) => e.stopPropagation()}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="exit-tour-dialog-title"
+                  >
+                    <div className="flex shrink-0 items-center justify-between gap-3 border-b-[4px] border-ink bg-maroon px-5 py-4 sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold p-2 shadow-brutal-sm [@media(max-height:500px)]:p-1.5">
+                          <LogOut
+                            className="h-5 w-5 text-ink [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-4"
+                            strokeWidth={3.5}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="mb-1 hidden rounded-full border-[3px] border-ink bg-gold px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-ink sm:inline-block [@media(max-height:500px)]:hidden">
+                            Leaving Campus
+                          </p>
+                          <h3
+                            id="exit-tour-dialog-title"
+                            className="truncate text-lg font-black italic leading-tight text-white sm:text-2xl [@media(max-height:500px)]:text-sm [@media(orientation:landscape)_and_(max-height:600px)]:text-base"
+                          >
+                            Exit Tour?
+                          </h3>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleCancelExit}
+                        disabled={isExiting}
+                        className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1.5 transition-transform hover:bg-muted active:scale-90 disabled:opacity-50 [@media(max-height:500px)]:p-1"
+                        aria-label="Close exit tour dialog"
+                        type="button"
+                      >
+                        <X className="h-5 w-5" strokeWidth={3} />
+                      </button>
+                    </div>
+
+                    <div className="min-h-0 flex-1 overflow-y-auto bg-cream px-5 py-5 pb-[max(1rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-3 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2.5 custom-scrollbar">
+                      <div className="rounded-2xl border-[3px] border-ink bg-cream p-4 text-sm font-bold leading-relaxed text-ink/80 shadow-brutal-sm [@media(max-height:500px)]:p-3 [@media(max-height:500px)]:text-xs [@media(orientation:landscape)_and_(max-height:600px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px]">
+                        Are you sure you want to exit the tour? Your session will be ended and you&apos;ll
+                        be redirected to the home page.
+                      </div>
+                    </div>
+
+                    <div className="flex shrink-0 flex-col-reverse gap-2 border-t-[4px] border-ink bg-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end sm:gap-3 sm:border-t-[6px] [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:border-t-[4px] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:flex-row [@media(orientation:landscape)_and_(max-height:600px)]:justify-end [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
+                      <button
+                        onClick={handleCancelExit}
+                        disabled={isExiting}
+                        className="w-full rounded-xl border-[3px] border-ink bg-white px-4 py-2.5 text-xs font-black uppercase text-ink shadow-brutal-sm transition-all active:translate-y-1 active:shadow-none disabled:opacity-50 sm:w-auto sm:py-2 sm:text-sm [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:w-auto [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-xs"
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleExitTour}
+                        disabled={isExiting}
+                        className="w-full rounded-xl border-[3px] border-ink bg-maroon px-4 py-2.5 text-xs font-black uppercase text-white shadow-brutal-sm transition-all hover:bg-maroon/90 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2 sm:text-sm [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:w-auto [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-xs"
+                        type="button"
+                      >
+                        {isExiting ? "Exiting..." : "Exit Tour"}
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )
+      : null;
+
   return (
     <>
       <button
         onClick={() => setShowExitConfirm(true)}
         disabled={isExiting}
-        className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-ink bg-gold text-maroon hover:bg-gold/90 transition-all flex items-center justify-center shadow-brutal-sm [@media(max-height:500px)]:shadow-brutal-sm active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed ${
-          showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm ${
+          showLogHistory ? "pointer-events-none blur-sm opacity-50" : ""
         }`}
         title="Exit tour"
         aria-label="Exit tour"
         type="button"
       >
-        <LogOut className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5" strokeWidth={3} />
+        <LogOut
+          className="h-4 w-4 [@media(max-height:500px)]:h-3.5 [@media(max-height:500px)]:w-3.5"
+          strokeWidth={3}
+        />
       </button>
 
-      {showExitConfirm && (
-        <div className="fixed inset-0 z-[1400] flex items-center justify-center p-4 [@media(max-height:500px)]:p-2">
-          <div
-            className="absolute inset-0 bg-ink/85"
-            onClick={handleCancelExit}
-          />
-          <div className="relative w-full max-w-[440px] [@media(max-height:500px)]:max-w-[92vw] rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink bg-cream text-ink shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md overflow-hidden">
-            <div className="flex items-center gap-3 px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink bg-maroon">
-              <div className="p-2 [@media(max-height:500px)]:p-1.5 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
-                <LogOut className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 text-ink" strokeWidth={3.5} />
-              </div>
-              <div className="min-w-0">
-                <p className="inline-block rounded-full bg-gold border-[3px] border-ink px-2 py-0.5 text-[9px] [@media(max-height:500px)]:hidden font-black uppercase tracking-wider text-ink">
-                  Leaving Campus
-                </p>
-                <h3 className="mt-1 text-xl sm:text-2xl [@media(max-height:500px)]:text-base font-black italic text-white leading-tight">
-                  Exit Tour?
-                </h3>
-              </div>
-            </div>
-            <div className="px-5 py-5 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-3">
-              <div className="rounded-2xl border-[3px] border-ink bg-cream p-4 [@media(max-height:500px)]:p-3 shadow-brutal-sm text-sm [@media(max-height:500px)]:text-xs font-bold text-ink/80 leading-relaxed">
-                Are you sure you want to exit the tour? Your session will be ended and you&apos;ll be
-                redirected to the home page.
-              </div>
-            </div>
-            <div className="flex gap-3 [@media(max-height:500px)]:gap-2 justify-end px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 border-t-[4px] sm:border-t-[6px] [@media(max-height:500px)]:border-t-[4px] border-ink bg-white">
-              <button
-                onClick={handleCancelExit}
-                disabled={isExiting}
-                className="px-4 py-2 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-1.5 rounded-xl border-[3px] border-ink bg-white text-xs sm:text-sm font-black uppercase text-ink shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleExitTour}
-                disabled={isExiting}
-                className="px-4 py-2 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-1.5 rounded-xl border-[3px] border-ink bg-maroon hover:bg-maroon/90 text-xs sm:text-sm font-black uppercase text-white shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isExiting ? "Exiting..." : "Exit Tour"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {modal}
     </>
   );
 };

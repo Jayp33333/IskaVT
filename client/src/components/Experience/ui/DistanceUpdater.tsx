@@ -1,17 +1,18 @@
 import { useFrame } from "@react-three/fiber";
 import useWorld from "../../../hooks/useWorld";
+import { computeGuideDistance } from "../../../data/guidePaths";
 
 const DistanceUpdater = () => {
   const characterPosition = useWorld((s: any) => s.characterPosition);
   const pinPosition = useWorld((s: any) => s.pinPosition);
+  const selectedDestinationId = useWorld((s: any) => s.selectedDestinationId);
   const setDistance = useWorld((s: any) => s.setDistance);
 
   useFrame(() => {
     if (characterPosition && pinPosition) {
-      const dx = pinPosition.x - characterPosition.x;
-      const dy = pinPosition.y - characterPosition.y;
-      const dz = pinPosition.z - characterPosition.z;
-      setDistance(Math.hypot(dx, dy, dz));
+      setDistance(
+        computeGuideDistance(characterPosition, pinPosition, selectedDestinationId),
+      );
     }
   });
 

@@ -11,7 +11,12 @@ import { runTeleportTransition } from "../../../utils/teleportTransition";
 import { CenterDot } from "./CenterDot";
 import { EnterTransitionOverlay } from "./EnterTransitionOverlay";
 
-export const EnterButton = () => {
+type EnterButtonProps = {
+  /** First-person only: show center crosshair when not at a door. */
+  showCrosshair?: boolean;
+};
+
+export const EnterButton = ({ showCrosshair = true }: EnterButtonProps) => {
   const [transitioning, setTransitioning] = useState(false);
   const transitionLockRef = useRef(false);
 
@@ -72,7 +77,7 @@ export const EnterButton = () => {
     return <EnterTransitionOverlay />;
   }
 
-  if (!label) return <CenterDot />;
+  if (!label) return showCrosshair ? <CenterDot /> : null;
 
   return (
     <AnimatePresence>

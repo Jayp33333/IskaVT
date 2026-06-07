@@ -105,3 +105,57 @@ body.marketing-no-shadow
 body.marketing-no-shadow [class*="drop-shadow"] {
   filter: none !important;
 }
+
+/* VIVERSE mobile controls — ISKA brutal theme */
+.viverse-joystick {
+  border: 3px solid var(--color-ink) !important;
+  background: color-mix(in srgb, var(--color-gold) 45%, transparent) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(4px);
+  bottom: max(1.25rem, env(safe-area-inset-bottom, 0px)) !important;
+  left: max(1.25rem, env(safe-area-inset-left, 0px)) !important;
+}
+
+.viverse-joystick-handle {
+  border: 3px solid var(--color-ink) !important;
+  background: var(--color-maroon) !important;
+  box-shadow: none !important;
+}
+
+.viverse-button.viverse-jump {
+  border: 3px solid var(--color-ink) !important;
+  background: var(--color-gold)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23800000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V5'/%3E%3Cpath d='m5 12 7-7 7 7'/%3E%3C/svg%3E")
+    center / 52% no-repeat !important;
+  box-shadow: none !important;
+  bottom: max(1.5rem, env(safe-area-inset-bottom, 0px)) !important;
+  right: max(1.25rem, env(safe-area-inset-right, 0px)) !important;
+  min-width: 3.75rem !important;
+  height: 3.75rem !important;
+  transition: transform 0.1s ease;
+}
+
+.viverse-button.viverse-jump:active {
+  transform: scale(0.95);
+}
+
+@media (max-height: 500px) {
+  .viverse-joystick {
+    width: 5.5rem !important;
+    height: 5.5rem !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+    left: max(0.75rem, env(safe-area-inset-left, 0px)) !important;
+  }
+
+  .viverse-joystick-handle {
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+  }
+
+  .viverse-button.viverse-jump {
+    min-width: 3rem !important;
+    height: 3rem !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+    right: max(0.75rem, env(safe-area-inset-right, 0px)) !important;
+  }
+}

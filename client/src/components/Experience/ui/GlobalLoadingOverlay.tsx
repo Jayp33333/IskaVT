@@ -17,8 +17,16 @@ export const GlobalLoadingOverlay = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="flex flex-col items-center gap-3 text-white">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="flex h-8 items-end justify-center gap-2.5">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="block h-3 w-3 rounded-full bg-white loading-dot-wave"
+                  style={{ animationDelay: `${i * 0.18}s` }}
+                />
+              ))}
+            </div>
             <p className="text-xs opacity-80">
               {loadingMessage || "Loading…"}
             </p>

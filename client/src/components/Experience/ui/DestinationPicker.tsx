@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, X, Search, MapPinned } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { DESTINATIONS } from "../../../sampleData";
+import { computeGuideDistance } from "../../../data/guidePaths";
 
 export const DestinationPicker = () => {
   const [open, setOpen] = useState(false);
@@ -43,14 +44,13 @@ export const DestinationPicker = () => {
 
   const handleSelect = (destination: (typeof DESTINATIONS)[number]) => {
     const destinationPosition = destination.position.clone();
-    const dx = destinationPosition.x - characterPosition.x;
-    const dy = destinationPosition.y - characterPosition.y;
-    const dz = destinationPosition.z - characterPosition.z;
 
     setPinPosition(destinationPosition);
     setIsPinConfirmed(true);
     setIsPinTeleported(false);
-    setDistance(Math.hypot(dx, dy, dz));
+    setDistance(
+      computeGuideDistance(characterPosition, destinationPosition, destination.id),
+    );
     setSelectedDestination(destination.name);
     setSelectedDestinationId(destination.id);
     setOpen(false);

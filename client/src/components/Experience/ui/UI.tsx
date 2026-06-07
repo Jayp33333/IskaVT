@@ -15,6 +15,7 @@ import { ExitTourButton } from "./ExitTourButton";
 import { FullScreenButton } from "./FullScreenButton";
 import Map2D from "../Map2D"; 
 import { NPCDialog } from "./NPCDialog";
+import { NPCTalkButton } from "./NPCTalkButton";
 
 type UIProps = {
   tourGuideDialogOpen?: boolean;
@@ -34,8 +35,7 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
   const npcFocus = !!activeNPCDialog;
   const hideAreaInfo =
     npcFocus || map2DOpen || tourGuideDialogOpen || exitTourConfirmOpen;
-  const showCenterDot =
-    cameraMode === "first" &&
+  const showEnterInteraction =
     !npcFocus &&
     !map2DOpen &&
     !tourGuideDialogOpen &&
@@ -44,7 +44,10 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
 
   return (
     <>
-      {showCenterDot && <EnterButton />}
+      {showEnterInteraction && (
+        <EnterButton showCrosshair={cameraMode === "first"} />
+      )}
+      {!npcFocus && <NPCTalkButton />}
 
       {/* Left sidebar controls */}
       {!npcFocus && (

@@ -1,4 +1,4 @@
-import { Gltf, Html } from "@react-three/drei";
+import { Gltf } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -20,7 +20,7 @@ type NPCProps = {
   color?: string;
 };
 
-const INTERACT_DISTANCE = 3;
+const INTERACT_DISTANCE = 1.5;
 
 export const NPC = ({
   id,
@@ -33,21 +33,16 @@ export const NPC = ({
   color = "#D43F3F",
 }: NPCProps) => {
   const npcRef = useRef<THREE.Group>(null);
-  const [canTalk, setCanTalk] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogStep, setDialogStep] = useState<number | null>(0);
 
   const {
     characterPosition,
-    showMiniMap,
-    showLogHistory,
     registerNPCInRange,
     unregisterNPCInRange,
     setActiveNPCDialog,
   } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
-    showMiniMap: state.showMiniMap,
-    showLogHistory: state.showLogHistory,
     registerNPCInRange: state.registerNPCInRange,
     unregisterNPCInRange: state.unregisterNPCInRange,
     setActiveNPCDialog: state.setActiveNPCDialog,
@@ -64,10 +59,9 @@ export const NPC = ({
     npcRef.current.getWorldPosition(npcWorldPos.current);
     const distance = npcWorldPos.current.distanceTo(characterPosition);
     const inRange = distance < INTERACT_DISTANCE;
-    setCanTalk(inRange);
 
     if (inRange) {
-      registerNPCInRange(id, npcWorldPos.current.clone(), handleTalk);
+      registerNPCInRange(id, npcWorldPos.current.clone(), handleTalk, name);
     } else {
       unregisterNPCInRange(id);
       setShowDialog(false);
@@ -136,25 +130,6 @@ export const NPC = ({
             <meshStandardMaterial color="#1f2937" roughness={0.7} />
           </mesh>
         </group>
-      )}
-
-      {canTalk && !showMiniMap && !showDialog && !showLogHistory && (
-        <Html position={[0, 1.2, 0]} center>
-          <div
-            style={{
-              background: "rgba(0,0,0,0.75)",
-              padding: "6px 10px",
-              borderRadius: "6px",
-              color: "#fff",
-              fontSize: "13px",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleTalk}
-          >
-            Talk (F)
-          </div>
-        </Html>
       )}
 
     </group>

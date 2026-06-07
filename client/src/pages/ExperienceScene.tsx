@@ -14,12 +14,14 @@ import { enterKioskLandscape } from "../utils/kiosk";
 import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
 import useWorld from "../hooks/useWorld";
 import { useAltCursorReveal } from "../hooks/useAltCursorReveal";
+import { useModelPreload } from "../hooks/useModelPreload";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
 export default function ExperienceScene() {
   useAudioPreload();
+  useModelPreload();
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);

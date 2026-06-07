@@ -1,57 +1,22 @@
 import * as THREE from "three";
 import { DESTINATIONS } from "../sampleData";
+import {
+  DESTINATION_NODES,
+  campusPathToPoints,
+  findShortestCampusPath,
+  type CampusNodeId,
+} from "./campusGraph";
 
 export const GUIDE_Y = 0.18;
 
 /**
- * Hand-placed route corners keyed by destination id (see sampleData / FIXED_LOCATION_PINS).
+ * Guide routes use the shared campus graph (Dijkstra shortest path).
  *
  * Edit tips:
- * - Walk the route in-game and read X/Z from the pin panel or browser console.
- * - Keep GUIDE_Y (~0.18) unless the line needs to sit higher on stairs/ramps.
- * - Add one Vector3 per turn; the guide smooths between them automatically.
- *
- * Reference positions (world X, Y, Z):
- * - Main Gate spawn  ~ (10, 0, 0)
- * - PUP Gymnasium    ~ (41, 0.2, -148)
+ * - Add or move nodes/edges in campusGraph.ts when you map new walkways.
+ * - Walk in-game and read X/Z from the pin panel or browser console.
+ * - Link new destinations in DESTINATION_NODES.
  */
-export const GUIDE_PATH_WAYPOINTS: Record<string, THREE.Vector3[]> = {
-  /** Main Gate area → south past canteen → east → Gymnasium */
-  // gymnasium: [
-  //   new THREE.Vector3(10, GUIDE_Y, 2), // 1. step out from Main Gate
-  //   new THREE.Vector3(8, GUIDE_Y, -18), // 2. south toward Comlab / inner campus
-  //   new THREE.Vector3(6, GUIDE_Y, -55), // 3. continue south
-  //   new THREE.Vector3(7, GUIDE_Y, -88), // 4. New Canteen / open field edge
-  //   new THREE.Vector3(18, GUIDE_Y, -108), // 5. bend east (west of Grandstand)
-  //   new THREE.Vector3(32, GUIDE_Y, -118), // 6. cross east across field
-  //   new THREE.Vector3(41, GUIDE_Y, -135), // 7. final approach to Gymnasium
-  // ],
-  grandstand: [
-    new THREE.Vector3(16, GUIDE_Y, -28), // Main Gate → south
-    new THREE.Vector3(16, GUIDE_Y, -50),
-    new THREE.Vector3(7, 1.24, -52.5),
-    new THREE.Vector3(-2, 1.24, -54),
-    new THREE.Vector3(-8.5, 0.3, -58),
-    new THREE.Vector3(-1, 0.3, -94),
-    new THREE.Vector3(6, GUIDE_Y, -104), 
-    new THREE.Vector3(6, 2.5, -107), // near Grandstand (~6, 2, -119)
-  ],
-  "room-103": [
-    new THREE.Vector3(8, GUIDE_Y, -4), // from gate toward Yumul wing
-    new THREE.Vector3(5, GUIDE_Y, -8), // Comlab 1 corridor (~3.5, 0.1, -12.5)
-  ],
-  "room-104": [
-    new THREE.Vector3(12, GUIDE_Y, -15),
-    new THREE.Vector3(14, GUIDE_Y, -22), // Comlab 2 (~13.5, 0.1, -26)
-  ],
-};
-
-export function getGuideWaypointsForDestinationId(
-  id: string | null | undefined,
-): THREE.Vector3[] | null {
-  if (!id) return null;
-  return GUIDE_PATH_WAYPOINTS[id] ?? null;
-}
 
 export function findDestinationIdForPin(pin: THREE.Vector3): string | null {
   for (const destination of DESTINATIONS) {
@@ -64,19 +29,6 @@ export function findDestinationIdForPin(pin: THREE.Vector3): string | null {
 
 function toGuidePoint(v: THREE.Vector3, y = GUIDE_Y): THREE.Vector3 {
   return new THREE.Vector3(v.x, v.y ?? y, v.z);
-}
-
-function trimPassedWaypoints(
-  start: THREE.Vector3,
-  waypoints: THREE.Vector3[],
-): THREE.Vector3[] {
-  let skipUntil = 0;
-  for (let i = 0; i < waypoints.length; i++) {
-    if (start.distanceTo(waypoints[i]) < 5) {
-      skipUntil = i + 1;
-    }
-  }
-  return waypoints.slice(skipUntil);
 }
 
 function dedupeClosePoints(points: THREE.Vector3[], minDist: number): THREE.Vector3[] {
@@ -99,10 +51,15 @@ function dedupeClosePoints(points: THREE.Vector3[], minDist: number): THREE.Vect
   return result;
 }
 
+function preferredGoalNode(destinationId: string | null | undefined): CampusNodeId | undefined {
+  if (!destinationId) return undefined;
+  return DESTINATION_NODES[destinationId];
+}
+
 export function buildGuidePath(
   character: THREE.Vector3,
   pin: THREE.Vector3,
-  waypoints: THREE.Vector3[] | null | undefined,
+  destinationId?: string | null,
 ): THREE.Vector3[] {
   const start = toGuidePoint(character);
   const end = new THREE.Vector3(
@@ -111,15 +68,38 @@ export function buildGuidePath(
     pin.z,
   );
 
-  if (!waypoints?.length) {
+  const resolvedDestinationId = destinationId ?? findDestinationIdForPin(pin);
+  const campusPath = findShortestCampusPath(
+    character,
+    pin,
+    preferredGoalNode(resolvedDestinationId),
+  );
+
+  if (!campusPath) {
     return [start, end];
   }
 
-  const mids = waypoints.map((waypoint) => toGuidePoint(waypoint));
-  const remaining = trimPassedWaypoints(start, mids);
-  return dedupeClosePoints([start, ...remaining, end], 0.3);
+  const raw = campusPathToPoints(start, end, campusPath).map((point, index, list) => {
+    if (index === 0) return start;
+    if (index === list.length - 1) return end;
+    return toGuidePoint(point, point.y);
+  });
+
+  return dedupeClosePoints(raw, 0.3);
 }
 
 export function createGuideCurve(points: THREE.Vector3[]): THREE.CatmullRomCurve3 {
   return new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.35);
+}
+
+export function computeGuideDistance(
+  character: THREE.Vector3,
+  pin: THREE.Vector3,
+  destinationId?: string | null,
+): number {
+  const pathPoints = buildGuidePath(character, pin, destinationId);
+  if (pathPoints.length < 2) return 0;
+
+  const curve = createGuideCurve(pathPoints);
+  return curve.getLength();
 }

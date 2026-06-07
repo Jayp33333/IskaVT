@@ -5,6 +5,7 @@ import { Camera, Check, UserRound, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { SAMPLE_AVATAR_LIST } from "../../../sampleData";
 import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
+import { preloadModel } from "../../../utils/modelCache";
 
 type AvatarOption = {
   id: string | number;
@@ -50,14 +51,19 @@ export const AvatarPicker = () => {
   }, [openMenu]);
 
   const handleSelectAvatar = (avatar: AvatarOption) => {
-    // Wrap the avatar switch in global loading
-    withLoading(async () => {
-      setAvatar(avatar);
-      // optional delay to allow avatar rendering
-      await new Promise((r) => setTimeout(r, 300));
-    }, "Switching avatar…");
+    if (currentAvatar?.id === avatar.id) {
+      setOpenMenu(false);
+      return;
+    }
 
     setOpenMenu(false);
+
+    void withLoading(async () => {
+      if (cameraMode === "third" && avatar.vrmUrl) {
+        await preloadModel(avatar.vrmUrl);
+      }
+      setAvatar(avatar);
+    }, "Switching avatar…");
   };
 
   return (

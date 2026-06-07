@@ -2,12 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import useWorld from "../../../hooks/useWorld";
-import {
-  buildGuidePath,
-  createGuideCurve,
-  findDestinationIdForPin,
-  getGuideWaypointsForDestinationId,
-} from "../../../data/guidePaths";
+import { buildGuidePath, createGuideCurve } from "../../../data/guidePaths";
 
 const FLOW_DOT_COUNT = 7;
 
@@ -62,10 +57,11 @@ const GuideLine = () => {
     guide.visible = !!characterPosition && !!pinPosition && isPinConfirmed;
     if (!guide.visible || !characterPosition || !pinPosition) return;
 
-    const destinationId =
-      selectedDestinationId ?? findDestinationIdForPin(pinPosition);
-    const waypoints = getGuideWaypointsForDestinationId(destinationId);
-    const pathPoints = buildGuidePath(characterPosition, pinPosition, waypoints);
+    const pathPoints = buildGuidePath(
+      characterPosition,
+      pinPosition,
+      selectedDestinationId,
+    );
 
     if (pathPoints.length < 2) {
       guide.visible = false;

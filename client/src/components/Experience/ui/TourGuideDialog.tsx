@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { 
-  Move, 
-  MousePointer2, 
-  Zap, 
-  Map as MapIcon, 
-  MessageCircle, 
-  LogOut, 
-  Maximize2,
-  ArrowRight, 
-  ArrowLeft,
-  X
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import {
+  CAMPUS_GUIDE_PORTRAIT,
+  campusGuidePages,
+  type CampusGuideTip,
+} from "../../../data/campusGuideContent";
 
 interface TourGuideDialogProps {
   open: boolean;
@@ -19,22 +13,27 @@ interface TourGuideDialogProps {
   portraitSrc?: string;
 }
 
-export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogProps) => {
+export const TourGuideDialog = ({
+  open,
+  onClose,
+  portraitSrc = CAMPUS_GUIDE_PORTRAIT,
+}: TourGuideDialogProps) => {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
     if (open) setPage(0);
   }, [open]);
 
-  const maxPage = 1;
+  const maxPage = campusGuidePages.length - 1;
+  const currentPage = campusGuidePages[page];
   const isLastPage = page === maxPage;
 
-  const handleNext = () => (isLastPage ? onClose() : setPage(1));
-  const handlePrev = () => setPage(0);
+  const handleNext = () => (isLastPage ? onClose() : setPage((p) => p + 1));
+  const handlePrev = () => setPage((p) => Math.max(0, p - 1));
 
   return (
     <AnimatePresence>
-      {open && (
+      {open && currentPage && (
         <motion.div
           className="fixed inset-0 z-[1300] flex items-center justify-center bg-ink/85 p-4 [@media(max-height:500px)]:p-2"
           initial={{ opacity: 0 }}
@@ -42,110 +41,102 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="
-              relative w-full max-w-[440px] [@media(max-height:500px)]:max-w-[440px] rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-2xl
-              bg-cream text-ink 
-              border-[4px] sm:border-[6px] [@media(max-height:500px)]:border-[4px] border-ink 
-              shadow-brutal-md sm:shadow-brutal-lg [@media(max-height:500px)]:shadow-brutal-md
-              flex flex-col max-h-[85vh] sm:max-h-[90vh] [@media(max-height:500px)]:max-h-[96dvh] overflow-hidden
-            "
+            className="relative flex max-h-[85vh] w-full max-w-[440px] flex-col overflow-hidden rounded-[2rem] border-[4px] border-ink bg-cream text-ink shadow-brutal-md sm:max-h-[90vh] sm:rounded-[2.5rem] sm:border-[6px] sm:shadow-brutal-lg [@media(max-height:500px)]:max-h-[96dvh] [@media(max-height:500px)]:max-w-[440px] [@media(max-height:500px)]:rounded-2xl [@media(max-height:500px)]:border-[4px] [@media(max-height:500px)]:shadow-brutal-md"
             initial={{ scale: 0.9, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 50 }}
             transition={{ type: "spring", damping: 20, stiffness: 250 }}
           >
-            {/* Header - Resizes font and padding for mobile */}
-            <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink p-4 sm:p-5 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="bg-gold border-[3px] border-ink px-2 py-0.5 rounded-full mb-1 [@media(max-height:500px)]:hidden inline-block">
-                    <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-ink">Tutorial</p>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl [@media(max-height:500px)]:text-sm font-black italic text-white leading-tight">CAMPUS GUIDE</h2>
+            <div className="shrink-0 border-b-[4px] border-ink bg-maroon p-4 sm:border-b-[6px] sm:p-5 [@media(max-height:500px)]:border-b-[4px] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="truncate text-xl font-black italic leading-tight text-white sm:text-2xl [@media(max-height:500px)]:text-sm">
+                    {currentPage.title}
+                  </h2>
                 </div>
-                <button 
+                <button
                   onClick={onClose}
-                  className="bg-white border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90"
+                  className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1.5 transition-transform hover:bg-muted active:scale-90 [@media(max-height:500px)]:p-1"
+                  aria-label="Close campus guide"
+                  type="button"
                 >
                   <X size={20} strokeWidth={4} />
                 </button>
               </div>
             </div>
 
-            {/* Content Area - Scrollable for small screens */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 [@media(max-height:500px)]:p-3 space-y-4 sm:space-y-6 [@media(max-height:500px)]:space-y-2 custom-scrollbar">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:space-y-6 sm:p-6 [@media(max-height:500px)]:space-y-2 [@media(max-height:500px)]:p-3 custom-scrollbar">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={page}
+                  key={currentPage.id}
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
-                  className="space-y-3 sm:space-y-4 [@media(max-height:500px)]:space-y-1.5"
+                  className="space-y-4 sm:space-y-5 [@media(max-height:500px)]:space-y-2.5"
                 >
-                  {page === 0 ? (
-                    <>
-                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-ink/50 px-1 uppercase tracking-tight">Basic Controls</p>
-                      <ControlCard label="Movement" desc="WASD / Arrows" color="bg-blue-400">
-                        <Move size={20} strokeWidth={3} />
-                      </ControlCard>
-                      <ControlCard label="Camera" desc="Mouse / Touch" color="bg-purple-400">
-                        <MousePointer2 size={20} strokeWidth={3} />
-                      </ControlCard>
-                      <ControlCard label="Sprint" desc="Hold Shift" color="bg-orange-400">
-                        <Zap size={20} strokeWidth={3} />
-                      </ControlCard>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-xs sm:text-sm [@media(max-height:500px)]:text-[9px] font-bold text-ink/50 px-1 uppercase tracking-tight">Special Features</p>
-                      <ControlCard label="Navigation" desc="Mini-Map Teleport" color="bg-emerald-400">
-                        <MapIcon size={20} strokeWidth={3} />
-                      </ControlCard>
-                      <ControlCard label="Social" desc="'F' Key Interaction" color="bg-pink-400">
-                        <MessageCircle size={20} strokeWidth={3} />
-                      </ControlCard>
-                      <ControlCard label="Exit / Fullscreen" desc="Top-left toolbar" color="bg-amber-400">
-                        <div className="flex items-center gap-1">
-                          <LogOut size={16} strokeWidth={3} />
-                          <Maximize2 size={16} strokeWidth={3} />
-                        </div>
-                      </ControlCard>
-                    </>
-                  )}
+                  <div className="overflow-hidden rounded-2xl border-[3px] border-ink bg-white shadow-brutal-sm">
+                    <img
+                      src={currentPage.image}
+                      alt={currentPage.imageAlt}
+                      className="h-36 w-full object-cover sm:h-44 [@media(max-height:500px)]:h-28"
+                      loading="eager"
+                    />
+                  </div>
+
+                  <div className="space-y-3 sm:space-y-4 [@media(max-height:500px)]:space-y-1.5">
+                    {currentPage.tips.map((tip) => (
+                      <GuideTipCard key={tip.label} tip={tip} />
+                    ))}
+                  </div>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Avatar Dialogue - Shrinks on mobile */}
-              {portraitSrc && (
-                <div className="bg-muted border-[3px] border-ink p-3 [@media(max-height:500px)]:p-2 rounded-2xl flex items-center gap-3 [@media(max-height:500px)]:gap-2">
-                  <img 
-                    src={portraitSrc} 
-                    className="h-10 w-10 sm:h-12 sm:w-12 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 rounded-xl border-[3px] border-ink bg-white shrink-0" 
-                    alt="Guide" 
+              {currentPage.guideQuote && (
+                <div className="flex items-center gap-3 rounded-2xl border-[3px] border-ink bg-muted p-3 [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:p-2">
+                  <img
+                    src={portraitSrc}
+                    className="h-10 w-10 shrink-0 rounded-xl border-[3px] border-ink bg-white sm:h-12 sm:w-12 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8"
+                    alt="ISKA campus guide"
                   />
-                  <p className="text-[11px] sm:text-[12px] [@media(max-height:500px)]:text-[9px] font-bold italic text-ink/80 leading-tight">
-                    Check the map to find buildings faster!
+                  <p className="text-[11px] font-bold italic leading-tight text-ink/80 sm:text-[12px] [@media(max-height:500px)]:text-[9px]">
+                    {currentPage.guideQuote}
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Footer Buttons - Full width stack on tiny screens if needed */}
-            <div className="p-4 sm:p-5 [@media(max-height:500px)]:p-2.5 bg-white border-t-[4px] sm:border-t-[6px] [@media(max-height:500px)]:border-t-[4px] border-ink flex items-center gap-3 [@media(max-height:500px)]:gap-2 shrink-0">
-              {page === 1 && (
+            <div className="flex shrink-0 items-center gap-3 border-t-[4px] border-ink bg-white p-4 sm:border-t-[6px] sm:p-5 [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:border-t-[4px] [@media(max-height:500px)]:p-2.5">
+              {page > 0 && (
                 <button
                   onClick={handlePrev}
-                  className="p-3 [@media(max-height:500px)]:p-2 bg-white border-[3px] border-ink rounded-xl shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all shrink-0"
+                  className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-3 shadow-brutal-sm transition-all active:translate-y-1 active:shadow-none [@media(max-height:500px)]:p-2"
+                  aria-label="Previous page"
+                  type="button"
                 >
                   <ArrowLeft size={20} strokeWidth={4} />
                 </button>
               )}
-              
+
+              <div className="flex flex-1 items-center justify-center gap-1.5">
+                {campusGuidePages.map((guidePage, index) => (
+                  <span
+                    key={guidePage.id}
+                    className={`h-2 rounded-full border-2 border-ink transition-all ${
+                      index === page
+                        ? "w-5 bg-maroon"
+                        : "w-2 bg-white"
+                    }`}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 [@media(max-height:500px)]:py-2 bg-maroon text-white border-[3px] border-ink rounded-xl text-sm sm:text-lg [@media(max-height:500px)]:text-[11px] font-black italic shadow-brutal-sm active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border-[3px] border-ink bg-maroon py-3 text-sm font-black uppercase italic tracking-wide text-white shadow-brutal-sm transition-all active:translate-y-1 active:shadow-none sm:text-lg [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[11px]"
+                type="button"
               >
-                {isLastPage ? "Start Tour!" : "Next Tip"}
+                {isLastPage ? "Start Tour!" : "Next"}
                 {!isLastPage && <ArrowRight size={18} strokeWidth={4} />}
               </button>
             </div>
@@ -156,15 +147,24 @@ export const TourGuideDialog = ({ open, onClose, portraitSrc }: TourGuideDialogP
   );
 };
 
-/* Mini Component for Responsive Cards */
-const ControlCard = ({ label, desc, children, color }: { label: string; desc: string; children: React.ReactNode; color: string }) => (
-  <div className="flex items-center gap-3 [@media(max-height:500px)]:gap-2 p-1 [@media(max-height:500px)]:p-0.5">
-    <div className={`${color} border-[3px] border-ink p-2 sm:p-2.5 [@media(max-height:500px)]:p-1.5 rounded-xl shadow-brutal-sm shrink-0`}>
-      {children}
+function GuideTipCard({ tip }: { tip: CampusGuideTip }) {
+  const Icon = tip.icon;
+
+  return (
+    <div className="flex items-start gap-3 p-1 [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:p-0.5">
+      <div
+        className={`${tip.color} shrink-0 rounded-xl border-[3px] border-ink p-2 shadow-brutal-sm sm:p-2.5 [@media(max-height:500px)]:p-1.5`}
+      >
+        <Icon size={20} strokeWidth={3} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <span className="text-[9px] font-black uppercase tracking-wider text-ink/40 [@media(max-height:500px)]:text-[7px]">
+          {tip.label}
+        </span>
+        <p className="text-xs font-extrabold leading-snug text-ink sm:text-sm [@media(max-height:500px)]:text-[10px]">
+          {tip.description}
+        </p>
+      </div>
     </div>
-    <div className="flex flex-col min-w-0">
-      <span className="text-[9px] [@media(max-height:500px)]:text-[7px] font-black uppercase text-ink/40 tracking-wider truncate">{label}</span>
-      <span className="text-xs sm:text-sm [@media(max-height:500px)]:text-[10px] font-extrabold text-ink truncate">{desc}</span>
-    </div>
-  </div>
-);
+  );
+}
