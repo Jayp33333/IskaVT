@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useViverseAvatarList } from "@react-three/viverse";
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, Check, UserRound, X } from "lucide-react";
+import { Check, UserRound, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { SAMPLE_AVATAR_LIST } from "../../../sampleData";
 import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
@@ -32,7 +32,6 @@ export const AvatarPicker = () => {
   const currentAvatar = useWorld((state: any) => state.avatar) as AvatarOption;
   const setAvatar = useWorld((state: any) => state.setAvatar);
   const cameraMode = useWorld((state: any) => state.cameraMode) as "first" | "third";
-  const setCameraMode = useWorld((state: any) => state.setCameraMode);
   const showLogHistory = useWorld((state: any) => state.showLogHistory);
 
   const { withLoading } = useGlobalLoading();
@@ -121,38 +120,6 @@ export const AvatarPicker = () => {
             </div>
 
             <div className="max-h-[min(62dvh,22rem)] overflow-y-auto p-3 custom-scrollbar [@media(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-3.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:p-1.5">
-              <div className="mb-3 rounded-2xl border-[3px] border-ink bg-white p-1.5 shadow-brutal-sm [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-1 [@media(orientation:landscape)_and_(max-height:500px)]:mb-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:border-[2px] [@media(orientation:landscape)_and_(max-height:500px)]:shadow-brutal-sm">
-                <p className="mb-1.5 px-1 text-[9px] font-black uppercase tracking-wide text-ink/50 [@media(max-height:500px)]:hidden">
-                  Camera View
-                </p>
-                <div className="grid grid-cols-2 gap-1.5 [@media(max-height:500px)]:gap-1 [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5">
-                  {(["first", "third"] as const).map((mode) => {
-                    const isActive = cameraMode === mode;
-
-                    return (
-                      <button
-                        key={mode}
-                        onClick={() => setCameraMode(mode)}
-                        className={`flex items-center justify-center gap-1.5 rounded-xl border-[2px] border-ink px-2 py-2 text-[10px] font-black uppercase transition-all active:translate-y-0.5 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:py-1.5 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:500px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:py-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px] ${
-                          isActive
-                            ? "bg-maroon text-white shadow-brutal-sm"
-                            : "bg-gold/25 text-ink hover:bg-gold/90"
-                        }`}
-                        type="button"
-                        aria-pressed={isActive}
-                      >
-                        {mode === "first" ? (
-                          <Camera className="h-3.5 w-3.5 [@media(max-height:500px)]:h-3 [@media(max-height:500px)]:w-3 [@media(orientation:landscape)_and_(max-height:500px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-2.5" strokeWidth={3.5} />
-                        ) : (
-                          <UserRound className="h-3.5 w-3.5 [@media(max-height:500px)]:h-3 [@media(max-height:500px)]:w-3 [@media(orientation:landscape)_and_(max-height:500px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-2.5" strokeWidth={3.5} />
-                        )}
-                        {mode === "first" ? "First" : "Third"}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
               <div className="grid grid-cols-2 gap-2 [@media(max-height:500px)]:grid-cols-[repeat(auto-fit,minmax(4.5rem,1fr))] [@media(max-height:500px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[repeat(auto-fit,minmax(3.75rem,1fr))] [@media(orientation:landscape)_and_(max-height:500px)]:gap-1">
                 {avatarList.map((avatar) => {
                   const isSelected = currentAvatar?.id === avatar.id;

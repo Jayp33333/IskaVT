@@ -7,16 +7,19 @@ import { DestinationPicker } from "./DestinationPicker";
 import { DestinationChecker } from "./DestinationChecker";
 import { EnterButton } from "./EnterButton";
 import { DistanceHUD } from "./DistanceHUD";
+import { ArrivalBanner } from "./ArrivalBanner";
 import { FloorLabel } from "./FloorLabel";
 import { AreaInfo } from "./AreaInfo";
 
 import { LogHistory } from "./LogHistory";
 import { Feedback } from "./Feedback";
-import { ExitTourButton } from "./ExitTourButton";
-import { FullScreenButton } from "./FullScreenButton";
+import { ExperienceSettings } from "./ExperienceSettings";
 import Map2D from "../Map2D"; 
 import { NPCDialog } from "./NPCDialog";
 import { NPCTalkButton } from "./NPCTalkButton";
+import { MobileControlCustomizer } from "./MobileControlCustomizer";
+import { useMobileControlLayout } from "../../../hooks/useMobileControlLayout";
+import { useIsMobileDevice } from "../../../hooks/useIsMobileDevice";
 
 type UIProps = {
   tourGuideDialogOpen?: boolean;
@@ -24,8 +27,9 @@ type UIProps = {
 };
 
 export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: UIProps) => {
+  const isMobileDevice = useIsMobileDevice();
   const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
-  const fps = useFps();
+  useMobileControlLayout(isMobileDevice && experienceStarted);
   const {
     pinPosition,
     isPinConfirmed,
@@ -33,7 +37,10 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
     map2DOpen,
     cameraMode,
     cursorRevealedByAlt,
+    showFps,
+    mobileControlsCustomize,
   } = useWorld((s: any) => s);
+  const fps = useFps(showFps);
   const npcFocus = !!activeNPCDialog;
   const hideAreaInfo =
     npcFocus || map2DOpen || tourGuideDialogOpen || exitTourConfirmOpen;
@@ -42,14 +49,15 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
     !map2DOpen &&
     !tourGuideDialogOpen &&
     !exitTourConfirmOpen &&
-    !cursorRevealedByAlt;
+    !cursorRevealedByAlt &&
+    !mobileControlsCustomize;
 
   return (
     <>
       {showEnterInteraction && (
         <EnterButton showCrosshair={cameraMode === "first"} />
       )}
-      {!npcFocus && <NPCTalkButton />}
+      {!npcFocus && !mobileControlsCustomize && <NPCTalkButton />}
 
       {/* Left sidebar controls */}
       {!npcFocus && (
@@ -58,22 +66,23 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
             <div className="rounded-2xl border-[3px] border-ink bg-cream/95 p-1.5 shadow-brutal-sm backdrop-blur-sm [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-1">
               <div className="flex max-w-full flex-wrap items-center gap-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1">
                 <AvatarPicker />
-                <ExitTourButton onConfirmOpenChange={setExitTourConfirmOpen} />
-                <FullScreenButton />
+                <ExperienceSettings onConfirmOpenChange={setExitTourConfirmOpen} />
                 <DestinationPicker />
                 <LogHistory />
                 <Feedback experienceStarted={experienceStarted} />
               </div>
             </div>
-            <span
-              className={`cursor-help pl-1 text-[9px] font-bold tabular-nums leading-none [@media(max-height:500px)]:text-[8px] ${getFpsColorClass(fps)}`}
-              title={getFpsTooltip(fps)}
-              aria-label={getFpsTooltip(fps)}
-            >
-              {fps === null ? "—" : `${fps}fps`}
-            </span>
+            {showFps && (
+              <span
+                className={`cursor-help pl-1 text-[9px] font-bold tabular-nums leading-none [@media(max-height:500px)]:text-[8px] ${getFpsColorClass(fps)}`}
+                title={getFpsTooltip(fps)}
+                aria-label={getFpsTooltip(fps)}
+              >
+                {fps === null ? "—" : `${fps}fps`}
+              </span>
+            )}
           </div>
-          {pinPosition && isPinConfirmed && <DistanceHUD />}
+          {pinPosition && isPinConfirmed ? <DistanceHUD /> : <ArrivalBanner />}
         </div>
       )}
 
@@ -95,6 +104,8 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
 
       {/* Map — hidden during NPC dialog or exit tour confirm */}
       {!npcFocus && !exitTourConfirmOpen && <Map2D />}
+
+      {isMobileDevice && experienceStarted && <MobileControlCustomizer />}
     </>
   );
 };

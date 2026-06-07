@@ -1,6 +1,33 @@
 import { create } from "zustand";
 import { SAMPLE_AVATAR_LIST } from "../sampleData";
 import { Vector3 } from "three";
+import {
+  AMBIENT_ENABLED_KEY,
+  MASTER_VOLUME_KEY,
+  readAmbientEnabled,
+  readMasterVolume,
+  readSfxEnabled,
+  SFX_ENABLED_KEY,
+} from "../utils/experienceAudioSettings";
+import {
+  readSensitivityPreference,
+  SENSITIVITY_STORAGE_KEY,
+  type SensitivityLevel,
+} from "../utils/experienceSensitivity";
+import {
+  DEFAULT_MOBILE_CONTROL_LAYOUT,
+  readMobileControlLayout,
+  saveMobileControlLayout,
+  type MobileControlLayout,
+} from "../utils/experienceMobileControls";
+
+const SHOW_FPS_KEY = "experience-show-fps";
+
+function readShowFpsPreference(): boolean {
+  if (typeof window === "undefined") return true;
+  const stored = localStorage.getItem(SHOW_FPS_KEY);
+  return stored === null ? true : stored === "true";
+}
 
 interface WorldState {
   avatar: any;
@@ -70,6 +97,27 @@ interface WorldState {
   /** True while Alt is held to temporarily show the system cursor. */
   cursorRevealedByAlt: boolean;
   setCursorRevealedByAlt: (value: boolean) => void;
+  /** True for 2s after reaching a destination — freezes movement for celebration. */
+  isArrivalPaused: boolean;
+  setIsArrivalPaused: (value: boolean) => void;
+  /** Destination name shown in the arrival banner (Distance HUD area). */
+  arrivalBannerDestination: string | null;
+  setArrivalBannerDestination: (destination: string | null) => void;
+  showFps: boolean;
+  setShowFps: (value: boolean) => void;
+  sensitivity: SensitivityLevel;
+  setSensitivity: (value: SensitivityLevel) => void;
+  masterVolume: number;
+  setMasterVolume: (value: number) => void;
+  sfxEnabled: boolean;
+  setSfxEnabled: (value: boolean) => void;
+  ambientEnabled: boolean;
+  setAmbientEnabled: (value: boolean) => void;
+  mobileControlLayout: MobileControlLayout;
+  setMobileControlLayout: (layout: MobileControlLayout) => void;
+  resetMobileControlLayout: () => void;
+  mobileControlsCustomize: boolean;
+  setMobileControlsCustomize: (value: boolean) => void;
 }
 
 const useWorld = create<WorldState>((set) => ({
@@ -94,6 +142,15 @@ const useWorld = create<WorldState>((set) => ({
   isLoading: false,
   loadingMessage: "",
   cursorRevealedByAlt: false,
+  isArrivalPaused: false,
+  arrivalBannerDestination: null,
+  showFps: readShowFpsPreference(),
+  sensitivity: readSensitivityPreference(),
+  masterVolume: readMasterVolume(),
+  sfxEnabled: readSfxEnabled(),
+  ambientEnabled: readAmbientEnabled(),
+  mobileControlLayout: readMobileControlLayout(),
+  mobileControlsCustomize: false,
   npcsInRange: new Map(),
   activeNPCDialog: null,
 
@@ -179,6 +236,49 @@ const useWorld = create<WorldState>((set) => ({
   setLoading: (v, msg = "") =>
   set({ isLoading: v, loadingMessage: msg }),
   setCursorRevealedByAlt: (cursorRevealedByAlt) => set({ cursorRevealedByAlt }),
+  setIsArrivalPaused: (isArrivalPaused) => set({ isArrivalPaused }),
+  setArrivalBannerDestination: (arrivalBannerDestination) =>
+    set({ arrivalBannerDestination }),
+  setShowFps: (showFps) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SHOW_FPS_KEY, String(showFps));
+    }
+    set({ showFps });
+  },
+  setSensitivity: (sensitivity) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SENSITIVITY_STORAGE_KEY, sensitivity);
+    }
+    set({ sensitivity });
+  },
+  setMasterVolume: (masterVolume) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(masterVolume)));
+    if (typeof window !== "undefined") {
+      localStorage.setItem(MASTER_VOLUME_KEY, String(clamped));
+    }
+    set({ masterVolume: clamped });
+  },
+  setSfxEnabled: (sfxEnabled) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SFX_ENABLED_KEY, String(sfxEnabled));
+    }
+    set({ sfxEnabled });
+  },
+  setAmbientEnabled: (ambientEnabled) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(AMBIENT_ENABLED_KEY, String(ambientEnabled));
+    }
+    set({ ambientEnabled });
+  },
+  setMobileControlLayout: (mobileControlLayout) => {
+    saveMobileControlLayout(mobileControlLayout);
+    set({ mobileControlLayout });
+  },
+  resetMobileControlLayout: () => {
+    saveMobileControlLayout(DEFAULT_MOBILE_CONTROL_LAYOUT);
+    set({ mobileControlLayout: DEFAULT_MOBILE_CONTROL_LAYOUT });
+  },
+  setMobileControlsCustomize: (mobileControlsCustomize) => set({ mobileControlsCustomize }),
 }));
 
 export default useWorld;

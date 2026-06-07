@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 
 const SAMPLE_INTERVAL_MS = 1000;
 
-export function useFps() {
+export function useFps(enabled = true) {
   const [fps, setFps] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!enabled) {
+      setFps(null);
+      return;
+    }
+
     let frameCount = 0;
     let lastSample = performance.now();
     let rafId = 0;
@@ -25,7 +30,7 @@ export function useFps() {
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, []);
+  }, [enabled]);
 
   return fps;
 }

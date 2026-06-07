@@ -15,6 +15,7 @@ import { LogbookFormDialog } from "../components/Home/LogbookFormDialog";
 import useWorld from "../hooks/useWorld";
 import { useAltCursorReveal } from "../hooks/useAltCursorReveal";
 import { useModelPreload } from "../hooks/useModelPreload";
+import { useExperienceAudio } from "../hooks/useExperienceAudio";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
@@ -26,8 +27,13 @@ export default function ExperienceScene() {
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
 
-  // Global NPC dialog state – used to temporarily lock movement/camera
+  const isTouring = loadingFinished && !logbookOpen;
+  useExperienceAudio(isTouring);
+
+  // Global NPC dialog / arrival pause — temporarily lock movement/camera
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
+  const isArrivalPaused = useWorld((s: any) => s.isArrivalPaused);
+  const movementBlocked = !!activeNPCDialog || isArrivalPaused;
 
   const hasLogbookEntry = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -47,6 +53,23 @@ export default function ExperienceScene() {
     document.body.classList.add("experience-no-shadow");
     return () => document.body.classList.remove("experience-no-shadow");
   }, []);
+
+  // Browsers block autoplay until the user interacts with the page.
+  useEffect(() => {
+    if (!loadingFinished) return;
+
+    const unlockOnGesture = () => {
+      audioManager.unlock();
+    };
+
+    window.addEventListener("pointerdown", unlockOnGesture, { once: true });
+    window.addEventListener("keydown", unlockOnGesture, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockOnGesture);
+      window.removeEventListener("keydown", unlockOnGesture);
+    };
+  }, [loadingFinished]);
 
   // Keyboard shortcuts:
   // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
@@ -144,10 +167,9 @@ export default function ExperienceScene() {
     };
   }, [logbookOpen]);
 
-  // While an NPC dialog is open, block movement keys (WASD, arrows, jump, sprint)
-  // so the player can't move or use joystick-style controls while talking.
+  // While an NPC dialog is open or arrival celebration is pausing, block movement keys.
   useEffect(() => {
-    if (!activeNPCDialog) return;
+    if (!movementBlocked) return;
 
     const blockedCodes = new Set([
       "KeyW",
@@ -191,7 +213,7 @@ export default function ExperienceScene() {
       window.removeEventListener("keydown", handler, true);
       window.removeEventListener("keyup", handler, true);
     };
-  }, [activeNPCDialog]);
+  }, [movementBlocked]);
 
   const handleLoadingFinished = () => {
     setLoadingFinished(true);
@@ -223,7 +245,10 @@ export default function ExperienceScene() {
 
       <TourGuideDialog
         open={showWelcome}
-        onClose={() => setShowWelcome(false)}
+        onClose={() => {
+          setShowWelcome(false);
+          audioManager.unlock();
+        }}
         portraitSrc="/images/headIconGirl.png"
       />
 
