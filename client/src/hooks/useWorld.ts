@@ -20,6 +20,7 @@ import {
   saveMobileControlLayout,
   type MobileControlLayout,
 } from "../utils/experienceMobileControls";
+import { readCustomAmbientTrackName } from "../utils/customAmbientMusic";
 
 const SHOW_FPS_KEY = "experience-show-fps";
 
@@ -113,6 +114,8 @@ interface WorldState {
   setSfxEnabled: (value: boolean) => void;
   ambientEnabled: boolean;
   setAmbientEnabled: (value: boolean) => void;
+  customAmbientTrackName: string | null;
+  setCustomAmbientTrackName: (name: string | null) => void;
   mobileControlLayout: MobileControlLayout;
   setMobileControlLayout: (layout: MobileControlLayout) => void;
   resetMobileControlLayout: () => void;
@@ -149,6 +152,7 @@ const useWorld = create<WorldState>((set) => ({
   masterVolume: readMasterVolume(),
   sfxEnabled: readSfxEnabled(),
   ambientEnabled: readAmbientEnabled(),
+  customAmbientTrackName: readCustomAmbientTrackName(),
   mobileControlLayout: readMobileControlLayout(),
   mobileControlsCustomize: false,
   npcsInRange: new Map(),
@@ -270,6 +274,8 @@ const useWorld = create<WorldState>((set) => ({
     }
     set({ ambientEnabled });
   },
+  setCustomAmbientTrackName: (customAmbientTrackName) =>
+    set({ customAmbientTrackName }),
   setMobileControlLayout: (mobileControlLayout) => {
     saveMobileControlLayout(mobileControlLayout);
     set({ mobileControlLayout });

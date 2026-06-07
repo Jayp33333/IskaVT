@@ -53,6 +53,7 @@ import {
 } from "./ExitTourButton";
 
 import { FullScreenButton } from "./FullScreenButton";
+import { CustomAmbientMusicPicker } from "./CustomAmbientMusicPicker";
 import { useIsMobileDevice } from "../../../hooks/useIsMobileDevice";
 import { LEFT_HANDED_MOBILE_CONTROL_LAYOUT } from "../../../utils/experienceMobileControls";
 
@@ -773,7 +774,9 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
 
                         </SettingRow>
 
-                        <SettingRow icon={Music} label="Ambient" hint="Campus background" last>
+                        <CustomAmbientMusicPicker />
+
+                        <SettingRow icon={Music} label="Ambient" hint="Background while touring" last>
 
                           <ToggleSwitch
 

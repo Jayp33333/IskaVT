@@ -6,6 +6,12 @@ type LoadOptions = {
   loop?: boolean;
 };
 
+type AmbientSourceOptions = {
+  volume?: number;
+  loop?: boolean;
+  isObjectUrl?: boolean;
+};
+
 class AudioManager {
   private audios = new Map<string, HTMLAudioElement>();
   private categories = new Map<string, AudioCategory>();
@@ -15,6 +21,7 @@ class AudioManager {
   private sfxEnabled = true;
   private ambientEnabled = true;
   private ambientShouldPlay = false;
+  private ambientObjectUrl: string | null = null;
 
   unlock() {
     this.unlocked = true;
@@ -56,14 +63,40 @@ class AudioManager {
     this.applyVolume(key);
 
     if (category === "ambient") {
-      const handleReady = () => this.syncAmbient();
-      audio.addEventListener("canplaythrough", handleReady, { once: true });
-      audio.addEventListener("loadeddata", handleReady);
-      audio.addEventListener("error", () => {
-        console.warn(`Failed to load ambient audio: ${src}`);
-      });
+      this.bindAmbientEvents(audio);
       this.syncAmbient();
     }
+  }
+
+  setAmbientSource(src: string, options: AmbientSourceOptions = {}) {
+    const existing = this.audios.get("ambient");
+    if (existing) {
+      existing.pause();
+      this.audios.delete("ambient");
+      this.categories.delete("ambient");
+      this.baseVolumes.delete("ambient");
+    }
+
+    if (this.ambientObjectUrl) {
+      URL.revokeObjectURL(this.ambientObjectUrl);
+      this.ambientObjectUrl = null;
+    }
+
+    if (options.isObjectUrl) {
+      this.ambientObjectUrl = src;
+    }
+
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audio.loop = options.loop ?? true;
+
+    const baseVolume = options.volume ?? 0.45;
+    this.audios.set("ambient", audio);
+    this.categories.set("ambient", "ambient");
+    this.baseVolumes.set("ambient", baseVolume);
+    this.applyVolume("ambient");
+    this.bindAmbientEvents(audio);
+    this.syncAmbient();
   }
 
   play(key: string) {
@@ -98,6 +131,15 @@ class AudioManager {
       audio.currentTime = 0;
     });
     this.ambientShouldPlay = false;
+  }
+
+  private bindAmbientEvents(audio: HTMLAudioElement) {
+    const handleReady = () => this.syncAmbient();
+    audio.addEventListener("canplaythrough", handleReady, { once: true });
+    audio.addEventListener("loadeddata", handleReady);
+    audio.addEventListener("error", () => {
+      console.warn("Failed to load ambient audio track");
+    });
   }
 
   private applyVolume(key: string) {

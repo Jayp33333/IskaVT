@@ -16,12 +16,14 @@ import useWorld from "../hooks/useWorld";
 import { useAltCursorReveal } from "../hooks/useAltCursorReveal";
 import { useModelPreload } from "../hooks/useModelPreload";
 import { useExperienceAudio } from "../hooks/useExperienceAudio";
+import { useCustomAmbientMusic } from "../hooks/useCustomAmbientMusic";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
 
 export default function ExperienceScene() {
   useAudioPreload();
+  useCustomAmbientMusic();
   useModelPreload();
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
