@@ -10,9 +10,9 @@ import {
   SFX_ENABLED_KEY,
 } from "../utils/experienceAudioSettings";
 import {
+  clampSensitivityPercent,
   readSensitivityPreference,
   SENSITIVITY_STORAGE_KEY,
-  type SensitivityLevel,
 } from "../utils/experienceSensitivity";
 import {
   DEFAULT_MOBILE_CONTROL_LAYOUT,
@@ -106,8 +106,8 @@ interface WorldState {
   setArrivalBannerDestination: (destination: string | null) => void;
   showFps: boolean;
   setShowFps: (value: boolean) => void;
-  sensitivity: SensitivityLevel;
-  setSensitivity: (value: SensitivityLevel) => void;
+  sensitivity: number;
+  setSensitivity: (value: number) => void;
   masterVolume: number;
   setMasterVolume: (value: number) => void;
   sfxEnabled: boolean;
@@ -250,10 +250,11 @@ const useWorld = create<WorldState>((set) => ({
     set({ showFps });
   },
   setSensitivity: (sensitivity) => {
+    const clamped = clampSensitivityPercent(sensitivity);
     if (typeof window !== "undefined") {
-      localStorage.setItem(SENSITIVITY_STORAGE_KEY, sensitivity);
+      localStorage.setItem(SENSITIVITY_STORAGE_KEY, String(clamped));
     }
-    set({ sensitivity });
+    set({ sensitivity: clamped });
   },
   setMasterVolume: (masterVolume) => {
     const clamped = Math.max(0, Math.min(100, Math.round(masterVolume)));

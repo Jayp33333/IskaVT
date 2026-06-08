@@ -6,8 +6,11 @@ const teleportTransitionPostDelayMs = 150;
 export function runTeleportTransition(performTeleport: () => void): Promise<void> {
   return new Promise((resolve) => {
     window.setTimeout(() => {
-      performTeleport();
-      window.setTimeout(resolve, teleportTransitionPostDelayMs);
+      try {
+        performTeleport();
+      } finally {
+        window.setTimeout(resolve, teleportTransitionPostDelayMs);
+      }
     }, enterTransitionDurationMs);
   });
 }

@@ -18,6 +18,11 @@ const MAP_ZOOM_STEP = 0.4;
 const clamp = (n: number, min: number, max: number) =>
   Math.min(max, Math.max(min, n));
 
+const mapBackdropVariants = {
+  hidden: { opacity: 0, pointerEvents: "none" as const },
+  visible: { opacity: 1, pointerEvents: "auto" as const },
+};
+
 // Campus map bounds (world-space X / Z). Tweak these to align the player
 // marker with the CampusMap.png image. They should match the area of the
 // 3D world that is captured in the map render.
@@ -96,6 +101,8 @@ export default function Map2D() {
     panX: number;
     panY: number;
     moved: boolean;
+    pointerId: number;
+    captured: boolean;
   }>({
     dragging: false,
     startX: 0,
@@ -103,6 +110,8 @@ export default function Map2D() {
     panX: 0,
     panY: 0,
     moved: false,
+    pointerId: -1,
+    captured: false,
   });
   const pinchRef = useRef<{ startDist: number; startZoom: number } | null>(null);
 
@@ -229,8 +238,10 @@ export default function Map2D() {
     if (teleportLockRef.current) return;
     teleportLockRef.current = true;
     setTeleporting(true);
+    setSelectedFixedPin(null);
+    setMap2DOpen(false);
 
-    void runTeleportTransition(performTeleport).then(() => {
+    void runTeleportTransition(performTeleport).finally(() => {
       setTeleporting(false);
       teleportLockRef.current = false;
     });
@@ -250,8 +261,6 @@ export default function Map2D() {
       setSelectedDestination(target.name);
       setSelectedDestinationId(target.id ?? null);
       audioManager?.play?.("teleported");
-      setSelectedFixedPin(null);
-      setMap2DOpen(false);
     });
   };
 
@@ -277,10 +286,16 @@ export default function Map2D() {
   };
 
   // --- Pan handlers (mouse + touch) ---
+  const releasePointerCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = dragStateRef.current;
+    if (!s.captured) return;
+    e.currentTarget.releasePointerCapture?.(s.pointerId);
+    s.captured = false;
+  };
+
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Only left mouse / single touch
     if (e.button !== undefined && e.button !== 0) return;
-    e.currentTarget.setPointerCapture?.(e.pointerId);
     dragStateRef.current = {
       dragging: true,
       startX: e.clientX,
@@ -288,6 +303,8 @@ export default function Map2D() {
       panX: pan.x,
       panY: pan.y,
       moved: false,
+      pointerId: e.pointerId,
+      captured: false,
     };
   };
 
@@ -296,22 +313,34 @@ export default function Map2D() {
     if (!s.dragging) return;
     const dx = e.clientX - s.startX;
     const dy = e.clientY - s.startY;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) s.moved = true;
-    if (!canPan) return;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      s.moved = true;
+      if (canPan && !s.captured) {
+        e.currentTarget.setPointerCapture?.(s.pointerId);
+        s.captured = true;
+      }
+    }
+    if (!canPan || !s.moved) return;
     setPan(clampPan(s.panX + dx, s.panY + dy));
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    releasePointerCapture(e);
     const s = dragStateRef.current;
     const wasDragging = s.dragging;
     const wasMoved = s.moved;
-    dragStateRef.current.dragging = false;
-    dragStateRef.current.moved = false;
+    dragStateRef.current = {
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      panX: 0,
+      panY: 0,
+      moved: false,
+      pointerId: -1,
+      captured: false,
+    };
 
     // If the pointer went down + up without meaningful movement, treat as a tap → drop a pin.
-    // (setPointerCapture would otherwise prevent the synthesized `click` event from
-    //  reaching the <img>, so we handle the tap ourselves here.)
     if (wasDragging && !wasMoved) {
       dropPinAt(e.clientX, e.clientY);
     }
@@ -387,7 +416,6 @@ export default function Map2D() {
       setIsPinConfirmed(false);
       setIsPinTeleported(true);
       audioManager?.play?.("teleported");
-      setMap2DOpen(false);
     });
   };
 
@@ -506,10 +534,11 @@ export default function Map2D() {
       <AnimatePresence>
         {map2DOpen && (
           <motion.div
-            className="fixed inset-0 z-[1150] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 pointer-events-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1150] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3"
+            variants={mapBackdropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
             onClick={() => setMap2DOpen(false)}
           >
             <motion.div
@@ -827,7 +856,12 @@ export default function Map2D() {
         onVisit={handleVisit}
       />
 
-      {teleporting && <EnterTransitionOverlay zIndexClass="z-[1200]" />}
+      {teleporting && (
+        <EnterTransitionOverlay
+          zIndexClass="z-[1200]"
+          key="map-teleport-overlay"
+        />
+      )}
     </>
   );
 }

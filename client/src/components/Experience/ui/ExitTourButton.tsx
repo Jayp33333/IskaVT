@@ -162,13 +162,13 @@ export function ExitTourMenuItem({ onClick, disabled }: ExitTourMenuItemProps) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex h-full min-w-0 w-full items-center gap-2.5 rounded-xl border-[2px] border-ink bg-white px-3 py-2.5 text-left text-[10px] font-black uppercase tracking-wide text-ink shadow-brutal-sm transition-all hover:bg-cream active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:500px)]:px-2 [@media(orientation:landscape)_and_(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:text-[8px]"
+      className="flex min-h-11 min-w-0 w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-cream px-3 py-2.5 text-[10px] font-black uppercase tracking-wide text-ink transition-colors hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 [@media(max-height:500px)]:min-h-10 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[9px]"
       type="button"
     >
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-[2px] border-ink bg-gold [@media(max-height:500px)]:h-6 [@media(max-height:500px)]:w-6">
         <LogOut
           className="h-3.5 w-3.5 text-maroon [@media(max-height:500px)]:h-3 [@media(max-height:500px)]:w-3"
-          strokeWidth={3}
+          strokeWidth={2.75}
         />
       </span>
       Exit Tour

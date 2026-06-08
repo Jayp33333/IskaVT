@@ -10,9 +10,8 @@ import {
 } from "@react-three/viverse";
 import useWorld from "../../hooks/useWorld";
 import {
-  LOOK_SPEED,
-  MOVE_SPEED_MULT,
-  type SensitivityLevel,
+  sensitivityPercentToLookSpeed,
+  sensitivityPercentToMoveMult,
 } from "../../utils/experienceSensitivity";
 
 const Character = () => {
@@ -35,12 +34,13 @@ const Character = () => {
   const isArrivalPaused = useWorld((s: any) => s.isArrivalPaused);
   const mobileControlsCustomize = useWorld((s: any) => s.mobileControlsCustomize);
   const cursorRevealedByAlt = useWorld((s: any) => s.cursorRevealedByAlt);
-  const sensitivity = useWorld((s: any) => s.sensitivity) as SensitivityLevel;
+  const sensitivity = useWorld((s: any) => s.sensitivity) as number;
 
   const interactionLocked =
     !!activeNPCDialog || isArrivalPaused || mobileControlsCustomize;
-  const lookSpeed = LOOK_SPEED[sensitivity] ?? LOOK_SPEED.medium;
-  const moveMult = MOVE_SPEED_MULT[sensitivity] ?? MOVE_SPEED_MULT.medium;
+  const lookLocked = interactionLocked || (!isMobile && cursorRevealedByAlt);
+  const lookSpeed = lookLocked ? 0 : sensitivityPercentToLookSpeed(sensitivity);
+  const moveMult = sensitivityPercentToMoveMult(sensitivity);
 
   const characterRef = useRef<any>(null);
   const cameraRotationRef = useRef(new Vector3());
@@ -48,8 +48,7 @@ const Character = () => {
   usePointerLockRotateZoomActionBindings({
     // While talking to an NPC, do not allow acquiring pointer lock
     lockOnClick: !isMobile && !interactionLocked && !cursorRevealedByAlt,
-    // Freeze camera rotation while in dialog or while Alt reveals the cursor
-    rotationSpeed: interactionLocked || cursorRevealedByAlt ? 0 : lookSpeed,
+    rotationSpeed: lookSpeed,
   });
   useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
 
@@ -64,7 +63,11 @@ const Character = () => {
   }, [interactionLocked]);
 
   const handleTeleport = useCallback(() => {
-    if (!characterRef.current || !pinPosition) return;
+    if (!characterRef.current) return;
+    if (!pinPosition) {
+      setIsPinTeleported(false);
+      return;
+    }
 
     characterRef.current.position.set(
       pinPosition.x,
@@ -102,6 +105,10 @@ const Character = () => {
     <SimpleCharacter
       ref={characterRef}
       position={[10, 3, 0]}
+      actionBindingOptions={{
+        pointerCaptureRotationSpeed: lookSpeed,
+        pointerLockRotationSpeed: lookSpeed,
+      }}
       movement={{
         jump: { speed: isArrivalPaused ? 0 : 4 * moveMult },
         walk: { speed: isArrivalPaused ? 0 : 3 * moveMult },
