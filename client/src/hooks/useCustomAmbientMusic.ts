@@ -9,6 +9,15 @@ import {
   saveCustomAmbientFile,
 } from "../utils/customAmbientMusic";
 
+function loadDefaultAmbient() {
+  if (audioManager.hasAmbientSource()) return;
+  audioManager.load("ambient", DEFAULT_AMBIENT_SRC, {
+    category: "ambient",
+    volume: 0.45,
+    loop: true,
+  });
+}
+
 export function useCustomAmbientMusic() {
   const setCustomAmbientTrackName = useWorld((s) => s.setCustomAmbientTrackName);
 
@@ -21,6 +30,7 @@ export function useCustomAmbientMusic() {
 
       if (!stored) {
         setCustomAmbientTrackName(null);
+        loadDefaultAmbient();
         return;
       }
 

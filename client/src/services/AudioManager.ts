@@ -20,7 +20,9 @@ class AudioManager {
   private masterVolume = 1;
   private ambientVolume = 0.8;
   private ambientShouldPlay = false;
+  private ambientLoop = true;
   private ambientObjectUrl: string | null = null;
+  private ambientEndedHandler: (() => void) | null = null;
 
   unlock() {
     this.unlocked = true;
@@ -63,9 +65,17 @@ class AudioManager {
     }
   }
 
+  hasAmbientSource() {
+    return this.audios.has("ambient");
+  }
+
   setAmbientSource(src: string, options: AmbientSourceOptions = {}) {
     const existing = this.audios.get("ambient");
     if (existing) {
+      if (this.ambientEndedHandler) {
+        existing.removeEventListener("ended", this.ambientEndedHandler);
+        this.ambientEndedHandler = null;
+      }
       existing.pause();
       this.audios.delete("ambient");
       this.categories.delete("ambient");
@@ -83,7 +93,15 @@ class AudioManager {
 
     const audio = new Audio(src);
     audio.preload = "auto";
-    audio.loop = options.loop ?? true;
+    this.ambientLoop = options.loop ?? true;
+    audio.loop = this.ambientLoop;
+
+    this.ambientEndedHandler = () => {
+      if (!this.ambientLoop || !this.ambientShouldPlay) return;
+      audio.currentTime = 0;
+      void audio.play().catch(() => {});
+    };
+    audio.addEventListener("ended", this.ambientEndedHandler);
 
     const baseVolume = options.volume ?? 0.45;
     this.audios.set("ambient", audio);
@@ -144,6 +162,12 @@ class AudioManager {
     audio.volume = this.masterVolume * ambientMultiplier * baseVolume;
   }
 
+  private isAmbientAtEnd(audio: HTMLAudioElement) {
+    if (audio.ended) return true;
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return false;
+    return audio.currentTime >= audio.duration - 0.15;
+  }
+
   private syncAmbient() {
     const audio = this.audios.get("ambient");
     if (!audio) return;
@@ -154,6 +178,10 @@ class AudioManager {
     if (!shouldPlay) {
       audio.pause();
       return;
+    }
+
+    if (this.isAmbientAtEnd(audio)) {
+      audio.currentTime = 0;
     }
 
     if (audio.paused) {

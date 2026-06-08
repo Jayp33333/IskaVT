@@ -15,6 +15,9 @@ export function useExperienceAudio(experienceActive: boolean) {
 
   useEffect(() => {
     audioManager.setAmbientActive(experienceActive && ambientVolume > 0);
-    return () => audioManager.setAmbientActive(false);
   }, [experienceActive, ambientVolume]);
+
+  useEffect(() => {
+    return () => audioManager.setAmbientActive(false);
+  }, []);
 }
