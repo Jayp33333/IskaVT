@@ -25,11 +25,11 @@ export const homeWelcomeContent = {
     members: [
       {
         name: "John Paul Jamito",
-        role: "Lead Developer",
+        role: "Lead Dev · 3D Modeler",
         slug: "john-paul-jamito",
         image: "/images/developers/JohnPaulJamito.jpg",
-        bio: "Leads the overall development of ISKA VT, coordinating frontend, 3D, and backend work to keep the platform stable and on track.",
-        focus: ["System architecture", "Integration", "Code review"],
+        bio: "Leads overall development of ISKA VT and builds key 3D campus assets, coordinating frontend, backend, and modeling work to keep the platform stable and on track.",
+        focus: ["System architecture", "3D modeling", "Integration"],
         socials: [
           {
             platform: "facebook",
@@ -39,33 +39,33 @@ export const homeWelcomeContent = {
       },
       {
         name: "Jaz Mostoles",
-        role: "3D Developer",
+        role: "Co-Dev · 3D Modeler",
         slug: "jaz-mostoles",
         image: "/images/developers/JazMostoles.jpg",
-        bio: "Develops the 3D campus experience — character movement, building models, mini-map, and in-tour interactions.",
-        focus: ["Three.js", "3D campus", "Tour mechanics"],
+        bio: "Co-develops the 3D campus experience and models buildings, characters, and tour assets — from movement mechanics to mini-map and in-tour interactions.",
+        focus: ["Three.js", "3D modeling", "Tour mechanics"],
         socials: [
           { platform: "facebook", url: "https://www.facebook.com/jaz.selotsom" },
         ],
       },
       {
         name: "John Rainer Espineda",
-        role: "Frontend Developer",
+        role: "Documentation · 3D Texturing",
         slug: "john-rainer-espineda",
         image: "/images/developers/JohnRainerEspineda.jpg",
-        bio: "Builds the marketing pages, UI components, and user-facing flows that make the virtual tour easy to discover and navigate.",
-        focus: ["React UI", "Responsive design", "User experience"],
+        bio: "Prepares project documentation and applies textures to 3D campus models, helping keep guides, references, and in-tour visuals clear and polished.",
+        focus: ["Technical writing", "3D texturing", "Project documentation"],
         socials: [
           { platform: "facebook", url: "https://www.facebook.com/rainier.69" },
         ],
       },
       {
         name: "Gilbert Velarde",
-        role: "Backend Developer",
+        role: "UI/UX · Documentation",
         slug: "gilbert-velarde",
         image: "/images/developers/GilbertVelarde.jpg",
-        bio: "Handles the server, database, and APIs that power the logbook, feedback, contact messages, and admin dashboard.",
-        focus: ["Node.js APIs", "Database", "Admin tools"],
+        bio: "Shapes the look and feel of ISKA VT through UI/UX design and supports the team with clear documentation for pages, flows, and user-facing features.",
+        focus: ["UI/UX design", "Visual design", "Documentation"],
         socials: [
           {
             platform: "facebook",

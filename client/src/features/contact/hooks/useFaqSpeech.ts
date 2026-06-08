@@ -3,12 +3,37 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const FEMALE_VOICE_PATTERN =
   /female|woman|samantha|victoria|zira|susan|karen|moira|tessa|fiona|veena|alice|emma|linda|heera|paulina|sara|joanna|ivy|kimberly|penelope|olivia|ava|nicole|laura|allison|aria|jenny|serena|sophie|hazel|michelle|nancy/i;
 
-/** Names that often sound younger / brighter on common OS voices */
-const STUDENT_GIRL_VOICE_PRIORITY =
-  /child|girl|young|teen|student|junior|ava|allison|aria|jenny|joanna|ivy|kimberly|tessa|emma|olivia|penelope|nicole|samantha|sophie|serena|fiona|moira|karen/i;
+/** Young, bright female voices — checked in order across Windows, macOS, and Chrome */
+const ENERGETIC_STUDENT_VOICE_PRIORITY: RegExp[] = [
+  /microsoft aria/i,
+  /microsoft jenny/i,
+  /google.*english.*female/i,
+  /samantha/i,
+  /tessa/i,
+  /joanna/i,
+  /ivy/i,
+  /kimberly/i,
+  /zira/i,
+  /karen/i,
+  /fiona/i,
+  /moira/i,
+  /victoria/i,
+  /emma/i,
+  /olivia/i,
+  /\baria\b/i,
+  /\bjenny\b/i,
+  /nicole/i,
+  /susan/i,
+  /allison/i,
+  /serena/i,
+  /sophie/i,
+];
 
-const SPEECH_RATE = 1.03;
-const SPEECH_PITCH = 1.24;
+const AVOID_VOICE_PATTERN =
+  /male|boy|man|david|mark|james|richard|george|daniel|thomas|paul|guy|adult male/i;
+
+const SPEECH_RATE = 1.12;
+const SPEECH_PITCH = 1.16;
 const SPEAK_CHUNK_SIZE = 280;
 
 function isFemaleVoice(voice: SpeechSynthesisVoice): boolean {
@@ -20,7 +45,7 @@ function isFemaleVoice(voice: SpeechSynthesisVoice): boolean {
   return FEMALE_VOICE_PATTERN.test(voice.name);
 }
 
-function scoreStudentGirlVoice(voice: SpeechSynthesisVoice): number {
+function scoreEnergeticStudentVoice(voice: SpeechSynthesisVoice): number {
   const name = voice.name.toLowerCase();
   let score = 0;
 
@@ -28,8 +53,8 @@ function scoreStudentGirlVoice(voice: SpeechSynthesisVoice): number {
     score += 120;
   }
 
-  if (STUDENT_GIRL_VOICE_PRIORITY.test(voice.name)) {
-    score += 60;
+  if (/natural|online|neural/.test(name)) {
+    score += 80;
   }
 
   if (isFemaleVoice(voice)) {
@@ -44,14 +69,14 @@ function scoreStudentGirlVoice(voice: SpeechSynthesisVoice): number {
     score += 8;
   }
 
-  if (voice.localService) {
-    score += 5;
+  if (AVOID_VOICE_PATTERN.test(voice.name)) {
+    score -= 200;
   }
 
   return score;
 }
 
-function pickStudentGirlEnglishVoice(
+function pickEnergeticStudentVoice(
   voices: SpeechSynthesisVoice[],
 ): SpeechSynthesisVoice | null {
   if (voices.length === 0) {
@@ -62,12 +87,21 @@ function pickStudentGirlEnglishVoice(
     voice.lang.toLowerCase().startsWith("en"),
   );
   const pool = english.length > 0 ? english : voices;
-  const female = pool.filter(isFemaleVoice);
+  const female = pool.filter(
+    (voice) => isFemaleVoice(voice) && !AVOID_VOICE_PATTERN.test(voice.name),
+  );
   const candidates = female.length > 0 ? female : pool;
+
+  for (const pattern of ENERGETIC_STUDENT_VOICE_PRIORITY) {
+    const match = candidates.find((voice) => pattern.test(voice.name));
+    if (match) {
+      return match;
+    }
+  }
 
   return (
     [...candidates].sort(
-      (a, b) => scoreStudentGirlVoice(b) - scoreStudentGirlVoice(a),
+      (a, b) => scoreEnergeticStudentVoice(b) - scoreEnergeticStudentVoice(a),
     )[0] ?? null
   );
 }
@@ -132,7 +166,7 @@ export function useFaqSpeech() {
     }
 
     const loadVoices = () => {
-      preferredVoiceRef.current = pickStudentGirlEnglishVoice(
+      preferredVoiceRef.current = pickEnergeticStudentVoice(
         window.speechSynthesis.getVoices(),
       );
     };
@@ -170,7 +204,7 @@ export function useFaqSpeech() {
     const utterance = new SpeechSynthesisUtterance(text);
     const voice =
       preferredVoiceRef.current ??
-      pickStudentGirlEnglishVoice(window.speechSynthesis.getVoices());
+      pickEnergeticStudentVoice(window.speechSynthesis.getVoices());
 
     utterance.rate = SPEECH_RATE;
     utterance.pitch = SPEECH_PITCH;
