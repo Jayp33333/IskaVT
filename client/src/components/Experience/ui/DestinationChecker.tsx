@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import useWorld from "../../../hooks/useWorld";
-import { audioManager } from "../../../services/AudioManager";
 import { DestinationCelebration } from "./DestinationCelebration";
+import { useFaqSpeech } from "../../../features/contact/hooks/useFaqSpeech";
+import { getArrivalTtsMessage } from "../../../data/campusGuideContent";
 
 const ARRIVAL_PAUSE_MS = 2000;
 const CELEBRATION_HIDE_MS = 6000;
@@ -23,6 +24,7 @@ export const DestinationChecker = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationBurstKey, setCelebrationBurstKey] = useState(0);
   const arrivalTimersRef = useRef<number[]>([]);
+  const { speak, stop, isSupported } = useFaqSpeech();
 
   const clearArrivalTimers = () => {
     arrivalTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -49,7 +51,8 @@ export const DestinationChecker = () => {
       const distance = characterPosition.distanceTo(pinPosition);
 
       if (distance <= THRESHOLD && !isPinTeleported) {
-        setArrivalBannerDestination(selectedDestination || "your destination");
+        const destinationLabel = selectedDestination || "your destination";
+        setArrivalBannerDestination(destinationLabel);
         setPinPosition(null);
         setIsPinConfirmed(false);
         setIsArrivalPaused(true);
@@ -57,7 +60,9 @@ export const DestinationChecker = () => {
         setShowCelebration(true);
         setSelectedDestination(null);
         setSelectedDestinationId(null);
-        audioManager.play("arrived");
+        if (isSupported) {
+          speak("tour-arrived", getArrivalTtsMessage(destinationLabel));
+        }
         scheduleArrivalTimers();
 
         clearInterval(interval);
@@ -76,6 +81,8 @@ export const DestinationChecker = () => {
     setSelectedDestination,
     setSelectedDestinationId,
     setArrivalBannerDestination,
+    isSupported,
+    speak,
   ]);
 
   useEffect(() => {
@@ -86,7 +93,13 @@ export const DestinationChecker = () => {
     }
   }, [arrivalBannerDestination, showCelebration, setIsArrivalPaused]);
 
-  useEffect(() => () => clearArrivalTimers(), []);
+  useEffect(
+    () => () => {
+      clearArrivalTimers();
+      stop();
+    },
+    [stop],
+  );
 
   return (
     <DestinationCelebration active={showCelebration} burstKey={celebrationBurstKey} />

@@ -17,9 +17,8 @@ class AudioManager {
   private categories = new Map<string, AudioCategory>();
   private baseVolumes = new Map<string, number>();
   private unlocked = false;
-  private masterVolume = 0.8;
-  private sfxEnabled = true;
-  private ambientEnabled = true;
+  private masterVolume = 1;
+  private ambientVolume = 0.8;
   private ambientShouldPlay = false;
   private ambientObjectUrl: string | null = null;
 
@@ -29,18 +28,14 @@ class AudioManager {
   }
 
   configure(options: {
-    masterVolume?: number;
-    sfxEnabled?: boolean;
-    ambientEnabled?: boolean;
+    masterEnabled?: boolean;
+    ambientVolume?: number;
   }) {
-    if (options.masterVolume !== undefined) {
-      this.masterVolume = Math.max(0, Math.min(1, options.masterVolume / 100));
+    if (options.masterEnabled !== undefined) {
+      this.masterVolume = options.masterEnabled ? 1 : 0;
     }
-    if (options.sfxEnabled !== undefined) {
-      this.sfxEnabled = options.sfxEnabled;
-    }
-    if (options.ambientEnabled !== undefined) {
-      this.ambientEnabled = options.ambientEnabled;
+    if (options.ambientVolume !== undefined) {
+      this.ambientVolume = Math.max(0, Math.min(1, options.ambientVolume / 100));
     }
 
     this.audios.forEach((_audio, key) => this.applyVolume(key));
@@ -102,9 +97,6 @@ class AudioManager {
   play(key: string) {
     if (!this.unlocked) return;
 
-    const category = this.categories.get(key) ?? "sfx";
-    if (category === "sfx" && !this.sfxEnabled) return;
-
     const audio = this.audios.get(key);
     if (!audio) return;
 
@@ -147,7 +139,9 @@ class AudioManager {
     if (!audio) return;
 
     const baseVolume = this.baseVolumes.get(key) ?? 1;
-    audio.volume = this.masterVolume * baseVolume;
+    const category = this.categories.get(key) ?? "sfx";
+    const ambientMultiplier = category === "ambient" ? this.ambientVolume : 1;
+    audio.volume = this.masterVolume * ambientMultiplier * baseVolume;
   }
 
   private syncAmbient() {
@@ -155,7 +149,7 @@ class AudioManager {
     if (!audio) return;
 
     const shouldPlay =
-      this.unlocked && this.ambientEnabled && this.ambientShouldPlay;
+      this.unlocked && this.ambientVolume > 0 && this.ambientShouldPlay;
 
     if (!shouldPlay) {
       audio.pause();

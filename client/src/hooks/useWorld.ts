@@ -2,12 +2,10 @@ import { create } from "zustand";
 import { SAMPLE_AVATAR_LIST } from "../sampleData";
 import { Vector3 } from "three";
 import {
-  AMBIENT_ENABLED_KEY,
+  AMBIENT_VOLUME_KEY,
   MASTER_VOLUME_KEY,
-  readAmbientEnabled,
-  readMasterVolume,
-  readSfxEnabled,
-  SFX_ENABLED_KEY,
+  readAmbientVolume,
+  readMasterEnabled,
 } from "../utils/experienceAudioSettings";
 import {
   clampSensitivityPercent,
@@ -108,12 +106,10 @@ interface WorldState {
   setShowFps: (value: boolean) => void;
   sensitivity: number;
   setSensitivity: (value: number) => void;
-  masterVolume: number;
-  setMasterVolume: (value: number) => void;
-  sfxEnabled: boolean;
-  setSfxEnabled: (value: boolean) => void;
-  ambientEnabled: boolean;
-  setAmbientEnabled: (value: boolean) => void;
+  masterEnabled: boolean;
+  setMasterEnabled: (value: boolean) => void;
+  ambientVolume: number;
+  setAmbientVolume: (value: number) => void;
   customAmbientTrackName: string | null;
   setCustomAmbientTrackName: (name: string | null) => void;
   mobileControlLayout: MobileControlLayout;
@@ -149,9 +145,8 @@ const useWorld = create<WorldState>((set) => ({
   arrivalBannerDestination: null,
   showFps: readShowFpsPreference(),
   sensitivity: readSensitivityPreference(),
-  masterVolume: readMasterVolume(),
-  sfxEnabled: readSfxEnabled(),
-  ambientEnabled: readAmbientEnabled(),
+  masterEnabled: readMasterEnabled(),
+  ambientVolume: readAmbientVolume(),
   customAmbientTrackName: readCustomAmbientTrackName(),
   mobileControlLayout: readMobileControlLayout(),
   mobileControlsCustomize: false,
@@ -256,24 +251,18 @@ const useWorld = create<WorldState>((set) => ({
     }
     set({ sensitivity: clamped });
   },
-  setMasterVolume: (masterVolume) => {
-    const clamped = Math.max(0, Math.min(100, Math.round(masterVolume)));
+  setMasterEnabled: (masterEnabled) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem(MASTER_VOLUME_KEY, String(clamped));
+      localStorage.setItem(MASTER_VOLUME_KEY, String(masterEnabled));
     }
-    set({ masterVolume: clamped });
+    set({ masterEnabled });
   },
-  setSfxEnabled: (sfxEnabled) => {
+  setAmbientVolume: (ambientVolume) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(ambientVolume)));
     if (typeof window !== "undefined") {
-      localStorage.setItem(SFX_ENABLED_KEY, String(sfxEnabled));
+      localStorage.setItem(AMBIENT_VOLUME_KEY, String(clamped));
     }
-    set({ sfxEnabled });
-  },
-  setAmbientEnabled: (ambientEnabled) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(AMBIENT_ENABLED_KEY, String(ambientEnabled));
-    }
-    set({ ambientEnabled });
+    set({ ambientVolume: clamped });
   },
   setCustomAmbientTrackName: (customAmbientTrackName) =>
     set({ customAmbientTrackName }),

@@ -27,6 +27,12 @@ export type CampusGuidePage = {
 };
 
 export const CAMPUS_GUIDE_PORTRAIT = "/images/headIconGirl.png";
+export const WELCOME_TTS_MESSAGE =
+  "Welcome to the PUP Lopez Virtual Campus Tour. I am ISKA, your campus guide. Use the controls to move around, explore buildings, and open Area Info to learn more about each location. Enjoy your tour.";
+
+export function getArrivalTtsMessage(destinationLabel: string) {
+  return `You have arrived at ${destinationLabel}. Feel free to explore this area and open Area Info for more details.`;
+}
 
 export const campusGuidePages: CampusGuidePage[] = [
   {

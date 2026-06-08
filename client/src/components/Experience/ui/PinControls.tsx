@@ -1,5 +1,4 @@
 import useWorld from "../../../hooks/useWorld";
-import { audioManager } from "../../../services/AudioManager";
 
 export const PinControls = () => {
   const {
@@ -23,7 +22,6 @@ export const PinControls = () => {
     setIsPinConfirmed(false);
     useWorld.getState().setShowMiniMap(false);
     setIsPinTeleported(true);
-    audioManager.play("teleported");
   };
 
   // Remove pin

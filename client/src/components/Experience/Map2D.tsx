@@ -5,7 +5,6 @@ import { FiPlus, FiMinus, FiMaximize2, FiCompass } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Vector3 } from "three";
 import GameState from "../../hooks/useWorld";
-import { audioManager } from "../../services/AudioManager";
 import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
 import { FixedLocationModal } from "./ui/FixedLocationModal";
 import { EnterTransitionOverlay } from "./ui/EnterTransitionOverlay";
@@ -260,7 +259,6 @@ export default function Map2D() {
       setIsPinTeleported(true);
       setSelectedDestination(target.name);
       setSelectedDestinationId(target.id ?? null);
-      audioManager?.play?.("teleported");
     });
   };
 
@@ -415,7 +413,6 @@ export default function Map2D() {
       setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
       setIsPinConfirmed(false);
       setIsPinTeleported(true);
-      audioManager?.play?.("teleported");
     });
   };
 

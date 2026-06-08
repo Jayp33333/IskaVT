@@ -17,6 +17,8 @@ import { useAltCursorReveal } from "../hooks/useAltCursorReveal";
 import { useModelPreload } from "../hooks/useModelPreload";
 import { useExperienceAudio } from "../hooks/useExperienceAudio";
 import { useCustomAmbientMusic } from "../hooks/useCustomAmbientMusic";
+import { useFaqSpeech } from "../features/contact/hooks/useFaqSpeech";
+import { WELCOME_TTS_MESSAGE } from "../data/campusGuideContent";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
@@ -28,6 +30,7 @@ export default function ExperienceScene() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
+  const { speak, stop, isSupported } = useFaqSpeech();
 
   const isTouring = loadingFinished && !logbookOpen;
   useExperienceAudio(isTouring);
@@ -72,6 +75,17 @@ export default function ExperienceScene() {
       window.removeEventListener("keydown", unlockOnGesture);
     };
   }, [loadingFinished]);
+
+  useEffect(() => {
+    if (!showWelcome) {
+      stop();
+      return;
+    }
+
+    if (isSupported) {
+      speak("tour-welcome", WELCOME_TTS_MESSAGE);
+    }
+  }, [showWelcome, speak, stop, isSupported]);
 
   // Keyboard shortcuts:
   // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
@@ -227,14 +241,12 @@ export default function ExperienceScene() {
     }
 
     audioManager.unlock();
-    audioManager.play("welcome");
     setShowWelcome(true);
   };
 
   const handleLogbookSuccess = () => {
     setLogbookOpen(false);
     audioManager.unlock();
-    audioManager.play("welcome");
     setShowWelcome(true);
   };
 
@@ -248,6 +260,7 @@ export default function ExperienceScene() {
       <TourGuideDialog
         open={showWelcome}
         onClose={() => {
+          stop();
           setShowWelcome(false);
           audioManager.unlock();
         }}

@@ -3,20 +3,18 @@ import useWorld from "./useWorld";
 import { audioManager } from "../services/AudioManager";
 
 export function useExperienceAudio(experienceActive: boolean) {
-  const masterVolume = useWorld((s: any) => s.masterVolume);
-  const sfxEnabled = useWorld((s: any) => s.sfxEnabled);
-  const ambientEnabled = useWorld((s: any) => s.ambientEnabled);
+  const masterEnabled = useWorld((s: any) => s.masterEnabled);
+  const ambientVolume = useWorld((s: any) => s.ambientVolume);
 
   useEffect(() => {
     audioManager.configure({
-      masterVolume,
-      sfxEnabled,
-      ambientEnabled,
+      masterEnabled,
+      ambientVolume,
     });
-  }, [masterVolume, sfxEnabled, ambientEnabled]);
+  }, [masterEnabled, ambientVolume]);
 
   useEffect(() => {
-    audioManager.setAmbientActive(experienceActive && ambientEnabled);
+    audioManager.setAmbientActive(experienceActive && ambientVolume > 0);
     return () => audioManager.setAmbientActive(false);
-  }, [experienceActive, ambientEnabled]);
+  }, [experienceActive, ambientVolume]);
 }

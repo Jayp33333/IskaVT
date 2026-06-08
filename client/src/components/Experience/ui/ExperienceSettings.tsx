@@ -282,12 +282,10 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
   const cameraMode = useWorld((s: any) => s.cameraMode) as "first" | "third";
   const setCameraMode = useWorld((s: any) => s.setCameraMode);
   const avatar = useWorld((s: any) => s.avatar) as { vrmUrl?: string } | null;
-  const masterVolume = useWorld((s: any) => s.masterVolume);
-  const setMasterVolume = useWorld((s: any) => s.setMasterVolume);
-  const sfxEnabled = useWorld((s: any) => s.sfxEnabled);
-  const setSfxEnabled = useWorld((s: any) => s.setSfxEnabled);
-  const ambientEnabled = useWorld((s: any) => s.ambientEnabled);
-  const setAmbientEnabled = useWorld((s: any) => s.setAmbientEnabled);
+  const masterEnabled = useWorld((s: any) => s.masterEnabled);
+  const setMasterEnabled = useWorld((s: any) => s.setMasterEnabled);
+  const ambientVolume = useWorld((s: any) => s.ambientVolume);
+  const setAmbientVolume = useWorld((s: any) => s.setAmbientVolume);
   const { withLoading } = useGlobalLoading();
   const isMobileDevice = useIsMobileDevice();
   const setMobileControlsCustomize = useWorld((s: any) => s.setMobileControlsCustomize);
@@ -517,26 +515,20 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                       </TabPanel>
 
                       <TabPanel activeTab={activeTab} tab="audio">
-                        <SettingSlider
-                          icon={Volume2}
-                          label="Volume"
-                          value={masterVolume}
-                          onChange={setMasterVolume}
-                          ariaLabel="Master volume"
-                          dimAtZero
-                        />
                         <SettingToggle
-                          icon={VolumeX}
-                          label="SFX"
-                          checked={sfxEnabled}
-                          onChange={setSfxEnabled}
+                          icon={masterEnabled ? Volume2 : VolumeX}
+                          label="Volume"
+                          checked={masterEnabled}
+                          onChange={setMasterEnabled}
                         />
                         <CustomAmbientMusicPicker />
-                        <SettingToggle
+                        <SettingSlider
                           icon={Music}
                           label="Background Music"
-                          checked={ambientEnabled}
-                          onChange={setAmbientEnabled}
+                          value={ambientVolume}
+                          onChange={setAmbientVolume}
+                          ariaLabel="Background music volume"
+                          dimAtZero
                         />
                       </TabPanel>
                     </div>
