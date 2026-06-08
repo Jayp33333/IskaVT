@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoClose } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
@@ -8,6 +8,7 @@ import {
   FIXED_LOCATION_PINS,
   getFloorZonesAtPosition,
 } from "../../../sampleData";
+import { useFaqSpeech } from "../../../features/contact/hooks/useFaqSpeech";
 
 const AREA_DESCRIPTIONS: Record<string, string> = {
   "Main Gate":
@@ -32,6 +33,8 @@ export const AreaInfo = () => {
   );
   const [currentAreas, setCurrentAreas] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
+  const { speak, stop, isSupported } = useFaqSpeech();
+  const speechIdRef = useRef("area-info");
 
   useEffect(() => {
     if (!characterPosition) return;
@@ -63,25 +66,50 @@ export const AreaInfo = () => {
     return null;
   }, [currentAreas]);
 
+  const description = useMemo(() => {
+    if (!currentArea) return "";
+    return (
+      getLocationDescription(currentArea) ??
+      (areaPin ? getLocationDescription(areaPin.id) : undefined) ??
+      AREA_DESCRIPTIONS[currentArea] ??
+      "This area is part of the campus navigation map. Use it as a nearby landmark while exploring the virtual tour."
+    );
+  }, [areaPin, currentArea]);
+
+  useEffect(() => {
+    return () => stop();
+  }, [stop]);
+
+  useEffect(() => {
+    if (!open) stop();
+  }, [open, stop]);
+
   if (!currentArea) return null;
 
   const roomCount = areaPin?.rooms?.length ?? 0;
   const floorCount = areaPin?.rooms
     ? new Set(areaPin.rooms.map((room) => room.floor).filter(Boolean)).size
     : 0;
-  const description =
-    getLocationDescription(currentArea) ??
-    (areaPin ? getLocationDescription(areaPin.id) : undefined) ??
-    AREA_DESCRIPTIONS[currentArea] ??
-    "This area is part of the campus navigation map. Use it as a nearby landmark while exploring the virtual tour.";
   const imageSrc = areaPin?.imageSrc ?? "/images/campus-image.jpg";
+
+  const handleOpen = () => {
+    setOpen(true);
+    if (isSupported && description.trim()) {
+      speak(speechIdRef.current, description);
+    }
+  };
+
+  const handleClose = () => {
+    stop();
+    setOpen(false);
+  };
 
   return (
     <>
       {!open && (
         <motion.button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
           className="fixed right-4 top-1/2 z-[1300] flex -translate-y-1/2 items-center gap-1.5 rounded-full border-[3px] border-ink bg-gold px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-ink shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-[calc(-50%+2px)] active:shadow-none [@media(max-width:768px)]:top-auto [@media(max-width:768px)]:right-3 [@media(max-width:768px)]:bottom-24 [@media(max-width:768px)]:translate-y-0 [@media(max-width:768px)]:active:translate-y-0.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:right-3 [@media(orientation:landscape)_and_(max-height:600px)]:gap-1 [@media(orientation:landscape)_and_(max-height:600px)]:border-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-2 [@media(orientation:landscape)_and_(max-height:600px)]:py-1 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:600px)]:shadow-brutal-sm"
           initial={{ opacity: 0, x: 18 }}
           animate={{ opacity: 1, x: 0 }}
@@ -112,14 +140,16 @@ export const AreaInfo = () => {
                   </p>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close area information"
-                className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1 text-ink shadow-brutal-sm active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:border-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-0.5"
-              >
-                <IoClose size={16} />
-              </button>
+              <div className="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  aria-label="Close area information"
+                  className="rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"
+                >
+                  <IoClose size={16} />
+                </button>
+              </div>
             </div>
 
             <div className="relative h-36 border-b-[4px] border-ink bg-slate-200 [@media(orientation:landscape)_and_(max-height:600px)]:h-20 [@media(orientation:landscape)_and_(max-height:600px)]:border-b-[3px]">
