@@ -74,6 +74,15 @@ function pickStudentGirlEnglishVoice(
 
 const SPEAK_DELAY_MS = 80;
 
+/** Normalize acronyms so browser TTS pronounces them correctly. */
+function prepareSpeechText(text: string): string {
+  return text
+    .replace(/\bPUP\b/g, "P U P")
+    .replace(/\bDIT\b/g, "D I T")
+    .replace(/\bSIS\b/g, "S I S")
+    .replace(/\bISKA\b/gi, "iska");
+}
+
 function splitSpeechText(text: string): string[] {
   const trimmed = text.trim();
   if (trimmed.length <= SPEAK_CHUNK_SIZE) {
@@ -219,7 +228,7 @@ export function useFaqSpeech() {
 
       speakTimeoutRef.current = window.setTimeout(() => {
         speakTimeoutRef.current = null;
-        chunksRef.current = splitSpeechText(text);
+        chunksRef.current = splitSpeechText(prepareSpeechText(text));
         chunkIndexRef.current = 0;
         activeSpeechIdRef.current = id;
         setSpeakingId(id);

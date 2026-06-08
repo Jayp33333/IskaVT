@@ -5,24 +5,30 @@ export type CampusNodeId = keyof typeof CAMPUS_NODES;
 /** Walkable junctions merged from all campus routes (gate, comlabs, field, gym). */
 export const CAMPUS_NODES = {
   "main-gate": new THREE.Vector3(10, 0.18, 2),
-  "gate-yumul": new THREE.Vector3(8, 0.18, -4),
-  "comlab-1": new THREE.Vector3(5, 0.18, -8),
-  "comlab-2-mid": new THREE.Vector3(12, 0.18, -15),
-  "comlab-2": new THREE.Vector3(14, 0.18, -22),
-  "inner-south": new THREE.Vector3(8, 0.18, -18),
-  "south-corridor": new THREE.Vector3(16, 0.18, -28),
-  "south-mid": new THREE.Vector3(16, 0.18, -50),
-  "ramp-west": new THREE.Vector3(7, 1.24, -52.5),
-  "ramp-center": new THREE.Vector3(-2, 1.24, -54),
-  "ramp-east": new THREE.Vector3(-8.5, 0.3, -58),
-  "canteen-edge": new THREE.Vector3(6, 0.18, -55),
-  "canteen-field": new THREE.Vector3(7, 0.18, -88),
-  "field-west": new THREE.Vector3(-1, 0.3, -94),
+  "gate-yumul": new THREE.Vector3(11, 0.18, -6.3),
+  "comlab-1": new THREE.Vector3(4, 0.18, -12.5),
+  "comlab-2-mid": new THREE.Vector3(13, 0.18, -15),
+  "comlab-2": new THREE.Vector3(16, 0.18, -26),
+  "bridge-west-lower-right-ramp": new THREE.Vector3(16, 0.18, -50),
+  "bridge-west-upper-right-ramp": new THREE.Vector3(7, 1.24, -52.5),
+  "bridge-west-upper-left-ramp": new THREE.Vector3(-0.13, 1.24, -54),
+  "bridge-west-lower-left-ramp": new THREE.Vector3(-6.3, 0.3, -55),
+  "canteen-north-hallway": new THREE.Vector3(-0.3, 0.3, -94),
+  "canteen-mid-hallway": new THREE.Vector3(-5.2, 0.3, -72),
+  "canteen-south-hallway": new THREE.Vector3(-8, 0.3, -60),
   "grandstand-approach": new THREE.Vector3(6, 0.18, -104),
   "grandstand-ramp": new THREE.Vector3(6, 2.5, -107),
   "field-east-1": new THREE.Vector3(15, 0.18, -100),
-  "field-east-2": new THREE.Vector3(32, 0.18, -118),
+  "field-east-2": new THREE.Vector3(32, 0.18, -100),
+  "field-east-3": new THREE.Vector3(32, 0.18, -118),
   "gym-approach": new THREE.Vector3(38, 0.18, -145),
+  "bridge-east-lower-right-ramp": new THREE.Vector3(30.5, 0.2, -75),
+  "bridge-east-upper-right-ramp": new THREE.Vector3(31.3, 1.2, -81.8),
+  "bridge-east-upper-left-ramp": new THREE.Vector3(31.5, 1.3, -87),
+  "bridge-east-lower-left-ramp": new THREE.Vector3(31.8, 0.2, -93.4),
+  "field-south-1": new THREE.Vector3(19, 0.18, -33.3),
+  "field-south-2": new THREE.Vector3(23.4, 0.18, -46.5),
+  "field-south-3": new THREE.Vector3(26.4, 0.18, -58.7),
 } as const;
 
 /** Preferred graph anchors for known destinations (sampleData ids). */
@@ -70,19 +76,46 @@ connectChain(["main-gate", "gate-yumul", "comlab-1"]);
 connectChain(["comlab-1", "comlab-2-mid", "comlab-2"]);
 
 // Gate → inner campus → south corridor / grandstand ramp
-connectChain(["main-gate", "inner-south", "south-corridor", "south-mid"]);
-connectChain(["south-mid", "ramp-west", "ramp-center", "ramp-east"]);
-connectChain(["ramp-east", "field-west", "grandstand-approach", "grandstand-ramp"]);
+connectChain([
+  "main-gate",
+  "gate-yumul",
+  "comlab-2-mid",
+  "comlab-2",
+  "bridge-west-lower-right-ramp",
+]);
+connectChain([
+  "bridge-west-lower-right-ramp",
+  "bridge-west-upper-right-ramp",
+  "bridge-west-upper-left-ramp",
+  "bridge-west-lower-left-ramp",
+]);
+connectChain([
+  "bridge-west-lower-left-ramp",
+  "canteen-south-hallway",
+  "canteen-mid-hallway",
+  "canteen-north-hallway",
+  "grandstand-approach",
+  "grandstand-ramp",
+]);
 
-// Gate → canteen → field → gym
-connectChain(["inner-south", "canteen-edge", "canteen-field"]);
-connectChain(["canteen-field", "field-east-1", "field-east-2", "gym-approach"]);
+
+// Gate → gym
+connectChain(["field-east-1", "field-east-2", "field-east-3", "gym-approach"]);
+connectChain([
+  "field-south-1",
+  "field-south-2",
+  "field-south-3",
+  "bridge-east-lower-right-ramp",
+  "bridge-east-upper-right-ramp",
+  "bridge-east-upper-left-ramp",
+  "bridge-east-lower-left-ramp",
+  "field-east-2",
+]);
 
 // Cross-links between parallel routes
-addEdge("gate-yumul", "inner-south");
-addEdge("south-mid", "canteen-edge");
-addEdge("canteen-field", "field-west");
+addEdge("bridge-west-lower-right-ramp", "bridge-west-upper-right-ramp");
 addEdge("grandstand-approach", "field-east-1");
+addEdge("comlab-2", "field-south-1");
 
 export type CampusPathResult = {
   nodeIds: CampusNodeId[];
@@ -90,24 +123,51 @@ export type CampusPathResult = {
   totalDistance: number;
 };
 
-/**
- * Shortest walkable route using multi-source Dijkstra from the player position.
- * Any node can be reached directly from the player; the best goal node minimizes
- * graph cost plus the final hop to the pin.
- */
-export function findShortestCampusPath(
-  start: THREE.Vector3,
-  goal: THREE.Vector3,
-  preferredGoalNode?: CampusNodeId,
-): CampusPathResult | null {
+/** Line segments for dev visualization of walkable edges. */
+export function getCampusGraphSegments(): [THREE.Vector3, THREE.Vector3][] {
+  const segments: [THREE.Vector3, THREE.Vector3][] = [];
+  const seen = new Set<string>();
+
+  for (const from of nodeIds) {
+    for (const edge of adjacency.get(from) ?? []) {
+      const key = [from, edge.to].sort().join("|");
+      if (seen.has(key)) continue;
+      seen.add(key);
+      segments.push([
+        CAMPUS_NODES[from].clone(),
+        CAMPUS_NODES[edge.to].clone(),
+      ]);
+    }
+  }
+
+  return segments;
+}
+
+function nearestNode(pos: THREE.Vector3): CampusNodeId {
+  let bestId = nodeIds[0];
+  let bestDist = Infinity;
+
+  for (const id of nodeIds) {
+    const dist = pos.distanceTo(CAMPUS_NODES[id]);
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestId = id;
+    }
+  }
+
+  return bestId;
+}
+
+function runDijkstra(source: CampusNodeId) {
   const dist = new Map<CampusNodeId, number>();
   const prev = new Map<CampusNodeId, CampusNodeId | null>();
 
   for (const id of nodeIds) {
-    dist.set(id, start.distanceTo(CAMPUS_NODES[id]));
+    dist.set(id, Infinity);
     prev.set(id, null);
   }
 
+  dist.set(source, 0);
   const visited = new Set<CampusNodeId>();
 
   while (visited.size < nodeIds.length) {
@@ -135,23 +195,44 @@ export function findShortestCampusPath(
     }
   }
 
-  let goalNode: CampusNodeId | null = preferredGoalNode ?? null;
-  let totalDistance = Infinity;
+  return { dist, prev };
+}
 
-  const candidates = preferredGoalNode ? [preferredGoalNode, ...nodeIds] : nodeIds;
+function trimPassedNodes(
+  start: THREE.Vector3,
+  ids: CampusNodeId[],
+): CampusNodeId[] {
+  if (ids.length === 0) return [];
 
-  for (const id of candidates) {
-    const graphDistance = dist.get(id) ?? Infinity;
-    if (!Number.isFinite(graphDistance)) continue;
+  let nearestIdx = 0;
+  let nearestDist = Infinity;
 
-    const total = graphDistance + CAMPUS_NODES[id].distanceTo(goal);
-    if (total < totalDistance) {
-      totalDistance = total;
-      goalNode = id;
+  for (let i = 0; i < ids.length; i++) {
+    const dist = start.distanceTo(CAMPUS_NODES[ids[i]]);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearestIdx = i;
     }
   }
 
-  if (goalNode === null || !Number.isFinite(totalDistance)) {
+  return ids.slice(nearestIdx);
+}
+
+/**
+ * Shortest walkable route along graph edges only.
+ * Player snaps to the nearest node, walks the graph, then hops to the pin.
+ */
+export function findShortestCampusPath(
+  start: THREE.Vector3,
+  goal: THREE.Vector3,
+  preferredGoalNode?: CampusNodeId,
+): CampusPathResult | null {
+  const startNode = nearestNode(start);
+  const goalNode = preferredGoalNode ?? nearestNode(goal);
+  const { dist, prev } = runDijkstra(startNode);
+  const graphDistance = dist.get(goalNode) ?? Infinity;
+
+  if (!Number.isFinite(graphDistance)) {
     return null;
   }
 
@@ -163,9 +244,14 @@ export function findShortestCampusPath(
     cursor = prev.get(cursor) ?? null;
   }
 
+  const totalDistance =
+    start.distanceTo(CAMPUS_NODES[startNode]) +
+    graphDistance +
+    CAMPUS_NODES[goalNode].distanceTo(goal);
+
   return {
-    nodeIds: path,
-    graphDistance: dist.get(goalNode) ?? 0,
+    nodeIds: trimPassedNodes(start, path),
+    graphDistance,
     totalDistance,
   };
 }
@@ -181,9 +267,7 @@ export function campusPathToPoints(
     points.push(CAMPUS_NODES[id].clone());
   }
 
-  points.push(
-    new THREE.Vector3(goal.x, goal.y, goal.z),
-  );
+  points.push(goal.clone());
 
   return points;
 }

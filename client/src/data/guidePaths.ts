@@ -1,22 +1,12 @@
 import * as THREE from "three";
 import { DESTINATIONS } from "../sampleData";
 import {
-  DESTINATION_NODES,
   campusPathToPoints,
+  DESTINATION_NODES,
   findShortestCampusPath,
-  type CampusNodeId,
 } from "./campusGraph";
 
 export const GUIDE_Y = 0.18;
-
-/**
- * Guide routes use the shared campus graph (Dijkstra shortest path).
- *
- * Edit tips:
- * - Add or move nodes/edges in campusGraph.ts when you map new walkways.
- * - Walk in-game and read X/Z from the pin panel or browser console.
- * - Link new destinations in DESTINATION_NODES.
- */
 
 export function findDestinationIdForPin(pin: THREE.Vector3): string | null {
   for (const destination of DESTINATIONS) {
@@ -51,11 +41,6 @@ function dedupeClosePoints(points: THREE.Vector3[], minDist: number): THREE.Vect
   return result;
 }
 
-function preferredGoalNode(destinationId: string | null | undefined): CampusNodeId | undefined {
-  if (!destinationId) return undefined;
-  return DESTINATION_NODES[destinationId];
-}
-
 export function buildGuidePath(
   character: THREE.Vector3,
   pin: THREE.Vector3,
@@ -68,24 +53,18 @@ export function buildGuidePath(
     pin.z,
   );
 
-  const resolvedDestinationId = destinationId ?? findDestinationIdForPin(pin);
-  const campusPath = findShortestCampusPath(
-    character,
-    pin,
-    preferredGoalNode(resolvedDestinationId),
-  );
+  const destId = destinationId ?? findDestinationIdForPin(pin);
+  const goalNode = destId ? DESTINATION_NODES[destId] : undefined;
+  const graphPath = findShortestCampusPath(character, end, goalNode);
 
-  if (!campusPath) {
-    return [start, end];
+  if (graphPath) {
+    const points = campusPathToPoints(start, end, graphPath).map((point) =>
+      toGuidePoint(point, point.y),
+    );
+    return dedupeClosePoints(points, 0.3);
   }
 
-  const raw = campusPathToPoints(start, end, campusPath).map((point, index, list) => {
-    if (index === 0) return start;
-    if (index === list.length - 1) return end;
-    return toGuidePoint(point, point.y);
-  });
-
-  return dedupeClosePoints(raw, 0.3);
+  return [start, end];
 }
 
 export function createGuideCurve(points: THREE.Vector3[]): THREE.CatmullRomCurve3 {

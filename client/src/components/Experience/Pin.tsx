@@ -2,6 +2,7 @@ import { useRef, useEffect } from "react";
 import { Gltf } from "@react-three/drei";
 import useWorld from "../../hooks/useWorld";
 import { ArrowGuide } from "./ui/ArrowGuide";
+import { CampusGraphDebug } from "./CampusGraphDebug";
 
 const Pin = () => {
   const { pinPosition } = useWorld((s: any) => s);
@@ -22,6 +23,7 @@ const Pin = () => {
         <meshStandardMaterial color="red" transparent opacity={0.5} />
       </mesh>
       <ArrowGuide />
+      <CampusGraphDebug />
     </>
   );
 };

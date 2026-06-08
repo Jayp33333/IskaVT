@@ -89,6 +89,8 @@ const Character = () => {
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
 
+    // console.log("Character position:", character.position);
+
     const rot = camera.rotation;
     cameraRotationRef.current.set(rot.x, rot.y, rot.z);
     setCameraRotation(cameraRotationRef.current);
