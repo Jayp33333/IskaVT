@@ -43,7 +43,9 @@ const TABS: { id: SettingsTab; label: string; icon: typeof Monitor }[] = [
   { id: "audio", label: "Audio", icon: Headphones },
 ];
 
-const panelPadX = "px-4 sm:px-5 [@media(max-height:500px)]:px-3.5";
+const landscapeShort =
+  "[@media(orientation:landscape)_and_(max-height:768px)]";
+const panelPadX = `px-4 sm:px-5 [@media(max-height:500px)]:px-3.5 ${landscapeShort}:px-3`;
 const cardClass =
   "rounded-2xl border-2 border-ink bg-white [@media(max-height:500px)]:rounded-xl";
 const iconWrapClass =
@@ -265,7 +267,7 @@ function TabPanel({
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.16 }}
-      className="flex flex-col gap-4 [@media(max-height:500px)]:gap-3"
+      className="flex flex-col gap-4 [@media(max-height:500px)]:gap-3 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2.5"
     >
       {children}
     </motion.div>
@@ -369,7 +371,7 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                 />
 
                 <motion.div
-                  className="pointer-events-none fixed inset-0 z-[1600] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+                  className={`pointer-events-none fixed inset-0 z-[1600] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:items-center ${landscapeShort}:justify-center ${landscapeShort}:p-2`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -378,7 +380,7 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                     role="dialog"
                     aria-modal="true"
                     aria-label="Settings"
-                    className="pointer-events-auto flex w-full max-w-[26rem] max-sm:max-w-none flex-col overflow-hidden rounded-t-2xl rounded-b-none border-[3px] border-ink border-b-0 bg-cream text-ink max-sm:border-b-0 sm:rounded-2xl sm:border-[4px] max-h-[90dvh] sm:max-h-[min(88dvh,36rem)] [@media(max-height:500px)]:max-h-[94dvh] [@media(max-height:500px)]:rounded-t-xl [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,24rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[94dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl"
+                    className={`pointer-events-auto flex min-h-0 w-full max-w-[26rem] max-sm:max-w-none flex-col overflow-hidden rounded-t-2xl rounded-b-none border-[3px] border-ink bg-cream text-ink max-sm:rounded-b-2xl max-sm:border-b-[3px] sm:rounded-2xl sm:border-[4px] max-h-[min(90dvh,36rem)] sm:max-h-[min(88dvh,36rem)] [@media(max-height:500px)]:max-h-[min(92dvh,100%)] [@media(max-height:500px)]:rounded-t-xl ${landscapeShort}:max-h-[min(92dvh,100%)] ${landscapeShort}:max-w-[min(28rem,94vw)] ${landscapeShort}:rounded-2xl ${landscapeShort}:border-[3px]`}
                     initial={{ opacity: 0, y: 28 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
@@ -386,12 +388,12 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                     onClick={(event) => event.stopPropagation()}
                   >
                     <div
-                      className="mx-auto mt-2.5 h-1 w-12 shrink-0 rounded-full border border-ink/20 bg-ink/15 sm:hidden"
+                      className={`mx-auto mt-2.5 h-1 w-12 shrink-0 rounded-full border border-ink/20 bg-ink/15 sm:hidden ${landscapeShort}:hidden`}
                       aria-hidden
                     />
 
                     <div
-                      className={`flex shrink-0 items-center justify-between gap-4 border-b-[3px] border-ink bg-maroon py-4 ${panelPadX} [@media(max-height:500px)]:py-3.5`}
+                      className={`flex shrink-0 items-center justify-between gap-4 border-b-[3px] border-ink bg-maroon py-4 ${panelPadX} [@media(max-height:500px)]:py-3 ${landscapeShort}:py-2.5`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-ink bg-gold [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9">
@@ -414,9 +416,9 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                       </button>
                     </div>
 
-                    <div className={`shrink-0 pt-4 ${panelPadX} [@media(max-height:500px)]:pt-3`}>
+                    <div className={`shrink-0 pt-4 ${panelPadX} [@media(max-height:500px)]:pt-3 ${landscapeShort}:pt-2.5`}>
                       <div
-                        className="grid grid-cols-3 gap-2 rounded-xl border-2 border-ink bg-cream p-2 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:p-1.5"
+                        className={`grid grid-cols-3 gap-2 rounded-xl border-2 border-ink bg-cream p-2 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:p-1.5 ${landscapeShort}:gap-1.5 ${landscapeShort}:p-1.5`}
                         role="tablist"
                         aria-label="Settings sections"
                       >
@@ -449,7 +451,7 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                     </div>
 
                     <div
-                      className={`min-h-[14rem] flex-1 overflow-y-auto bg-cream pt-4 pb-5 custom-scrollbar ${panelPadX} [@media(max-height:500px)]:min-h-[12rem] [@media(max-height:500px)]:pt-3 [@media(max-height:500px)]:pb-4`}
+                      className={`min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-cream pt-4 pb-4 custom-scrollbar ${panelPadX} [@media(max-height:500px)]:pt-3 [@media(max-height:500px)]:pb-3 ${landscapeShort}:pt-2.5 ${landscapeShort}:pb-2.5`}
                     >
                       <TabPanel activeTab={activeTab} tab="display">
                         <SettingToggle
@@ -534,10 +536,10 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                     </div>
 
                     <div
-                      className={`shrink-0 border-t-[3px] border-ink bg-white py-4 ${panelPadX} [@media(max-height:500px)]:border-t-2 [@media(max-height:500px)]:py-3.5`}
+                      className={`shrink-0 border-t-[3px] border-ink bg-white py-3 ${panelPadX} pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] [@media(max-height:500px)]:border-t-2 [@media(max-height:500px)]:py-2.5 ${landscapeShort}:py-2`}
                     >
                       <div
-                        className={`grid gap-3 [@media(max-height:500px)]:gap-2.5 ${
+                        className={`grid gap-2.5 [@media(max-height:500px)]:gap-2 ${landscapeShort}:gap-2 ${
                           showExitTour ? "grid-cols-2" : "grid-cols-1"
                         }`}
                       >
