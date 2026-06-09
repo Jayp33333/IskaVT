@@ -10,6 +10,7 @@ import { DistanceHUD } from "./DistanceHUD";
 import { ArrivalBanner } from "./ArrivalBanner";
 import { FloorLabel } from "./FloorLabel";
 import { AreaInfo } from "./AreaInfo";
+import { CampusNodeAddTool } from "./CampusNodeAddTool";
 
 import { LogHistory } from "./LogHistory";
 import { Feedback } from "./Feedback";
@@ -91,6 +92,7 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
 
       {/* Global Components */}
       {!hideAreaInfo && <AreaInfo />}
+      {import.meta.env.DEV && <CampusNodeAddTool />}
       <DestinationChecker />
       {activeNPCDialog && (
         <NPCDialog

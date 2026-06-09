@@ -5,14 +5,12 @@ import { MdInfoOutline } from "react-icons/md";
 import useWorld from "../../../hooks/useWorld";
 import { getLocationDescription } from "../../../data/locationDescriptions";
 import {
-  FIXED_LOCATION_PINS,
   getFloorZonesAtPosition,
+  getPinForFloorZoneName,
 } from "../../../sampleData";
 import { useFaqSpeech } from "../../../features/contact/hooks/useFaqSpeech";
 
 const AREA_DESCRIPTIONS: Record<string, string> = {
-  "Main Gate":
-    "The main entrance of the campus and the usual starting point for visitors and students entering the school grounds.",
   Library:
     "A quiet learning area for reading, research, study sessions, and access to learning resources.",
   "Director's Office":
@@ -58,9 +56,7 @@ export const AreaInfo = () => {
   const areaPin = useMemo(() => {
     if (currentAreas.length === 0) return null;
     for (const name of currentAreas) {
-      const pin = FIXED_LOCATION_PINS.find(
-        (p) => normalizeAreaName(p.name) === name
-      );
+      const pin = getPinForFloorZoneName(name);
       if (pin) return pin;
     }
     return null;

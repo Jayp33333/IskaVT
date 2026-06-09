@@ -10,7 +10,10 @@ import {
   Move,
   Music,
   RotateCcw,
+  MapPinPlus,
+  Route,
   Settings,
+  Tags,
   SlidersHorizontal,
   User,
   Users,
@@ -279,6 +282,16 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
   const showFps = useWorld((s: any) => s.showFps);
   const setShowFps = useWorld((s: any) => s.setShowFps);
+  const showCampusGraph = useWorld((s: any) => s.showCampusGraph);
+  const setShowCampusGraph = useWorld((s: any) => s.setShowCampusGraph);
+  const showCampusGraphLabels = useWorld((s: any) => s.showCampusGraphLabels);
+  const setShowCampusGraphLabels = useWorld(
+    (s: any) => s.setShowCampusGraphLabels,
+  );
+  const showCampusNodeAddTool = useWorld((s: any) => s.showCampusNodeAddTool);
+  const setShowCampusNodeAddTool = useWorld(
+    (s: any) => s.setShowCampusNodeAddTool,
+  );
   const sensitivity = useWorld((s: any) => s.sensitivity);
   const setSensitivity = useWorld((s: any) => s.setSensitivity);
   const cameraMode = useWorld((s: any) => s.cameraMode) as "first" | "third";
@@ -460,6 +473,28 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                           checked={showFps}
                           onChange={setShowFps}
                         />
+                        {import.meta.env.DEV && (
+                          <>
+                            <SettingToggle
+                              icon={Route}
+                              label="Show Campus Nodes"
+                              checked={showCampusGraph}
+                              onChange={setShowCampusGraph}
+                            />
+                            <SettingToggle
+                              icon={Tags}
+                              label="Show Node Names & Coordinates"
+                              checked={showCampusGraphLabels}
+                              onChange={setShowCampusGraphLabels}
+                            />
+                            <SettingToggle
+                              icon={MapPinPlus}
+                              label="Show Copy Campus Node Tool"
+                              checked={showCampusNodeAddTool}
+                              onChange={setShowCampusNodeAddTool}
+                            />
+                          </>
+                        )}
                         <div className={`${cardClass} ${cardPad}`}>
                           <div className="mb-4 flex items-center gap-3.5 [@media(max-height:500px)]:mb-3">
                             <span className={iconWrapClass}>

@@ -1,7 +1,6 @@
 /** Canonical model paths — must match the strings passed to loaders in the app. */
 export const MODEL_PATHS = {
   campus: "./models/PUP_CAMPUS.glb",
-  location: "./models/location.glb",
   guard: "/models/avatars/guard.glb",
   professor: "/models/avatars/professor1.glb",
   iskaVrm: "models/avatars/Iska.vrm",

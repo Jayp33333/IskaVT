@@ -148,25 +148,33 @@ export const homeExploreLocations: HomeExploreLocation[] = [
       "Named after the Yumul family — home to classrooms and faculty offices.",
   },
   {
-    name: "Comlab 1",
+    name: "HM Laboratories",
+    tag: "Laboratories",
+    image: "/images/buildings/HMRooms.jpg",
+    highlights: ["Kitchen lab", "Beverage lab", "Hospitality"],
+    description:
+      "Hospitality Management laboratories for kitchen, beverage, and tissue lab coursework.",
+  },
+  {
+    name: "ICT Laboratory 1",
     tag: "Laboratories",
     image: "/images/buildings/Comlab1.jpg",
     highlights: ["Programming", "Research", "BSIT labs"],
     description:
-      "Computer lab for programming, research, and IT coursework.",
+      "ICT Laboratory 1 for programming, research, and IT coursework.",
   },
   {
-    name: "Comlab 2",
+    name: "ICT Laboratory 2",
     tag: "Laboratories",
     image: "/images/buildings/Comlab2.jpg",
     highlights: ["Digital projects", "Practical work", "Tech subjects"],
     description:
-      "Additional lab space for digital projects and technology subjects.",
+      "ICT Laboratory 2 for digital projects and technology subjects.",
   },
   {
     name: "Engineering Building",
     tag: "Engineering",
-    image: "/images/buildings/EngineeringBuilding.webp",
+    image: "/images/buildings/EngineeringBuilding.jpg",
     highlights: ["Labs", "Drafting", "Technology programs"],
     description:
       "Engineering, architecture, and technology programs with specialized labs.",
@@ -182,7 +190,7 @@ export const homeExploreLocations: HomeExploreLocation[] = [
   {
     name: "Health and Sciences Building",
     tag: "Sciences",
-    image: "/images/buildings/HealthSciencesBuilding.webp",
+    image: "/images/buildings/HealthSciencesBuilding.jpg",
     highlights: ["Science labs", "Major classes", "Research"],
     description:
       "Science laboratories, major program classes, and research activities.",

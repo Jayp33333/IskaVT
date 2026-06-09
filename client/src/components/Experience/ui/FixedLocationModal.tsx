@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { IoClose } from "react-icons/io5";
-import { FaLocationCrosshairs } from "react-icons/fa6";
-import { HiBuildingOffice2 } from "react-icons/hi2";
-import { MdPlace } from "react-icons/md";
+import { ChevronRight, MapPin, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Vector3 } from "three";
 import type { FixedLocationPin, FixedLocationRoom } from "../../../sampleData";
+
+const landscapeShort =
+  "[@media(orientation:landscape)_and_(max-height:768px)]";
+const panelPadX =
+  "px-4 sm:px-5 [@media(max-height:500px)]:px-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-3";
 
 type FixedLocationModalProps = {
   pin: FixedLocationPin | null;
@@ -13,13 +15,59 @@ type FixedLocationModalProps = {
   onVisit: (target: { id?: string; name: string; position: Vector3 }) => void;
 };
 
+function splitRoomName(name: string): { title: string; subtitle?: string } {
+  const match = name.match(/^(.+?)\s*\((.+)\)$/);
+  if (!match) return { title: name };
+  return { title: match[1].trim(), subtitle: match[2].trim() };
+}
+
+function floorLabel(floor: string): string {
+  const n = Number(floor);
+  if (n === 1) return "1st Floor";
+  if (n === 2) return "2nd Floor";
+  if (n === 3) return "3rd Floor";
+  if (Number.isFinite(n)) return `${n}th Floor`;
+  return floor;
+}
+
+function roomBadgeLabel(title: string): string {
+  const num = title.match(/Room\s+(\d+)/i);
+  if (num) return num[1];
+  const words = title.trim().split(/\s+/);
+  if (words.length >= 2) return words.map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  return title.slice(0, 2).toUpperCase();
+}
+
+function HeroImage({
+  src,
+  alt,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
+  return (
+    <div className={`relative overflow-hidden bg-maroon ${className}`}>
+      <img
+        src={src}
+        alt={alt}
+        className="block h-full w-full scale-[1.02] object-cover"
+        loading="lazy"
+        draggable={false}
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-maroon/95 via-maroon/45 to-white/55" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-transparent" />
+    </div>
+  );
+}
+
 export function FixedLocationModal({
   pin,
   onClose,
   onVisit,
 }: FixedLocationModalProps) {
-  const rooms: FixedLocationRoom[] =
-    pin?.kind === "building" ? pin.rooms ?? [] : [];
+  const rooms: FixedLocationRoom[] = pin?.rooms ?? [];
   const hasFloors = rooms.some((r) => typeof r.floor === "number");
 
   const roomsByFloor = hasFloors
@@ -36,8 +84,6 @@ export function FixedLocationModal({
 
   const [activeFloor, setActiveFloor] = useState<string | null>(null);
 
-  // Keep the active floor in sync with which pin is open: reset to the first
-  // available floor whenever a new pin is shown (or the floor list changes).
   useEffect(() => {
     if (!pin) {
       setActiveFloor(null);
@@ -53,91 +99,88 @@ export function FixedLocationModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pin?.id, floorKeys.join("|")]);
 
-  const isBuilding = pin?.kind === "building";
+  const visibleRooms =
+    roomsByFloor && activeFloor ? roomsByFloor[activeFloor] ?? [] : rooms;
+
+  const imageSrc = pin?.imageSrc ?? "/images/campus-image.jpg";
+  const hasRooms = rooms.length > 0;
 
   return (
     <AnimatePresence>
       {pin && (
         <motion.div
-          className="fixed inset-0 z-[1200] flex items-center justify-center bg-ink/85 p-4 pointer-events-auto [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+          className={`pointer-events-auto fixed inset-0 z-[1200] flex items-end justify-center bg-ink/85 p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:p-2`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
-            className="
-              relative w-full max-w-[460px]
-              bg-cream text-ink
-              rounded-[2rem] sm:rounded-[2.5rem]
-              border-[4px] sm:border-[6px] border-ink
-              flex flex-col max-h-[90vh] overflow-hidden
-              [@media(max-height:500px)]:max-h-[94dvh] [@media(max-height:500px)]:rounded-2xl [@media(max-height:500px)]:border-[3px]
-              [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:768px)]:border-[3px]
-              [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[98dvh] [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-2
-            "
-            initial={{ scale: 0.9, opacity: 0, y: 40 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 40 }}
-            transition={{ type: "spring", damping: 22, stiffness: 260 }}
+            className={`relative flex w-full max-w-[26rem] flex-col overflow-hidden rounded-t-2xl border-[4px] border-ink bg-cream text-ink shadow-brutal-lg max-sm:max-w-none max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-2xl [@media(max-height:500px)]:rounded-t-2xl ${landscapeShort}:max-w-[min(92vw,22rem)] ${landscapeShort}:rounded-xl ${
+              hasRooms
+                ? `h-[min(92dvh,34rem)] [@media(max-height:500px)]:h-[min(96dvh,30rem)] ${landscapeShort}:h-[min(96dvh,28rem)]`
+                : "h-auto max-h-[min(92dvh,28rem)]"
+            }`}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 28, stiffness: 340 }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="fixed-location-dialog-title"
           >
-            {/* Header image with gradient overlay and title */}
-            <div className="relative border-b-[4px] sm:border-b-[6px] border-ink [@media(max-height:500px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:768px)]:border-b-[3px] [@media(orientation:landscape)_and_(max-height:500px)]:border-b-2">
-              <img
-                src={pin.imageSrc ?? "/images/campus-image.jpg"}
+            {/* Hero */}
+            <div
+              className={`relative w-full shrink-0 border-b-[3px] border-ink ${
+                hasRooms
+                  ? `h-40 sm:h-44 [@media(max-height:500px)]:h-36 ${landscapeShort}:h-32`
+                  : `aspect-[16/10] sm:aspect-[16/9] [@media(max-height:500px)]:aspect-[3/2] ${landscapeShort}:aspect-[2/1]`
+              }`}
+            >
+              <HeroImage
+                src={imageSrc}
                 alt={pin.name}
-                className="w-full h-44 sm:h-52 object-cover block [@media(max-height:500px)]:h-32 [@media(orientation:landscape)_and_(max-height:768px)]:h-24 [@media(orientation:landscape)_and_(max-height:500px)]:h-[4.5rem]"
-                loading="lazy"
-                draggable={false}
+                className="h-full w-full"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-900/30 to-transparent pointer-events-none" />
 
-              {/* Close button */}
               <button
                 onClick={onClose}
                 aria-label="Close"
                 type="button"
-                className="absolute top-3 right-3 bg-white border-[3px] border-ink p-1.5 rounded-xl hover:bg-muted transition-transform active:scale-90 shadow-brutal-sm [@media(max-height:500px)]:top-2 [@media(max-height:500px)]:right-2 [@media(max-height:500px)]:p-1 [@media(max-height:500px)]:rounded-lg [@media(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:right-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-1 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2"
+                className="absolute right-3 top-3 rounded-xl border-2 border-ink bg-white/95 p-1.5 text-ink shadow-brutal-sm backdrop-blur-sm transition-all hover:bg-cream active:scale-95 [@media(max-height:500px)]:right-2.5 [@media(max-height:500px)]:top-2.5 [@media(max-height:500px)]:p-1"
               >
-                <IoClose className="h-[18px] w-[18px] [@media(max-height:500px)]:h-4 [@media(max-height:500px)]:w-4 [@media(orientation:landscape)_and_(max-height:768px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-3.5" strokeWidth={2} />
+                <X className="h-4 w-4" strokeWidth={3} />
               </button>
 
-              {/* Kind badge */}
-              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-gold border-[3px] border-ink px-2 py-0.5 rounded-full shadow-brutal-sm [@media(max-height:500px)]:top-2 [@media(max-height:500px)]:left-2 [@media(max-height:500px)]:gap-1 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:top-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:left-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0 [@media(orientation:landscape)_and_(max-height:768px)]:border-2">
-                {isBuilding ? (
-                  <HiBuildingOffice2 className="h-3 w-3 text-ink [@media(orientation:landscape)_and_(max-height:768px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-2.5" />
-                ) : (
-                  <MdPlace className="h-3 w-3 text-ink [@media(orientation:landscape)_and_(max-height:768px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-2.5" />
-                )}
-                <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-ink [@media(max-height:500px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[7px]">
-                  {isBuilding ? "Building" : "Location"}
-                </p>
-              </div>
-
-              {/* Title block */}
-              <div className="absolute bottom-3 left-4 right-4 [@media(max-height:500px)]:bottom-2 [@media(max-height:500px)]:left-3 [@media(max-height:500px)]:right-3 [@media(orientation:landscape)_and_(max-height:768px)]:bottom-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:left-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:right-2.5">
-                <h2 className="text-xl sm:text-2xl font-black italic text-white leading-tight uppercase drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] [@media(max-height:500px)]:text-lg [@media(orientation:landscape)_and_(max-height:768px)]:text-sm [@media(orientation:landscape)_and_(max-height:500px)]:text-xs">
-                  {pin.name}
-                </h2>
-                {isBuilding && rooms.length > 0 && (
-                  <p className="text-[10px] sm:text-xs font-bold text-white/90 mt-0.5 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px] [@media(orientation:landscape)_and_(max-height:768px)]:mt-0 [@media(orientation:landscape)_and_(max-height:500px)]:hidden">
-                    {rooms.length} room{rooms.length === 1 ? "" : "s"}
-                    {floorKeys.length > 1
-                      ? ` · ${floorKeys.length} floors`
-                      : ""}
-                  </p>
-                )}
+              <div
+                className={`absolute bottom-0 left-0 right-0 ${panelPadX} pb-3 pt-8 [@media(max-height:500px)]:pb-2.5 ${landscapeShort}:pb-2`}
+              >
+                <div className="flex items-end gap-2.5">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-white p-1 shadow-brutal-sm [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 ${landscapeShort}:h-7 ${landscapeShort}:w-7">
+                    <img
+                      src="/images/pup-logo.png"
+                      alt=""
+                      className="h-full w-full object-contain"
+                    />
+                  </span>
+                  <h2
+                    id="fixed-location-dialog-title"
+                    className={`min-w-0 flex-1 font-black italic leading-tight text-white drop-shadow-sm ${hasRooms ? "text-base sm:text-lg [@media(max-height:500px)]:text-sm" : "text-lg sm:text-xl [@media(max-height:500px)]:text-base"} ${landscapeShort}:text-sm`}
+                  >
+                    {pin.name}
+                  </h2>
+                </div>
               </div>
             </div>
 
-            {/* Body */}
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-              {rooms.length > 0 ? (
-                <div className="p-4 sm:p-5 space-y-4 [@media(max-height:500px)]:p-3 [@media(max-height:500px)]:space-y-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:space-y-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:space-y-1.5">
-                  {/* Floor tabs (only when there are multiple floors) */}
-                  {roomsByFloor && floorKeys.length > 1 && (
-                    <div className="flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1 [@media(orientation:landscape)_and_(max-height:768px)]:pb-0">
+            {hasRooms ? (
+              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                {roomsByFloor && floorKeys.length > 1 && (
+                  <div
+                    className={`shrink-0 border-b-2 border-ink/10 bg-muted/60 py-2.5 ${panelPadX} [@media(max-height:500px)]:py-2 ${landscapeShort}:py-1.5`}
+                  >
+                    <div className="flex rounded-xl border-2 border-ink bg-white p-0.5 shadow-brutal-sm">
                       {floorKeys.map((floor) => {
                         const active = activeFloor === floor;
                         return (
@@ -145,105 +188,82 @@ export function FixedLocationModal({
                             key={floor}
                             type="button"
                             onClick={() => setActiveFloor(floor)}
-                            className={`shrink-0 px-3 py-1.5 rounded-xl border-[3px] border-ink text-[11px] sm:text-xs font-black uppercase tracking-wider transition-all active:translate-y-0.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:500px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:text-[8px] ${
+                            className={`min-w-0 flex-1 rounded-lg px-2 py-1.5 text-center text-[10px] font-black uppercase tracking-wide transition-all sm:text-[11px] [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-[9px] ${landscapeShort}:text-[8px] ${
                               active
-                                ? "bg-maroon text-white shadow-brutal-sm active:shadow-none [@media(orientation:landscape)_and_(max-height:768px)]:shadow-brutal-sm"
-                                : "bg-white text-ink/80 hover:bg-muted shadow-brutal-sm active:shadow-none"
+                                ? "bg-maroon text-white shadow-sm"
+                                : "text-ink/60 hover:bg-cream hover:text-ink"
                             }`}
                           >
-                            Floor {floor}
+                            {floorLabel(floor)}
                           </button>
                         );
                       })}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* Room list */}
-                  <div className="space-y-2 [@media(orientation:landscape)_and_(max-height:768px)]:space-y-1 [@media(orientation:landscape)_and_(max-height:500px)]:space-y-0.5">
-                    {(roomsByFloor && activeFloor
-                      ? roomsByFloor[activeFloor] ?? []
-                      : rooms
-                    ).map((room) => (
-                      <div
-                        key={room.id}
-                        className="
-                          w-full flex items-center justify-between gap-3
-                          px-3 py-2.5 rounded-xl
-                          bg-white border-[3px] border-ink
-                          shadow-brutal-sm
-                          [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:gap-2
-                          [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:shadow-brutal-sm
-                          [@media(orientation:landscape)_and_(max-height:500px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:py-1 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1
-                        "
-                      >
-                        <div className="flex items-center gap-2 min-w-0 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1.5">
-                          <div className="bg-blue-400 border-[2px] border-ink p-1.5 rounded-lg shrink-0 shadow-brutal-sm [@media(orientation:landscape)_and_(max-height:768px)]:p-1 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:500px)]:p-0.5">
-                            <MdPlace className="h-3.5 w-3.5 text-ink [@media(orientation:landscape)_and_(max-height:768px)]:h-3 [@media(orientation:landscape)_and_(max-height:768px)]:w-3 [@media(orientation:landscape)_and_(max-height:500px)]:h-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:w-2.5" />
-                          </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-ink truncate [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[9px]">
-                            {room.name}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => onVisit(room)}
-                          className="
-                            shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg
-                            bg-gold border-[2px] border-ink
-                            text-[10px] sm:text-[11px] font-black italic uppercase text-ink
-                            hover:bg-gold
-                            active:translate-y-0.5 active:shadow-none
-                            transition-all
-                            [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-0.5 [@media(max-height:500px)]:text-[9px]
-                            [@media(orientation:landscape)_and_(max-height:768px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]
-                            [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]
-                          "
+                <ul
+                  className={`flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto custom-scrollbar py-3 ${panelPadX} pb-[max(0.75rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:py-2.5 ${landscapeShort}:gap-1 ${landscapeShort}:py-2`}
+                >
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    {visibleRooms.map((room, index) => {
+                      const { title, subtitle } = splitRoomName(room.name);
+                      return (
+                        <motion.li
+                          key={room.id}
+                          layout
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: 0.15, delay: index * 0.02 }}
                         >
-                          <FaLocationCrosshairs className="h-2.5 w-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:h-2 [@media(orientation:landscape)_and_(max-height:768px)]:w-2" />
-                          Visit
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="p-5 sm:p-6 [@media(max-height:500px)]:p-3 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:500px)]:p-2">
-                  <div className="bg-muted border-[3px] border-ink rounded-2xl p-4 flex items-center justify-between gap-3 [@media(max-height:500px)]:p-3 [@media(max-height:500px)]:gap-2 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
-                    <div className="flex items-start gap-3 min-w-0 [@media(orientation:landscape)_and_(max-height:768px)]:gap-2">
-                      <div className="bg-blue-400 border-[3px] border-ink p-2 rounded-xl shrink-0 shadow-brutal-sm [@media(orientation:landscape)_and_(max-height:768px)]:p-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:768px)]:border-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-1">
-                        <MdPlace className="h-[18px] w-[18px] text-ink [@media(orientation:landscape)_and_(max-height:768px)]:h-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:w-3.5 [@media(orientation:landscape)_and_(max-height:500px)]:h-3 [@media(orientation:landscape)_and_(max-height:500px)]:w-3" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] sm:text-xs font-black uppercase text-ink/50 tracking-wider [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:500px)]:text-[8px]">
-                          Point of Interest
-                        </p>
-                        <p className="text-sm sm:text-base font-extrabold text-ink leading-tight mt-0.5 [@media(max-height:500px)]:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px] [@media(orientation:landscape)_and_(max-height:768px)]:mt-0 [@media(orientation:landscape)_and_(max-height:500px)]:text-[9px]">
-                          Teleport instantly to this location.
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => onVisit(pin)}
-                      className="
-                        shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg
-                        bg-gold border-[2px] border-ink
-                        text-[10px] sm:text-[11px] font-black italic uppercase text-ink
-                        hover:bg-gold
-                        active:translate-y-0.5 active:shadow-none
-                        transition-all
-                        [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-0.5 [@media(max-height:500px)]:text-[9px]
-                        [@media(orientation:landscape)_and_(max-height:768px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:rounded-md [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]
-                        [@media(orientation:landscape)_and_(max-height:500px)]:px-1 [@media(orientation:landscape)_and_(max-height:500px)]:text-[7px]
-                      "
-                    >
-                      <FaLocationCrosshairs className="h-2.5 w-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:h-2 [@media(orientation:landscape)_and_(max-height:768px)]:w-2" />
-                      Visit
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+                          <button
+                            type="button"
+                            onClick={() => onVisit(room)}
+                            className="group flex w-full items-center gap-3 rounded-xl border-2 border-ink/15 bg-white px-2.5 py-2.5 text-left transition-all hover:border-ink/40 hover:bg-cream active:scale-[0.99] [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-2 ${landscapeShort}:gap-2 ${landscapeShort}:py-1.5"
+                          >
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 border-ink bg-gold text-[11px] font-black text-maroon shadow-brutal-sm transition-transform group-hover:scale-105 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 [@media(max-height:500px)]:text-[10px] ${landscapeShort}:h-7 ${landscapeShort}:w-7 ${landscapeShort}:text-[9px]">
+                              {roomBadgeLabel(title)}
+                            </span>
+                            <span className="min-w-0 flex-1 leading-snug">
+                              <span
+                                className={`block truncate font-black text-ink ${subtitle ? "text-xs sm:text-sm [@media(max-height:500px)]:text-[11px]" : "text-sm sm:text-base [@media(max-height:500px)]:text-xs"} ${landscapeShort}:text-[10px]`}
+                              >
+                                {title}
+                              </span>
+                              {subtitle && (
+                                <span
+                                  className={`mt-0.5 block truncate text-[10px] font-bold text-ink/50 sm:text-xs [@media(max-height:500px)]:text-[9px] ${landscapeShort}:text-[8px]`}
+                                >
+                                  {subtitle}
+                                </span>
+                              )}
+                            </span>
+                            <ChevronRight
+                              className="h-4 w-4 shrink-0 text-maroon/40 transition-transform group-hover:translate-x-0.5 group-hover:text-maroon [@media(max-height:500px)]:h-3.5 [@media(max-height:500px)]:w-3.5"
+                              strokeWidth={3}
+                            />
+                          </button>
+                        </motion.li>
+                      );
+                    })}
+                  </AnimatePresence>
+                </ul>
+              </div>
+            ) : (
+              <div
+                className={`shrink-0 bg-muted ${panelPadX} py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:py-2.5 ${landscapeShort}:py-2`}
+              >
+                <button
+                  type="button"
+                  onClick={() => onVisit(pin)}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-[3px] border-ink bg-maroon py-2.5 text-sm font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-maroon/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-xs ${landscapeShort}:py-2 ${landscapeShort}:text-[11px]"
+                >
+                  <MapPin className="h-4 w-4" strokeWidth={2.5} />
+                  Visit Location
+                </button>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

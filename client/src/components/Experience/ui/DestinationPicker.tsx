@@ -1,10 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, X, Search, MapPinned } from "lucide-react";
+import { Check, MapPin, Search, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { DESTINATIONS } from "../../../sampleData";
 import { computeGuideDistance } from "../../../data/guidePaths";
+
+const landscapeShort =
+  "[@media(orientation:landscape)_and_(max-height:768px)]";
+const panelPadX =
+  "px-4 sm:px-5 [@media(max-height:500px)]:px-3.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-3";
 
 export const DestinationPicker = () => {
   const [open, setOpen] = useState(false);
@@ -24,7 +29,7 @@ export const DestinationPicker = () => {
 
   const filteredDestinations = useMemo(
     () => DESTINATIONS.filter((d) => d.name.toLowerCase().includes(query.toLowerCase())),
-    [query]
+    [query],
   );
 
   useEffect(() => {
@@ -33,10 +38,16 @@ export const DestinationPicker = () => {
     };
   }, []);
 
+  const close = () => {
+    setOpen(false);
+    useWorld.getState().setShowDestinationPicker(false);
+    setQuery("");
+  };
+
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") close();
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -53,9 +64,6 @@ export const DestinationPicker = () => {
     );
     setSelectedDestination(destination.name);
     setSelectedDestinationId(destination.id);
-    setOpen(false);
-    useWorld.getState().setShowDestinationPicker(false);
-    setQuery("");
   };
 
   const handleUnpin = () => {
@@ -64,13 +72,6 @@ export const DestinationPicker = () => {
     setSelectedDestination(null);
     setSelectedDestinationId(null);
     setIsPinTeleported(false);
-    setQuery("");
-  };
-
-  const close = () => {
-    setOpen(false);
-    useWorld.getState().setShowDestinationPicker(false);
-    setQuery("");
   };
 
   if (showMiniMap) return null;
@@ -82,179 +83,180 @@ export const DestinationPicker = () => {
           setOpen(true);
           useWorld.getState().setShowDestinationPicker(true);
         }}
-        className={`w-10 h-10 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:h-9 rounded-2xl [@media(max-height:500px)]:rounded-xl border-[3px] border-ink transition-all flex items-center justify-center shadow-brutal-sm [@media(max-height:500px)]:shadow-brutal-sm active:translate-y-1 active:shadow-none ${
+        className={`flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink shadow-brutal-sm transition-all active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl ${
           selectedDestination
             ? "bg-maroon text-white"
             : "bg-gold text-maroon hover:bg-gold/90"
-        } ${showLogHistory ? "blur-sm opacity-50 pointer-events-none" : ""}`}
-        title={selectedDestination ? `Destination: ${selectedDestination}` : "Select destination"}
-        aria-label="Select destination"
+        } ${showLogHistory ? "pointer-events-none opacity-50 blur-sm" : ""}`}
+        title={selectedDestination ?? "Destinations"}
+        aria-label="Destinations"
         aria-expanded={open}
         type="button"
       >
-        <MapPin className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5" />
+        <MapPin className="h-4 w-4 [@media(max-height:500px)]:h-3.5 [@media(max-height:500px)]:w-3.5" />
       </button>
 
       {createPortal(
         <AnimatePresence>
           {open && (
             <motion.div
-              className="fixed inset-0 z-[1600] flex items-end sm:items-center justify-center bg-ink/85 p-0 sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2 pointer-events-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={close}
-          >
-            <motion.div
-              className="relative w-full max-w-[460px] sm:max-w-[460px] max-sm:max-w-none max-sm:rounded-t-[1.75rem] max-sm:rounded-b-none bg-cream text-ink rounded-[2rem] sm:rounded-[2.5rem] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none border-[4px] sm:border-[6px] border-ink max-sm:border-b-0 flex flex-col max-h-[88vh] max-sm:max-h-[92dvh] [@media(max-height:500px)]:max-h-[96dvh] shadow-brutal-lg [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,400px)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,360px)] overflow-hidden"
-              initial={{ scale: 0.98, opacity: 0, y: 24 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.98, opacity: 0, y: 24 }}
-              transition={{ type: "spring", damping: 20, stiffness: 250 }}
-              onClick={(e) => e.stopPropagation()}
+              className={`pointer-events-auto fixed inset-0 z-[1600] flex items-end justify-center bg-ink/85 p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:p-2`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={close}
             >
-              {/* Header */}
-              <div className="bg-maroon border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 shrink-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-surface p-1.5 shadow-brutal-sm [@media(max-height:500px)]:p-1">
+              <motion.div
+                className={`relative flex h-[min(92dvh,34rem)] w-full max-w-[26rem] flex-col overflow-hidden rounded-t-2xl border-[4px] border-ink bg-cream text-ink max-sm:max-w-none max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-2xl sm:border-[4px] [@media(max-height:500px)]:h-[min(96dvh,30rem)] [@media(max-height:500px)]:rounded-t-2xl ${landscapeShort}:h-[min(96dvh,28rem)] ${landscapeShort}:max-w-[min(92vw,400px)] ${landscapeShort}:rounded-xl`}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ type: "spring", damping: 28, stiffness: 340 }}
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Destinations"
+              >
+                <div
+                  className={`mx-auto mt-2.5 h-1 w-12 shrink-0 rounded-full border border-ink/20 bg-ink/15 sm:hidden ${landscapeShort}:hidden`}
+                  aria-hidden
+                />
+
+                <div
+                  className={`flex shrink-0 items-center justify-between gap-3 border-b-[3px] border-ink bg-maroon py-4 ${panelPadX} [@media(max-height:500px)]:py-3 ${landscapeShort}:py-2.5`}
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-white p-1 [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:p-0.5">
                       <img
                         src="/images/pup-logo.png"
                         alt="PUP Logo"
-                        className="h-8 w-8 object-contain [@media(max-height:500px)]:h-7 [@media(max-height:500px)]:w-7"
+                        className="h-full w-full object-contain"
                       />
-                    </div>
-                    <div className="min-w-0">
-                      <h2 className="text-xl sm:text-2xl [@media(max-height:500px)]:text-base font-black italic text-white leading-tight truncate">
-                        Choose Destination
-                      </h2>
-                    </div>
+                    </span>
+                    <h2 className="truncate text-lg font-black italic text-white sm:text-xl [@media(max-height:500px)]:text-base">
+                      Choose Destination
+                    </h2>
                   </div>
                   <button
                     onClick={close}
-                    className="bg-surface border-[3px] border-ink p-1.5 [@media(max-height:500px)]:p-1 rounded-xl hover:bg-muted transition-transform active:scale-90 shrink-0"
+                    className="shrink-0 rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
                     aria-label="Close"
                     type="button"
                   >
-                    <X size={18} strokeWidth={4} />
+                    <X className="h-4 w-4" strokeWidth={3} />
                   </button>
                 </div>
-                <p className="mt-2 [@media(max-height:500px)]:mt-1 text-xs [@media(max-height:500px)]:text-[10px] font-bold text-white/90">
-                  Pick a location to pin on the map and follow the distance guide.
-                </p>
-              </div>
 
-              {/* Active pin */}
-              {selectedDestination && (
-                <div className="mx-4 mt-4 [@media(max-height:500px)]:mx-3 [@media(max-height:500px)]:mt-2 flex items-center justify-between gap-3 p-3 [@media(max-height:500px)]:p-2 rounded-2xl bg-gold border-[3px] border-ink shadow-brutal-sm shrink-0">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <MapPinned className="w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-maroon shrink-0" strokeWidth={3} />
-                    <div className="min-w-0">
-                      <p className="text-[10px] [@media(max-height:500px)]:text-[8px] font-black uppercase text-maroon tracking-wide">
-                        Pinned
-                      </p>
-                      <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-ink truncate">
+                <div
+                  className={`shrink-0 space-y-3 pt-4 ${panelPadX} [@media(max-height:500px)]:space-y-2 [@media(max-height:500px)]:pt-3 ${landscapeShort}:space-y-2 ${landscapeShort}:pt-2.5`}
+                >
+                  <div className="relative">
+                    <Search
+                      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-maroon [@media(max-height:500px)]:h-3.5 [@media(max-height:500px)]:w-3.5"
+                      strokeWidth={3}
+                    />
+                    <input
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search campus..."
+                      className="w-full rounded-xl border-2 border-ink bg-white py-2.5 pl-10 pr-10 text-sm font-bold text-ink outline-none placeholder:text-ink/40 focus:bg-cream [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-xs"
+                    />
+                    {query && (
+                      <button
+                        onClick={() => setQuery("")}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1 text-ink/70 hover:bg-muted"
+                        aria-label="Clear search"
+                        type="button"
+                      >
+                        <X className="h-4 w-4" strokeWidth={3} />
+                      </button>
+                    )}
+                  </div>
+
+                  {selectedDestination && (
+                    <div className="flex items-center gap-2 rounded-xl border-2 border-ink bg-gold px-3 py-2 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1.5">
+                      <MapPin
+                        className="h-4 w-4 shrink-0 text-maroon"
+                        strokeWidth={2.5}
+                        fill="currentColor"
+                      />
+                      <p className="min-w-0 flex-1 truncate text-sm font-black text-ink [@media(max-height:500px)]:text-xs">
                         {selectedDestination}
                       </p>
+                      <button
+                        onClick={handleUnpin}
+                        className="shrink-0 rounded-lg border-2 border-ink bg-white px-2 py-1 text-[10px] font-black uppercase text-maroon transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:px-1.5 [@media(max-height:500px)]:text-[9px]"
+                        type="button"
+                      >
+                        Unpin
+                      </button>
                     </div>
-                  </div>
-                  <button
-                    onClick={handleUnpin}
-                    className="shrink-0 px-3 py-1.5 [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase italic rounded-xl bg-surface border-[3px] border-ink text-maroon shadow-brutal-sm hover:bg-cream active:translate-y-1 active:shadow-none transition-all"
-                    type="button"
-                  >
-                    Unpin
-                  </button>
-                </div>
-              )}
-
-              {/* Search */}
-              <div className="px-4 pt-4 pb-2 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-1 shrink-0">
-                <div className="relative">
-                  <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 [@media(max-height:500px)]:w-3.5 [@media(max-height:500px)]:h-3.5 text-maroon pointer-events-none"
-                    strokeWidth={3}
-                  />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search buildings, rooms, facilities..."
-                    className="w-full pl-10 pr-10 py-2.5 [@media(max-height:500px)]:py-1.5 text-sm [@media(max-height:500px)]:text-xs font-bold text-ink bg-surface border-[3px] border-ink rounded-2xl shadow-brutal-sm outline-none focus:bg-cream placeholder:text-ink/40"
-                  />
-                  {query && (
-                    <button
-                      onClick={() => setQuery("")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-xl hover:bg-muted text-ink/80"
-                      title="Clear search"
-                      type="button"
-                    >
-                      <X className="w-4 h-4" strokeWidth={3} />
-                    </button>
                   )}
                 </div>
-                <p className="mt-3 [@media(max-height:500px)]:mt-2 text-xs [@media(max-height:500px)]:text-[10px] font-black uppercase tracking-wide text-ink/50 px-0.5">
-                  {filteredDestinations.length} location
-                  {filteredDestinations.length !== 1 ? "s" : ""} found
-                </p>
-              </div>
 
-              {/* List */}
-              <div className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 pb-4 pb-[max(1rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:pb-2 [@media(orientation:landscape)_and_(max-height:768px)]:px-2.5 custom-scrollbar">
-                {filteredDestinations.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 [@media(max-height:500px)]:py-4 text-center">
-                    <MapPin
-                      className="w-10 h-10 [@media(max-height:500px)]:w-8 [@media(max-height:500px)]:h-8 text-maroon/40 mb-3 [@media(max-height:500px)]:mb-2"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    <p className="text-sm [@media(max-height:500px)]:text-xs font-black text-ink">No locations found</p>
-                    <p className="text-xs [@media(max-height:500px)]:text-[10px] font-bold text-ink/50 mt-1">Try a different search term</p>
-                  </div>
-                ) : (
-                  <ul className="divide-y divide-ink/15">
-                    {filteredDestinations.map((d) => {
-                      const isActive = selectedDestination === d.name;
-                      return (
-                        <li key={d.id}>
-                          <button
-                            onClick={() => handleSelect(d)}
-                            className={`w-full flex items-center gap-3 sm:gap-3.5 px-2 sm:px-2.5 py-3 sm:py-3.5 [@media(max-height:500px)]:gap-2.5 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-2 rounded-xl border-[3px] text-left transition-colors ${
-                              isActive
-                                ? "border-ink bg-gold shadow-brutal-sm"
-                                : "border-transparent hover:bg-muted active:bg-muted"
-                            }`}
-                            type="button"
-                          >
-                            <MapPin
-                              className={`w-5 h-5 sm:w-[1.35rem] sm:h-[1.35rem] shrink-0 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 ${
-                                isActive ? "text-maroon" : "text-maroon/70"
+                <div
+                  className={`flex min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar pb-4 pt-3 ${panelPadX} pb-[max(1rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:pb-3 [@media(max-height:500px)]:pt-2 ${landscapeShort}:pb-2.5`}
+                >
+                  {filteredDestinations.length === 0 ? (
+                    <div className="flex min-h-full flex-1 flex-col items-center justify-center py-12 text-center [@media(max-height:500px)]:py-8">
+                      <MapPin
+                        className="mb-3 h-10 w-10 text-maroon/35 [@media(max-height:500px)]:mb-2 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      <p className="text-sm font-black text-ink [@media(max-height:500px)]:text-xs">
+                        No locations found
+                      </p>
+                    </div>
+                  ) : (
+                    <ul className="flex min-h-full flex-1 flex-col gap-2 [@media(max-height:500px)]:gap-1.5">
+                      {filteredDestinations.map((d) => {
+                        const isActive = selectedDestination === d.name;
+                        return (
+                          <li key={d.id}>
+                            <button
+                              onClick={() => handleSelect(d)}
+                              className={`flex w-full items-center gap-3 rounded-xl border-2 px-3 py-3 text-left transition-all active:scale-[0.99] [@media(max-height:500px)]:gap-2.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2.5 ${landscapeShort}:py-2 ${
+                                isActive
+                                  ? "border-ink bg-maroon text-white shadow-brutal-sm"
+                                  : "border-ink/20 bg-white hover:border-ink/40 hover:bg-cream"
                               }`}
-                              strokeWidth={2.25}
-                              fill={isActive ? "currentColor" : "none"}
-                              aria-hidden
-                            />
-                            <span className="flex-1 min-w-0">
-                              <span className="block text-sm sm:text-[0.9375rem] [@media(max-height:500px)]:text-xs font-bold text-ink leading-snug break-words">
+                              type="button"
+                            >
+                              <span
+                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 ${
+                                  isActive
+                                    ? "border-white/30 bg-white/10"
+                                    : "border-ink bg-gold"
+                                }`}
+                              >
+                                {isActive ? (
+                                  <Check
+                                    className="h-4 w-4 text-white"
+                                    strokeWidth={3}
+                                  />
+                                ) : (
+                                  <MapPin
+                                    className="h-4 w-4 text-maroon"
+                                    strokeWidth={2.5}
+                                  />
+                                )}
+                              </span>
+                              <span className="min-w-0 flex-1 text-sm font-bold leading-snug [@media(max-height:500px)]:text-xs">
                                 {d.name}
                               </span>
-                              {isActive && (
-                                <span className="mt-0.5 block text-[10px] sm:text-[11px] [@media(max-height:500px)]:text-[8px] font-bold uppercase text-maroon tracking-wide">
-                                  Currently pinned
-                                </span>
-                              )}
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-            </motion.div>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>,
-        document.body
+        document.body,
       )}
     </>
   );

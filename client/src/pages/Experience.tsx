@@ -5,6 +5,7 @@ import Character from "../components/Experience/Character";
 import World from "../components/Experience/World";
 import NPCs from "../components/Experience/NPCs";
 import Pin from "../components/Experience/Pin";
+import { CampusGraphDebug } from "../components/Experience/CampusGraphDebug";
 import Lights from "../components/Experience/Lights";
 import useWorld from "../hooks/useWorld";
 import DistanceUpdater from "../components/Experience/ui/DistanceUpdater";
@@ -25,6 +26,7 @@ const Experience = () => {
         <NPCs />
       </Suspense>
       <DistanceUpdater />
+      <CampusGraphDebug />
       {pinPosition && isPinConfirmed && <Pin />}
     </>
   );

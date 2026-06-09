@@ -21,11 +21,32 @@ import {
 import { readCustomAmbientTrackName } from "../utils/customAmbientMusic";
 
 const SHOW_FPS_KEY = "experience-show-fps";
+const SHOW_CAMPUS_GRAPH_KEY = "experience-show-campus-graph";
+const SHOW_CAMPUS_GRAPH_LABELS_KEY = "experience-show-campus-graph-labels";
+const SHOW_CAMPUS_NODE_ADD_TOOL_KEY = "experience-show-campus-node-add-tool";
 
 function readShowFpsPreference(): boolean {
   if (typeof window === "undefined") return true;
   const stored = localStorage.getItem(SHOW_FPS_KEY);
   return stored === null ? true : stored === "true";
+}
+
+function readShowCampusGraphPreference(): boolean {
+  if (typeof window === "undefined" || !import.meta.env.DEV) return false;
+  const stored = localStorage.getItem(SHOW_CAMPUS_GRAPH_KEY);
+  return stored === null ? true : stored === "true";
+}
+
+function readShowCampusGraphLabelsPreference(): boolean {
+  if (typeof window === "undefined" || !import.meta.env.DEV) return false;
+  const stored = localStorage.getItem(SHOW_CAMPUS_GRAPH_LABELS_KEY);
+  return stored === null ? true : stored === "true";
+}
+
+function readShowCampusNodeAddToolPreference(): boolean {
+  if (typeof window === "undefined" || !import.meta.env.DEV) return false;
+  const stored = localStorage.getItem(SHOW_CAMPUS_NODE_ADD_TOOL_KEY);
+  return stored === null ? false : stored === "true";
 }
 
 interface WorldState {
@@ -104,6 +125,12 @@ interface WorldState {
   setArrivalBannerDestination: (destination: string | null) => void;
   showFps: boolean;
   setShowFps: (value: boolean) => void;
+  showCampusGraph: boolean;
+  setShowCampusGraph: (value: boolean) => void;
+  showCampusGraphLabels: boolean;
+  setShowCampusGraphLabels: (value: boolean) => void;
+  showCampusNodeAddTool: boolean;
+  setShowCampusNodeAddTool: (value: boolean) => void;
   sensitivity: number;
   setSensitivity: (value: number) => void;
   masterEnabled: boolean;
@@ -144,6 +171,9 @@ const useWorld = create<WorldState>((set) => ({
   isArrivalPaused: false,
   arrivalBannerDestination: null,
   showFps: readShowFpsPreference(),
+  showCampusGraph: readShowCampusGraphPreference(),
+  showCampusGraphLabels: readShowCampusGraphLabelsPreference(),
+  showCampusNodeAddTool: readShowCampusNodeAddToolPreference(),
   sensitivity: readSensitivityPreference(),
   masterEnabled: readMasterEnabled(),
   ambientVolume: readAmbientVolume(),
@@ -243,6 +273,30 @@ const useWorld = create<WorldState>((set) => ({
       localStorage.setItem(SHOW_FPS_KEY, String(showFps));
     }
     set({ showFps });
+  },
+  setShowCampusGraph: (showCampusGraph) => {
+    if (typeof window !== "undefined" && import.meta.env.DEV) {
+      localStorage.setItem(SHOW_CAMPUS_GRAPH_KEY, String(showCampusGraph));
+    }
+    set({ showCampusGraph });
+  },
+  setShowCampusGraphLabels: (showCampusGraphLabels) => {
+    if (typeof window !== "undefined" && import.meta.env.DEV) {
+      localStorage.setItem(
+        SHOW_CAMPUS_GRAPH_LABELS_KEY,
+        String(showCampusGraphLabels),
+      );
+    }
+    set({ showCampusGraphLabels });
+  },
+  setShowCampusNodeAddTool: (showCampusNodeAddTool) => {
+    if (typeof window !== "undefined" && import.meta.env.DEV) {
+      localStorage.setItem(
+        SHOW_CAMPUS_NODE_ADD_TOOL_KEY,
+        String(showCampusNodeAddTool),
+      );
+    }
+    set({ showCampusNodeAddTool });
   },
   setSensitivity: (sensitivity) => {
     const clamped = clampSensitivityPercent(sensitivity);

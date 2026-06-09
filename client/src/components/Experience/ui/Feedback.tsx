@@ -28,7 +28,7 @@ function StarRating({
 }) {
   return (
     <div
-      className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5 [@media(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:600px)]:gap-0.5"
+      className="flex items-center justify-center gap-1 [@media(max-height:500px)]:gap-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:gap-0.5"
       role="group"
       aria-label="Rating"
     >
@@ -38,12 +38,12 @@ function StarRating({
           type="button"
           disabled={disabled}
           onClick={() => onChange(star)}
-          className="rounded-lg border-[2px] border-transparent p-0.5 transition-colors hover:scale-105 disabled:opacity-50 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:600px)]:p-0"
+          className="rounded-md border-2 border-transparent p-0.5 transition-colors hover:scale-105 disabled:opacity-50"
           aria-label={`${star} star${star > 1 ? "s" : ""}`}
           aria-pressed={value >= star}
         >
           <Star
-            className={`h-7 w-7 sm:h-8 sm:w-8 [@media(max-height:500px)]:h-6 [@media(max-height:500px)]:w-6 [@media(orientation:landscape)_and_(max-height:600px)]:h-5 [@media(orientation:landscape)_and_(max-height:600px)]:w-5 ${
+            className={`h-6 w-6 sm:h-7 sm:w-7 [@media(max-height:500px)]:h-5 [@media(max-height:500px)]:w-5 [@media(orientation:landscape)_and_(max-height:768px)]:h-[1.125rem] [@media(orientation:landscape)_and_(max-height:768px)]:w-[1.125rem] ${
               value >= star ? "fill-gold text-gold" : "text-ink/20"
             }`}
             strokeWidth={2.5}
@@ -215,7 +215,7 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
                   exit={{ opacity: 0 }}
                 >
                   <motion.div
-                    className="pointer-events-auto mx-auto flex w-full max-w-md max-sm:max-w-none flex-col overflow-hidden rounded-t-[1.75rem] rounded-b-none sm:rounded-[2rem] border-[4px] sm:border-[6px] max-sm:border-b-0 border-ink bg-cream text-ink shadow-brutal-lg sm:shadow-brutal-lg max-h-[92dvh] sm:max-h-[90dvh] [@media(max-height:500px)]:max-h-[96dvh] [@media(max-height:500px)]:rounded-t-2xl [@media(max-height:500px)]:rounded-b-none [@media(max-height:500px)]:w-[min(100%,20rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-h-[96dvh] [@media(orientation:landscape)_and_(max-height:768px)]:w-[min(92vw,22rem)] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:w-[min(88vw,18rem)] shrink-0 sm:w-[min(100%,22rem)]"
+                    className="pointer-events-auto mx-auto flex h-[min(92dvh,34rem)] w-full max-w-[26rem] shrink-0 flex-col overflow-hidden rounded-t-2xl border-[4px] border-ink bg-cream text-ink shadow-brutal-lg max-sm:max-w-none max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-2xl [@media(max-height:500px)]:h-[min(96dvh,30rem)] [@media(max-height:500px)]:max-w-[min(92vw,20rem)] [@media(max-height:500px)]:rounded-t-2xl [@media(orientation:landscape)_and_(max-height:768px)]:h-[min(96dvh,28rem)] [@media(orientation:landscape)_and_(max-height:768px)]:max-w-[min(92vw,22rem)] [@media(orientation:landscape)_and_(max-height:768px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:max-w-[min(88vw,18rem)]"
                     initial={{ scale: 0.98, opacity: 0, y: 24 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.98, opacity: 0, y: 24 }}
@@ -225,41 +225,36 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
                     aria-modal="true"
                     aria-labelledby="feedback-dialog-title"
                   >
-                    <div className="flex shrink-0 items-center justify-between border-b-[4px] sm:border-b-[6px] [@media(max-height:500px)]:border-b-[4px] border-ink bg-maroon px-5 py-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2">
-                      <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-surface p-1.5 shadow-brutal-sm [@media(max-height:500px)]:p-1">
+                    <div className="flex shrink-0 items-center justify-between gap-2 border-b-[3px] border-ink bg-maroon px-3.5 py-3 sm:px-4 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2.5 [@media(orientation:landscape)_and_(max-height:768px)]:px-3 [@media(orientation:landscape)_and_(max-height:768px)]:py-2">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-white p-1 [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8 [@media(orientation:landscape)_and_(max-height:768px)]:h-7 [@media(orientation:landscape)_and_(max-height:768px)]:w-7">
                           <img
                             src="/images/pup-logo.png"
                             alt="PUP Logo"
-                            className="h-8 w-8 object-contain [@media(max-height:500px)]:h-7 [@media(max-height:500px)]:w-7"
+                            className="h-full w-full object-contain"
                           />
-                        </div>
-                        <div className="min-w-0">
-                          <h2
-                            id="feedback-dialog-title"
-                            className="truncate text-lg font-black italic text-white sm:text-2xl [@media(max-height:500px)]:text-sm [@media(orientation:landscape)_and_(max-height:600px)]:text-base"
-                          >
-                            Feedback
-                          </h2>
-                          <p className="mt-0.5 text-[10px] font-bold text-white/80 sm:text-xs max-sm:hidden [@media(max-height:500px)]:hidden">
-                            Share your virtual tour experience
-                          </p>
-                        </div>
+                        </span>
+                        <h2
+                          id="feedback-dialog-title"
+                          className="truncate text-base font-black italic text-white sm:text-lg [@media(max-height:500px)]:text-sm [@media(orientation:landscape)_and_(max-height:768px)]:text-xs"
+                        >
+                          Feedback
+                        </h2>
                       </div>
                       <button
                         onClick={closeModal}
                         disabled={isSubmitting}
-                        className="shrink-0 rounded-xl border-[3px] border-ink bg-surface p-1.5 transition-transform hover:bg-muted active:scale-90 disabled:opacity-50 [@media(max-height:500px)]:p-1"
+                        className="shrink-0 rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 disabled:opacity-50 [@media(max-height:500px)]:p-1"
                         aria-label="Close feedback"
                         type="button"
                       >
-                        <X className="h-5 w-5" strokeWidth={3} />
+                        <X className="h-4 w-4" strokeWidth={3} />
                       </button>
                     </div>
 
-                    <div className="min-h-0 flex-1 overflow-y-auto bg-cream p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] [@media(max-height:500px)]:p-3 [@media(orientation:landscape)_and_(max-height:600px)]:p-3 custom-scrollbar">
-                      {submitted ? (
-                        <div className="py-6 text-center sm:py-8 [@media(max-height:500px)]:py-4">
+                    {submitted ? (
+                      <div className="flex min-h-0 flex-1 items-center justify-center p-4 sm:p-6 [@media(max-height:500px)]:p-3">
+                        <div className="text-center">
                           <p className="text-base font-black italic text-maroon sm:text-xl [@media(max-height:500px)]:text-sm">
                             Thank you!
                           </p>
@@ -267,28 +262,30 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
                             Your feedback helps us improve the virtual tour.
                           </p>
                         </div>
-                      ) : (
-                        <form
-                          onSubmit={handleSubmit}
-                          className="space-y-4 sm:space-y-5 [@media(max-height:500px)]:space-y-3 [@media(orientation:landscape)_and_(max-height:600px)]:space-y-2.5"
-                        >
+                      </div>
+                    ) : (
+                      <form
+                        onSubmit={handleSubmit}
+                        className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                      >
+                        <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden p-3.5 sm:p-4 [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:p-3 [@media(orientation:landscape)_and_(max-height:768px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:p-2.5">
                           <div
-                            className="flex items-center gap-3 rounded-2xl border-[3px] border-ink bg-muted px-3 py-2.5 shadow-brutal-sm [@media(max-height:500px)]:gap-2 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2"
+                            className="flex shrink-0 items-center gap-2 rounded-xl border-2 border-ink bg-muted px-2.5 py-2 shadow-brutal-sm [@media(max-height:500px)]:px-2 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:py-1"
                             aria-label={`Profile: ${displayFullName}`}
                           >
                             <div
-                              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[3px] border-ink bg-maroon text-base font-black text-white [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:text-sm"
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-maroon text-sm font-black text-white [@media(max-height:500px)]:h-7 [@media(max-height:500px)]:w-7 [@media(max-height:500px)]:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:h-6 [@media(orientation:landscape)_and_(max-height:768px)]:w-6"
                               aria-hidden
                             >
                               {profileInitial}
                             </div>
-                            <p className="min-w-0 flex-1 truncate text-sm font-black text-ink [@media(max-height:500px)]:text-xs">
+                            <p className="min-w-0 flex-1 truncate text-xs font-black text-ink sm:text-sm [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px]">
                               {displayFullName}
                             </p>
                           </div>
 
-                          <div>
-                            <p className="mb-2 text-center text-xs font-black uppercase tracking-wider text-ink/80 sm:mb-3 [@media(max-height:500px)]:mb-1.5 [@media(max-height:500px)]:text-[10px]">
+                          <div className="shrink-0">
+                            <p className="mb-1 text-center text-[10px] font-black uppercase tracking-wider text-ink/80 sm:text-xs [@media(max-height:500px)]:mb-0.5 [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px]">
                               How was your experience?
                             </p>
                             <StarRating
@@ -298,10 +295,10 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
                             />
                           </div>
 
-                          <div>
+                          <div className="flex min-h-0 flex-1 flex-col">
                             <label
                               htmlFor="feedback-comment"
-                              className="mb-1.5 block text-xs font-black uppercase tracking-wider text-ink/80 sm:mb-2 [@media(max-height:500px)]:mb-1 [@media(max-height:500px)]:text-[9px]"
+                              className="mb-1 block shrink-0 text-[10px] font-black uppercase tracking-wider text-ink/80 sm:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px]"
                             >
                               Your feedback
                             </label>
@@ -313,32 +310,33 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
                                 setError(null);
                               }}
                               disabled={isSubmitting}
-                              rows={4}
                               maxLength={2000}
-                              placeholder="Tell us what you enjoyed or what we could do better…"
-                              className="w-full min-h-[5.5rem] max-h-[10rem] resize-y rounded-2xl border-[3px] border-ink bg-surface px-4 py-3 text-sm font-bold text-ink shadow-brutal-sm outline-none placeholder:text-ink/40 focus:bg-cream disabled:opacity-60 [@media(max-height:500px)]:min-h-[4rem] [@media(max-height:500px)]:max-h-[6rem] [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:600px)]:min-h-[3.25rem] [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[5rem]"
+                              placeholder="Share your experience…"
+                              className="min-h-0 w-full flex-1 resize-none rounded-xl border-2 border-ink bg-white px-3 py-2 text-xs font-bold leading-snug text-ink shadow-brutal-sm outline-none placeholder:text-ink/40 focus:bg-cream disabled:opacity-60 sm:text-sm [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-1.5 [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:768px)]:text-[10px]"
                             />
-                            <p className="mt-1 text-right text-[10px] font-bold text-ink/40 [@media(max-height:500px)]:text-[9px]">
+                            <p className="mt-0.5 shrink-0 text-right text-[9px] font-bold text-ink/40 sm:text-[10px]">
                               {comment.length}/2000
                             </p>
                           </div>
 
                           {error && (
-                            <p className="rounded-2xl border-[3px] border-ink bg-red-50 px-3 py-2 text-center text-xs font-black italic text-maroon [@media(max-height:500px)]:text-[10px] [@media(max-height:500px)]:py-1.5">
+                            <p className="shrink-0 rounded-xl border-2 border-ink bg-red-50 px-2.5 py-1.5 text-center text-[10px] font-black italic text-maroon sm:text-xs [@media(orientation:landscape)_and_(max-height:768px)]:py-1 [@media(orientation:landscape)_and_(max-height:768px)]:text-[9px]">
                               {error}
                             </p>
                           )}
+                        </div>
 
+                        <div className="shrink-0 border-t-[3px] border-ink bg-muted px-3.5 py-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-2">
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full rounded-2xl border-[3px] border-ink bg-maroon py-3 text-sm font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-maroon/90 active:translate-y-1 active:shadow-none disabled:opacity-50 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[11px] [@media(orientation:landscape)_and_(max-height:600px)]:py-2"
+                            className="flex w-full items-center justify-center rounded-xl border-[3px] border-ink bg-maroon py-2.5 text-xs font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-maroon/90 active:translate-y-1 active:shadow-none disabled:opacity-50 sm:py-3 sm:text-sm [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[11px]"
                           >
-                            {isSubmitting ? "Sending…" : "Submit Feedback"}
+                            {isSubmitting ? "Sending…" : "Submit"}
                           </button>
-                        </form>
-                      )}
-                    </div>
+                        </div>
+                      </form>
+                    )}
                   </motion.div>
                 </motion.div>
               </>

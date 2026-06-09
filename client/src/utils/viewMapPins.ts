@@ -23,7 +23,7 @@ export const VIEW_MAP_PIN_POSITIONS: ViewMapPinPosition[] = [
   { id: "pylon", x: 53, y: 65 },
   { id: "comlab-1", x: 40, y: 88 },
   { id: "comlab-2", x: 46, y: 82 },
-  { id: "main-gate", x: 48, y: 96 },
+  { id: "hm-rooms", x: 64, y: 34 },
 ];
 
 const viewMapPositionById = new Map(

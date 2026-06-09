@@ -4,14 +4,14 @@ export const LOCATION_DESCRIPTIONS_BY_ID: Record<string, string> = {
     "The campus grandstand hosts major events, assemblies, and outdoor gatherings.",
   pylon:
     "The iconic campus pylon — a landmark at the heart of PUP Lopez.",
-  "main-gate":
-    "The main entrance to PUP Lopez — your starting point when visiting campus.",
+  "hm-rooms":
+    "HM Laboratories house the Hospitality Management program laboratories, including the kitchen, beverage, and tissue labs used for hands-on training and coursework.",
   "administration-building":
     'The Administrative Building, commonly called "Admin" by students, serves as the main office center of the campus. It houses the offices for administration, registrar services, accounting, faculty concerns, and other student transactions such as enrollment, clearances, and document requests. It is considered one of the busiest areas in the university because students frequently visit the building for academic and administrative purposes.',
   "comlab-1":
-    "Comlab 1 is the first comlab you'll see when you walk in from the main gate. This is where most students start their computer subjects — basic programming, IT lab classes, and hands-on activities. If you're in BSIT or any course with tech subjects, you'll probably spend a lot of time here coding, finishing projects, and using the campus computers with internet.",
+    "ICT Laboratory 1 is where most students start their computer subjects — basic programming, IT lab classes, and hands-on activities. If you're in BSIT or any course with tech subjects, you'll spend time here coding, finishing projects, and using the campus computers with internet.",
   "comlab-2":
-    "Comlab 2 is the next comlab down the walkway, past Comlab 1. It's another full computer lab for classes that need more space or heavier project work. Upper-year BSIT and tech students often use this building for advanced subjects, digital projects, and lab activities that go beyond the basics — same setup of PCs and internet, just a different spot on campus.",
+    "ICT Laboratory 2 is the next lab down the walkway from ICT Laboratory 1. It's another full computer lab for classes that need more space or heavier project work, including advanced subjects and digital projects.",
   "engineering-building":
     "The Engineering Building is dedicated mainly to engineering, architecture, and technology-related programs. It contains classrooms, laboratories, and drafting areas used by students for technical and practical learning. Engineering students usually perform laboratory experiments, drafting activities, and specialized subject classes in this building, making it one of the most active academic facilities on campus.",
   "health-sciences":
@@ -30,14 +30,16 @@ export const LOCATION_DESCRIPTIONS_BY_ID: Record<string, string> = {
 export const LOCATION_DESCRIPTIONS_BY_NAME: Record<string, string> = {
   "Administration Building":
     LOCATION_DESCRIPTIONS_BY_ID["administration-building"],
-  "Comlab 1": LOCATION_DESCRIPTIONS_BY_ID["comlab-1"],
-  "Comlab 2": LOCATION_DESCRIPTIONS_BY_ID["comlab-2"],
+  "ICT Laboratory 1": LOCATION_DESCRIPTIONS_BY_ID["comlab-1"],
+  "ICT Laboratory 2": LOCATION_DESCRIPTIONS_BY_ID["comlab-2"],
   "Health and Sciences Building": LOCATION_DESCRIPTIONS_BY_ID["health-sciences"],
   "Engineering Building": LOCATION_DESCRIPTIONS_BY_ID["engineering-building"],
   "Education Building": LOCATION_DESCRIPTIONS_BY_ID["education-building"],
   "Nantes Building": LOCATION_DESCRIPTIONS_BY_ID["nantes-building"],
   "Yumul Building": LOCATION_DESCRIPTIONS_BY_ID["yumul-building"],
+  Gymnasium: LOCATION_DESCRIPTIONS_BY_ID.gymnasium,
   "PUP Gymnasium": LOCATION_DESCRIPTIONS_BY_ID.gymnasium,
+  "HM Laboratories": LOCATION_DESCRIPTIONS_BY_ID["hm-rooms"],
 };
 
 export function getLocationDescription(
