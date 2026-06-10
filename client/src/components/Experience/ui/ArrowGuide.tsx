@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import useWorld from "../../../hooks/useWorld";
-import { buildGuidePath, createGuideCurve } from "../../../data/guidePaths";
+import { resolveGuidePath } from "../../../data/guidePaths";
 
 const FLOW_DOT_COUNT = 7;
 
@@ -29,7 +29,7 @@ const GuideLine = () => {
   const flowDots = useRef<THREE.Mesh[]>([]);
   const glowGeometryRef = useRef<THREE.BufferGeometry | null>(null);
   const coreGeometryRef = useRef<THREE.BufferGeometry | null>(null);
-  const curveRef = useRef<THREE.CatmullRomCurve3 | null>(null);
+  const lastBuiltPathKeyRef = useRef<string | null>(null);
 
   const dotIndexes = useMemo(
     () => Array.from({ length: FLOW_DOT_COUNT }, (_, index) => index),
@@ -40,6 +40,7 @@ const GuideLine = () => {
     return () => {
       glowGeometryRef.current?.dispose();
       coreGeometryRef.current?.dispose();
+      lastBuiltPathKeyRef.current = null;
     };
   }, []);
 
@@ -55,30 +56,29 @@ const GuideLine = () => {
     if (!guide) return;
 
     guide.visible = !!characterPosition && !!pinPosition && isPinConfirmed;
-    if (!guide.visible || !characterPosition || !pinPosition) return;
+    if (!guide.visible || !characterPosition || !pinPosition) {
+      lastBuiltPathKeyRef.current = null;
+      return;
+    }
 
-    const pathPoints = buildGuidePath(
+    const resolved = resolveGuidePath(
       characterPosition,
       pinPosition,
       selectedDestinationId,
     );
 
-    if (pathPoints.length < 2) {
+    if (!resolved || resolved.length < 0.5) {
       guide.visible = false;
+      lastBuiltPathKeyRef.current = null;
       return;
     }
 
-    const curve = createGuideCurve(pathPoints);
-    curveRef.current = curve;
-
-    const pathLength = curve.getLength();
-    if (pathLength < 0.5) {
-      guide.visible = false;
-      return;
+    const { points, curve, pathKey } = resolved;
+    if (pathKey !== lastBuiltPathKeyRef.current) {
+      assignTubeGeometry(glowRef.current, glowGeometryRef, curve, 0.18);
+      assignTubeGeometry(coreRef.current, coreGeometryRef, curve, 0.055);
+      lastBuiltPathKeyRef.current = pathKey;
     }
-
-    assignTubeGeometry(glowRef.current, glowGeometryRef, curve, 0.18);
-    assignTubeGeometry(coreRef.current, coreGeometryRef, curve, 0.055);
 
     const elapsed = clock.getElapsedTime();
     flowDots.current.forEach((dot, index) => {
@@ -91,7 +91,7 @@ const GuideLine = () => {
 
     if (destinationRingRef.current) {
       const pulse = 1 + Math.sin(elapsed * 4) * 0.18;
-      destinationRingRef.current.position.copy(pathPoints[pathPoints.length - 1]);
+      destinationRingRef.current.position.copy(points[points.length - 1]);
       destinationRingRef.current.scale.setScalar(pulse);
     }
   });

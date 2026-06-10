@@ -230,7 +230,19 @@ const useWorld = create<WorldState>((set) => ({
   setPinPosition: (pinPosition) => set({ pinPosition }),
   setIsPinConfirmed: (isPinConfirmed) => set({ isPinConfirmed }),
   setIsPinTeleported: (isPinTeleported) => set({ isPinTeleported }),
-  setDistance: (distance) => set({ distance }),
+  setDistance: (distance) =>
+    set((state) => {
+      const rounded = Math.max(0, Math.round(distance));
+      const prevRounded = Math.max(0, Math.round(state.distance));
+      if (
+        rounded === prevRounded &&
+        Number.isFinite(state.distance) &&
+        Number.isFinite(distance)
+      ) {
+        return state;
+      }
+      return { distance };
+    }),
   setCurrentZoom: (zoomChange) =>
     set((state) => ({
       currentZoom: Math.max(19, Math.min(400, state.currentZoom * zoomChange)), //currentZoom: Math.max(19, Math.min(160, state.currentZoom * zoomChange)),

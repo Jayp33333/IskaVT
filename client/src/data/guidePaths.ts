@@ -71,14 +71,57 @@ export function createGuideCurve(points: THREE.Vector3[]): THREE.CatmullRomCurve
   return new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.35);
 }
 
+const PATH_REBUILD_GRID = 1;
+
+type GuidePathSnapshot = {
+  points: THREE.Vector3[];
+  curve: THREE.CatmullRomCurve3;
+  length: number;
+};
+
+let guidePathCache: { key: string; snapshot: GuidePathSnapshot } | null = null;
+
+function quantizeAxis(value: number, grid: number) {
+  return Math.round(value / grid) * grid;
+}
+
+function guideCacheKey(
+  character: THREE.Vector3,
+  pin: THREE.Vector3,
+  destinationId?: string | null,
+) {
+  const cx = quantizeAxis(character.x, PATH_REBUILD_GRID);
+  const cz = quantizeAxis(character.z, PATH_REBUILD_GRID);
+  return `${cx},${cz}|${pin.x.toFixed(1)},${pin.z.toFixed(1)}|${destinationId ?? ""}`;
+}
+
+export function resolveGuidePath(
+  character: THREE.Vector3,
+  pin: THREE.Vector3,
+  destinationId?: string | null,
+): (GuidePathSnapshot & { cacheHit: boolean; pathKey: string }) | null {
+  const key = guideCacheKey(character, pin, destinationId);
+  if (guidePathCache?.key === key) {
+    return { ...guidePathCache.snapshot, cacheHit: true, pathKey: key };
+  }
+
+  const points = buildGuidePath(character, pin, destinationId);
+  if (points.length < 2) return null;
+
+  const curve = createGuideCurve(points);
+  const snapshot: GuidePathSnapshot = {
+    points,
+    curve,
+    length: curve.getLength(),
+  };
+  guidePathCache = { key, snapshot };
+  return { ...snapshot, cacheHit: false, pathKey: key };
+}
+
 export function computeGuideDistance(
   character: THREE.Vector3,
   pin: THREE.Vector3,
   destinationId?: string | null,
 ): number {
-  const pathPoints = buildGuidePath(character, pin, destinationId);
-  if (pathPoints.length < 2) return 0;
-
-  const curve = createGuideCurve(pathPoints);
-  return curve.getLength();
+  return resolveGuidePath(character, pin, destinationId)?.length ?? 0;
 }
