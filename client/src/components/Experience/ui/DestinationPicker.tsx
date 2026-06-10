@@ -64,6 +64,7 @@ export const DestinationPicker = () => {
     );
     setSelectedDestination(destination.name);
     setSelectedDestinationId(destination.id);
+    close();
   };
 
   const handleUnpin = () => {
@@ -100,11 +101,10 @@ export const DestinationPicker = () => {
         <AnimatePresence>
           {open && (
             <motion.div
-              className={`pointer-events-auto fixed inset-0 z-[1600] flex items-end justify-center bg-ink/85 p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:p-2`}
+              className={`pointer-events-auto fixed inset-0 z-[2200] flex items-end justify-center bg-ink/85 p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:p-2`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={close}
             >
               <motion.div
                 className={`relative flex h-[min(92dvh,34rem)] w-full max-w-[26rem] flex-col overflow-hidden rounded-t-2xl border-[4px] border-ink bg-cream text-ink max-sm:max-w-none max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-2xl sm:border-[4px] [@media(max-height:500px)]:h-[min(96dvh,30rem)] [@media(max-height:500px)]:rounded-t-2xl ${landscapeShort}:h-[min(96dvh,28rem)] ${landscapeShort}:max-w-[min(92vw,400px)] ${landscapeShort}:rounded-xl`}

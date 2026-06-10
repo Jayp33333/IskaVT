@@ -72,7 +72,6 @@ export default function Map2D() {
   const setSelectedDestination = GameState((s: any) => s.setSelectedDestination);
   const setSelectedDestinationId = GameState((s: any) => s.setSelectedDestinationId);
   const setQuery = GameState((s: any) => s.setQuery);
-  const showDestinationPicker = GameState((s: any) => s.showDestinationPicker);
   const map2DOpen = GameState((s: any) => s.map2DOpen);
   const setMap2DOpen = GameState((s: any) => s.setMap2DOpen);
 
@@ -421,8 +420,6 @@ export default function Map2D() {
     setQuery("");
   };
 
-  if (showDestinationPicker) return null;
-
   return (
     <>
       {/* Mini circular campus map preview (top-right corner) */}
@@ -432,7 +429,7 @@ export default function Map2D() {
         title="Open campus map"
         aria-label="Open campus map"
         className="
-          fixed top-5 right-5 z-[1050]
+          fixed top-5 right-5 z-[2180]
           
           w-[18vh] h-[18vh] max-w-[180px] max-h-[180px]
           [@media(max-height:500px)]:top-3 [@media(max-height:500px)]:right-3
@@ -527,7 +524,7 @@ export default function Map2D() {
       <AnimatePresence>
         {map2DOpen && (
           <motion.div
-            className="fixed inset-0 z-[1150] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3"
+            className="fixed inset-0 z-[2200] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:p-3"
             variants={mapBackdropVariants}
             initial="hidden"
             animate="visible"
@@ -851,7 +848,7 @@ export default function Map2D() {
 
       {teleporting && (
         <EnterTransitionOverlay
-          zIndexClass="z-[1200]"
+          zIndexClass="z-[2201]"
           key="map-teleport-overlay"
         />
       )}

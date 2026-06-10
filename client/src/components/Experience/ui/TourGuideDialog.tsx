@@ -35,7 +35,7 @@ export const TourGuideDialog = ({
     <AnimatePresence>
       {open && currentPage && (
         <motion.div
-          className="fixed inset-0 z-[1300] flex items-center justify-center bg-ink/85 p-4 [@media(max-height:500px)]:p-2"
+          className="fixed inset-0 z-[2200] flex items-center justify-center bg-ink/85 p-4 [@media(max-height:500px)]:p-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

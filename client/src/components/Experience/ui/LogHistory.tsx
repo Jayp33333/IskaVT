@@ -57,7 +57,7 @@ export const LogHistory = () => {
             {isOpen && (
               <>
                 <motion.div
-                  className="fixed inset-0 z-[2000] bg-ink/85"
+                  className="fixed inset-0 z-[2200] bg-ink/85"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -65,7 +65,7 @@ export const LogHistory = () => {
                 />
 
                 <motion.div
-                  className="pointer-events-none fixed inset-0 z-[2001] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+                  className="pointer-events-none fixed inset-0 z-[2201] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

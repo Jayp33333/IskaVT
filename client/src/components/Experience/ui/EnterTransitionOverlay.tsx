@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 type EnterTransitionOverlayProps = {
-  /** Use a higher z-index when overlaying the 2D map modal (z-[1150]). */
+  /** Use a higher z-index when overlaying the 2D map modal (z-[2200]). */
   zIndexClass?: string;
 };
 
