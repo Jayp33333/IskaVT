@@ -5,6 +5,7 @@ import { Check, UserRound, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 import { SAMPLE_AVATAR_LIST } from "../../../sampleData";
 import { useGlobalLoading } from "../../../hooks/useGlobalLoading";
+import { waitForAvatarSwap } from "../../../utils/avatarSwap";
 import { preloadModel } from "../../../utils/modelCache";
 
 type AvatarOption = {
@@ -31,7 +32,6 @@ export const AvatarPicker = () => {
 
   const currentAvatar = useWorld((state: any) => state.avatar) as AvatarOption;
   const setAvatar = useWorld((state: any) => state.setAvatar);
-  const cameraMode = useWorld((state: any) => state.cameraMode) as "first" | "third";
   const showLogHistory = useWorld((state: any) => state.showLogHistory);
 
   const { withLoading } = useGlobalLoading();
@@ -58,10 +58,12 @@ export const AvatarPicker = () => {
     setOpenMenu(false);
 
     void withLoading(async () => {
-      if (cameraMode === "third" && avatar.vrmUrl) {
+      if (avatar.vrmUrl) {
         await preloadModel(avatar.vrmUrl);
       }
       setAvatar(avatar);
+      const swapGeneration = useWorld.getState().avatarSwapGeneration;
+      await waitForAvatarSwap(swapGeneration);
     }, "Switching avatar…");
   };
 

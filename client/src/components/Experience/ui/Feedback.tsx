@@ -14,7 +14,7 @@ import useWorld from "../../../hooks/useWorld";
 const AUTO_PROMPT_DELAY_MS = 60_000;
 
 type FeedbackProps = {
-  experienceStarted: boolean;
+  tourStarted: boolean;
 };
 
 function StarRating({
@@ -54,7 +54,7 @@ function StarRating({
   );
 }
 
-export const Feedback = ({ experienceStarted }: FeedbackProps) => {
+export const Feedback = ({ tourStarted }: FeedbackProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -115,7 +115,7 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
   }, [isOpen]);
 
   useEffect(() => {
-    if (!experienceStarted) return;
+    if (!tourStarted) return;
 
     autoTimerRef.current = setTimeout(() => {
       if (autoPromptShownRef.current) return;
@@ -129,7 +129,7 @@ export const Feedback = ({ experienceStarted }: FeedbackProps) => {
         autoTimerRef.current = null;
       }
     };
-  }, [experienceStarted]);
+  }, [tourStarted]);
 
   const openModal = () => {
     setError(null);

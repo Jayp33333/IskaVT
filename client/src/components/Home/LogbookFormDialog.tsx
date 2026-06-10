@@ -6,6 +6,7 @@ import {
   LOGBOOK_TIME_IN_KEY,
   setSessionFullName,
 } from "../../constants/logbookSession";
+import { DESTINATIONS } from "../../sampleData";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
 import { getErrorMessage } from "../../utils/errors";
@@ -28,7 +29,6 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
   const [error, setError] = useState<string | null>(null);
 
   const visitorTypes = ["Student", "Faculty", "Staff", "Visitor", "Alumni", "Guest"];
-  const destinations = ["Grandstand", "Lab 1", "Library", "Cafeteria", "Gymnasium", "Other"];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -172,9 +172,9 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                           className={inputBase}
                         >
                           <option value="">Select</option>
-                          {destinations.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
+                          {DESTINATIONS.map((d) => (
+                            <option key={d.id} value={d.name}>
+                              {d.name}
                             </option>
                           ))}
                         </select>

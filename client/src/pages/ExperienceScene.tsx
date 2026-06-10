@@ -30,6 +30,7 @@ export default function ExperienceScene() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
+  const [tourStarted, setTourStarted] = useState(false);
   const { speak, stop, isSupported } = useFaqSpeech();
 
   const isTouring = loadingFinished && !logbookOpen;
@@ -246,6 +247,7 @@ export default function ExperienceScene() {
 
   const handleLogbookSuccess = () => {
     setLogbookOpen(false);
+    setTourStarted(true);
     audioManager.unlock();
     setShowWelcome(true);
   };
@@ -274,7 +276,11 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      <UI tourGuideDialogOpen={showWelcome} experienceStarted={loadingFinished} />
+      <UI
+        tourGuideDialogOpen={showWelcome}
+        experienceStarted={loadingFinished}
+        tourStarted={tourStarted}
+      />
 
       {/* <Map2D /> */}
       

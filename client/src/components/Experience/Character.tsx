@@ -35,6 +35,7 @@ const Character = () => {
   const mobileControlsCustomize = useWorld((s: any) => s.mobileControlsCustomize);
   const cursorRevealedByAlt = useWorld((s: any) => s.cursorRevealedByAlt);
   const sensitivity = useWorld((s: any) => s.sensitivity) as number;
+  const markAvatarSwapReady = useWorld((s: any) => s.markAvatarSwapReady);
 
   const interactionLocked =
     !!activeNPCDialog || isArrivalPaused || mobileControlsCustomize;
@@ -61,6 +62,42 @@ const Character = () => {
       }
     }
   }, [interactionLocked]);
+
+  useEffect(() => {
+    if (cameraMode === "first" || !avatar?.vrmUrl) {
+      markAvatarSwapReady();
+      return;
+    }
+
+    let cancelled = false;
+    let frames = 0;
+    const maxFrames = 180;
+
+    const poll = () => {
+      if (cancelled) return;
+      frames += 1;
+
+      const character = characterRef.current;
+      const hasModel =
+        !!character &&
+        character.children.length > 0 &&
+        character.children.some(
+          (child: { children?: unknown[] }) => (child.children?.length ?? 0) > 0,
+        );
+
+      if (hasModel || frames >= maxFrames) {
+        markAvatarSwapReady();
+        return;
+      }
+
+      requestAnimationFrame(poll);
+    };
+
+    requestAnimationFrame(poll);
+    return () => {
+      cancelled = true;
+    };
+  }, [avatar?.id, avatar?.vrmUrl, cameraMode, markAvatarSwapReady]);
 
   const handleTeleport = useCallback(() => {
     if (!characterRef.current) return;

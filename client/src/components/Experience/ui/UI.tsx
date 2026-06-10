@@ -25,9 +25,14 @@ import { useIsMobileDevice } from "../../../hooks/useIsMobileDevice";
 type UIProps = {
   tourGuideDialogOpen?: boolean;
   experienceStarted?: boolean;
+  tourStarted?: boolean;
 };
 
-export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: UIProps) => {
+export const UI = ({
+  tourGuideDialogOpen = false,
+  experienceStarted = false,
+  tourStarted = false,
+}: UIProps) => {
   const isMobileDevice = useIsMobileDevice();
   const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
   useMobileControlLayout(isMobileDevice && experienceStarted);
@@ -70,7 +75,7 @@ export const UI = ({ tourGuideDialogOpen = false, experienceStarted = false }: U
                 <ExperienceSettings onConfirmOpenChange={setExitTourConfirmOpen} />
                 <DestinationPicker />
                 <LogHistory />
-                <Feedback experienceStarted={experienceStarted} />
+                <Feedback tourStarted={tourStarted} />
               </div>
             </div>
             {showFps && (

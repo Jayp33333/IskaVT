@@ -78,6 +78,9 @@ interface WorldState {
     onClose: () => void;
   } | null;
   setAvatar: (avatar: any) => void;
+  avatarSwapGeneration: number;
+  avatarSwapReadyGeneration: number;
+  markAvatarSwapReady: () => void;
   setActiveNPCDialog: (
     d: {
       title: string;
@@ -182,8 +185,18 @@ const useWorld = create<WorldState>((set) => ({
   mobileControlsCustomize: false,
   npcsInRange: new Map(),
   activeNPCDialog: null,
+  avatarSwapGeneration: 0,
+  avatarSwapReadyGeneration: 0,
 
-  setAvatar: (avatar) => set({ avatar }),
+  setAvatar: (avatar) =>
+    set((state) => ({
+      avatar,
+      avatarSwapGeneration: state.avatarSwapGeneration + 1,
+    })),
+  markAvatarSwapReady: () =>
+    set((state) => ({
+      avatarSwapReadyGeneration: state.avatarSwapGeneration,
+    })),
   setActiveNPCDialog: (activeNPCDialog) => set({ activeNPCDialog }),
   registerNPCInRange: (id, position, onTalk, name) =>
     set((s) => {
