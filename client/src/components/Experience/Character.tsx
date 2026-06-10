@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import {
@@ -18,8 +18,6 @@ const Character = () => {
   const isMobile = useIsMobile();
   const avatar = useWorld((s: any) => s.avatar);
   const cameraMode = useWorld((s: any) => s.cameraMode);
-  const pinPosition = useWorld((s: any) => s.pinPosition);
-  const isPinTeleported = useWorld((s: any) => s.isPinTeleported);
   const setPinPosition = useWorld((s: any) => s.setPinPosition);
   const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
   const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
@@ -99,34 +97,28 @@ const Character = () => {
     };
   }, [avatar?.id, avatar?.vrmUrl, cameraMode, markAvatarSwapReady]);
 
-  const handleTeleport = useCallback(() => {
-    if (!characterRef.current) return;
-    if (!pinPosition) {
-      setIsPinTeleported(false);
-      return;
-    }
-
-    characterRef.current.position.set(
-      pinPosition.x,
-      pinPosition.y,
-      pinPosition.z,
-    );
-    setCharacterPosition(characterRef.current.position);
-    setPinPosition(null);
-    setIsPinTeleported(false);
-    setSelectedDestination(null);
-    setSelectedDestinationId(null);
-    setQuery("");
-  }, [pinPosition]);
-
   useFrame(({ camera }) => {
     const character = characterRef.current;
     if (!character) return;
 
+    const {
+      isPinTeleported: shouldTeleport,
+      pinPosition: teleportPin,
+    } = useWorld.getState();
+
+    if (shouldTeleport) {
+      if (teleportPin) {
+        character.position.set(teleportPin.x, teleportPin.y, teleportPin.z);
+        setPinPosition(null);
+        setSelectedDestination(null);
+        setSelectedDestinationId(null);
+        setQuery("");
+      }
+      setIsPinTeleported(false);
+    }
+
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
-
-    console.log("Character position:", character.position);
 
     const rot = camera.rotation;
     cameraRotationRef.current.set(rot.x, rot.y, rot.z);
@@ -136,8 +128,6 @@ const Character = () => {
       character.position.set(10, 1, 0);
       setCharacterPosition(character.position);
     }
-
-    if (isPinTeleported) handleTeleport();
   });
 
   return (

@@ -281,6 +281,7 @@ export default function Map2D() {
     const { worldX, worldZ } = mapPercentToWorld(xPct, yPct);
     setPinPosition(new Vector3(worldX, 0.2, worldZ));
     setIsPinConfirmed(false);
+    setIsPinTeleported(false);
   };
 
   // --- Pan handlers (mouse + touch) ---
@@ -410,7 +411,9 @@ export default function Map2D() {
   const handleTeleport = () => {
     if (!pinPosition || teleporting) return;
     runMapTeleport(() => {
-      setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
+      const pin = GameState.getState().pinPosition ?? pinPosition;
+      if (!pin) return;
+      setPinPosition(new Vector3(pin.x, pin.y, pin.z));
       setIsPinConfirmed(false);
       setIsPinTeleported(true);
     });
