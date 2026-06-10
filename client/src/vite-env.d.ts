@@ -1,5 +1,13 @@
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  readonly VITE_FEEDBACK_GOOGLE_FORM_URL?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 declare const __APP_BUILD_ID__: string;
 
 declare module "virtual:pwa-register/react" {
