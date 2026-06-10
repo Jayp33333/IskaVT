@@ -9,6 +9,7 @@ import {
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
+import { MODEL_PATHS } from "../../data/modelRegistry";
 import useWorld from "../../hooks/useWorld";
 import { IoLocationSharp } from "react-icons/io5";
 import { LocationPin } from "./LocationPin";
@@ -62,7 +63,7 @@ export function MiniMap({ onFixedPinClick }: MiniMapProps) {
   const boyTexture = useTexture("/images/headIconBoy.png");
   const profileTexture = currentAvatar.id === 189084? girlTexture : boyTexture;
 
-  const mapModel = "./models/PUP_CAMPUS.glb";
+  const mapModel = MODEL_PATHS.campus;
 
   // --- Local state ---
   const [cameraPosition, setCameraPosition] = useState(

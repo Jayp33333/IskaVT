@@ -13,10 +13,12 @@ import ProgramsPage from "./pages/ProgramsPage";
 import FaqPage from "./pages/FaqPage";
 import HandbookPage from "./pages/HandbookPage";
 import DevelopersPage from "./pages/DevelopersPage";
+import { UpdatePrompt } from "./components/UpdatePrompt";
 
 export default function App() {
   return (
     <Router>
+      <UpdatePrompt />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />

@@ -22,7 +22,9 @@ export function normalizeModelUrl(url: string): string {
   if (typeof window === "undefined") return url;
 
   try {
-    return new URL(url, window.location.href).pathname;
+    const parsed = new URL(url, window.location.href);
+    const version = parsed.searchParams.get("v");
+    return version ? `${parsed.pathname}?v=${version}` : parsed.pathname;
   } catch {
     return url;
   }

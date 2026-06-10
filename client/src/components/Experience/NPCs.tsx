@@ -1,3 +1,4 @@
+import { MODEL_PATHS } from "../../data/modelRegistry";
 import { NPC } from "./NPC";
 
 type DialogStep = {
@@ -18,7 +19,7 @@ type NPCData = {
 const npcData: NPCData[] = [
   {
     position: [12, 0, 1],
-    model: "/models/avatars/guard.glb",
+    model: MODEL_PATHS.guard,
     name: "Guard",
     scale: 1.1,
     rotation: [0, -90, 0],
@@ -65,7 +66,7 @@ const npcData: NPCData[] = [
   },
   {
     position: [1, 1.1, -10],
-    model: "/models/avatars/professor1.glb",
+    model: MODEL_PATHS.professor,
     name: "Professor",
     scale: 1,
     rotation: [0, 90, 0],
