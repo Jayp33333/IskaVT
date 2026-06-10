@@ -249,9 +249,7 @@ export default function Map2D() {
   const handleVisit = (target: { id?: string; name: string; position: Vector3 }) => {
     runMapTeleport(() => {
       setPinPosition(target.position.clone());
-      setSelectedDestination(target.name);
-      setSelectedDestinationId(target.id ?? null);
-      completePinTeleport({ keepDestination: true });
+      completePinTeleport();
     });
   };
 

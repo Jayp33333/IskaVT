@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronRight, MapPin, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Vector3 } from "three";
@@ -105,18 +106,18 @@ export function FixedLocationModal({
   const imageSrc = pin?.imageSrc ?? "/images/campus-image.jpg";
   const hasRooms = rooms.length > 0;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {pin && (
         <motion.div
-          className={`pointer-events-auto fixed inset-0 z-[1200] flex items-end justify-center bg-ink/85 p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 ${landscapeShort}:p-2`}
+          className={`pointer-events-auto fixed inset-0 z-[2210] flex items-center justify-center bg-ink/85 p-3 sm:p-4 [@media(max-height:500px)]:p-2 ${landscapeShort}:p-2`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
-            className={`relative flex w-full max-w-[26rem] flex-col overflow-hidden rounded-t-2xl border-[4px] border-ink bg-cream text-ink shadow-brutal-lg max-sm:max-w-none max-sm:rounded-b-none max-sm:border-b-0 sm:rounded-2xl [@media(max-height:500px)]:rounded-t-2xl ${landscapeShort}:max-w-[min(92vw,22rem)] ${landscapeShort}:rounded-xl ${
+            className={`relative flex w-full max-w-[26rem] flex-col overflow-hidden rounded-2xl border-[4px] border-ink bg-cream text-ink shadow-brutal-lg ${landscapeShort}:max-w-[min(92vw,22rem)] ${landscapeShort}:rounded-xl ${
               hasRooms
                 ? `h-[min(92dvh,34rem)] [@media(max-height:500px)]:h-[min(96dvh,30rem)] ${landscapeShort}:h-[min(96dvh,28rem)]`
                 : "h-auto max-h-[min(92dvh,28rem)]"
@@ -267,6 +268,7 @@ export function FixedLocationModal({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
