@@ -8,6 +8,7 @@ import {
 } from "../../../data/enterAreas";
 import { enterButtonPosition } from "../../../data/enterInteractionConfig";
 import { runTeleportTransition } from "../../../utils/teleportTransition";
+import { completePinTeleport } from "../../../utils/pinTeleport";
 import { CenterDot } from "./CenterDot";
 import { EnterTransitionOverlay } from "./EnterTransitionOverlay";
 
@@ -23,16 +24,10 @@ export const EnterButton = ({ showCrosshair = true }: EnterButtonProps) => {
   const {
     characterPositionOnFloorLabel,
     setPinPosition,
-    setIsPinConfirmed,
-    setIsPinTeleported,
-    setCharacterPosition,
     setSelectedDestination,
   } = useWorld((s: any) => ({
     characterPositionOnFloorLabel: s.characterPositionOnFloorLabel,
     setPinPosition: s.setPinPosition,
-    setIsPinConfirmed: s.setIsPinConfirmed,
-    setIsPinTeleported: s.setIsPinTeleported,
-    setCharacterPosition: s.setCharacterPosition,
     setSelectedDestination: s.setSelectedDestination,
   }));
 
@@ -59,14 +54,8 @@ export const EnterButton = ({ showCrosshair = true }: EnterButtonProps) => {
 
     void runTeleportTransition(() => {
       setPinPosition(teleportPosition.clone());
-      setIsPinConfirmed(false);
-      setCharacterPosition({
-        x: teleportPosition.x,
-        y: teleportPosition.y,
-        z: teleportPosition.z,
-      });
-      setIsPinTeleported(true);
       setSelectedDestination(area.label);
+      completePinTeleport({ keepDestination: true });
     }).then(() => {
       setTransitioning(false);
       transitionLockRef.current = false;

@@ -1,4 +1,5 @@
 import useWorld from "../../../hooks/useWorld";
+import { completePinTeleport } from "../../../utils/pinTeleport";
 
 export const PinControls = () => {
   const {
@@ -6,22 +7,17 @@ export const PinControls = () => {
     setPinPosition,
     isPinConfirmed,
     setIsPinConfirmed,
-    setCharacterPosition,
-    setIsPinTeleported,
     setSelectedDestination,
     setSelectedDestinationId,
+    setIsPinTeleported,
     setQuery,
   } = useWorld((s: any) => s);
 
   // Teleport player to pinned location
   const teleportToPin = () => {
     if (!pinPosition) return;
-    // Character actually teleports inside `Character.tsx` when `isPinTeleported` flips true.
-    // We still update the store position to keep UI in sync immediately.
-    setCharacterPosition({ x: pinPosition.x, y: 0.2, z: pinPosition.z } as any);
-    setIsPinConfirmed(false);
     useWorld.getState().setShowMiniMap(false);
-    setIsPinTeleported(true);
+    completePinTeleport();
   };
 
   // Remove pin

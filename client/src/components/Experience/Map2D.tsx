@@ -9,6 +9,7 @@ import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
 import { FixedLocationModal } from "./ui/FixedLocationModal";
 import { EnterTransitionOverlay } from "./ui/EnterTransitionOverlay";
 import { runTeleportTransition } from "../../utils/teleportTransition";
+import { completePinTeleport } from "../../utils/pinTeleport";
 
 // Expanded-map zoom limits + step
 const MAP_MIN_ZOOM = 1;
@@ -68,7 +69,6 @@ export default function Map2D() {
   const setPinPosition = GameState((s: any) => s.setPinPosition);
   const setIsPinConfirmed = GameState((s: any) => s.setIsPinConfirmed);
   const setIsPinTeleported = GameState((s: any) => s.setIsPinTeleported);
-  const setCharacterPosition = GameState((s: any) => s.setCharacterPosition);
   const setSelectedDestination = GameState((s: any) => s.setSelectedDestination);
   const setSelectedDestinationId = GameState((s: any) => s.setSelectedDestinationId);
   const setQuery = GameState((s: any) => s.setQuery);
@@ -250,15 +250,9 @@ export default function Map2D() {
   const handleVisit = (target: { id?: string; name: string; position: Vector3 }) => {
     runMapTeleport(() => {
       setPinPosition(target.position.clone());
-      setIsPinConfirmed(false);
-      setCharacterPosition({
-        x: target.position.x,
-        y: 0.2,
-        z: target.position.z,
-      } as any);
-      setIsPinTeleported(true);
       setSelectedDestination(target.name);
       setSelectedDestinationId(target.id ?? null);
+      completePinTeleport({ keepDestination: true });
     });
   };
 
@@ -414,8 +408,7 @@ export default function Map2D() {
       const pin = GameState.getState().pinPosition ?? pinPosition;
       if (!pin) return;
       setPinPosition(new Vector3(pin.x, pin.y, pin.z));
-      setIsPinConfirmed(false);
-      setIsPinTeleported(true);
+      completePinTeleport();
     });
   };
 

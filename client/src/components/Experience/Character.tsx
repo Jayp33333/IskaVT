@@ -13,16 +13,15 @@ import {
   sensitivityPercentToLookSpeed,
   sensitivityPercentToMoveMult,
 } from "../../utils/experienceSensitivity";
+import {
+  processPendingPinTeleport,
+  registerCharacterTeleportApplier,
+} from "../../utils/pinTeleport";
 
 const Character = () => {
   const isMobile = useIsMobile();
   const avatar = useWorld((s: any) => s.avatar);
   const cameraMode = useWorld((s: any) => s.cameraMode);
-  const setPinPosition = useWorld((s: any) => s.setPinPosition);
-  const setIsPinTeleported = useWorld((s: any) => s.setIsPinTeleported);
-  const setSelectedDestination = useWorld((s: any) => s.setSelectedDestination);
-  const setSelectedDestinationId = useWorld((s: any) => s.setSelectedDestinationId);
-  const setQuery = useWorld((s: any) => s.setQuery);
   const setCharacterPosition = useWorld((s: any) => s.setCharacterPosition);
   const setCharacterPositionOnFloorLabel = useWorld(
     (s: any) => s.setCharacterPositionOnFloorLabel,
@@ -97,25 +96,22 @@ const Character = () => {
     };
   }, [avatar?.id, avatar?.vrmUrl, cameraMode, markAvatarSwapReady]);
 
+  useEffect(() => {
+    registerCharacterTeleportApplier((position) => {
+      const character = characterRef.current;
+      if (!character) return false;
+      character.position.set(position.x, position.y, position.z);
+      setCharacterPosition(character.position);
+      return true;
+    });
+    return () => registerCharacterTeleportApplier(null);
+  }, [setCharacterPosition]);
+
   useFrame(({ camera }) => {
+    processPendingPinTeleport();
+
     const character = characterRef.current;
     if (!character) return;
-
-    const {
-      isPinTeleported: shouldTeleport,
-      pinPosition: teleportPin,
-    } = useWorld.getState();
-
-    if (shouldTeleport) {
-      if (teleportPin) {
-        character.position.set(teleportPin.x, teleportPin.y, teleportPin.z);
-        setPinPosition(null);
-        setSelectedDestination(null);
-        setSelectedDestinationId(null);
-        setQuery("");
-      }
-      setIsPinTeleported(false);
-    }
 
     setCharacterPosition(character.position);
     setCharacterPositionOnFloorLabel(character.position.clone());
