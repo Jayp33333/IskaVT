@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CampusMapDialog } from "./CampusMapDialog";
+import { HeroMascotPanel } from "./HeroMascotPanel";
 import { HeroNeoBackground } from "./HeroNeoBackground";
 
 export function Hero() {
@@ -81,31 +82,9 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative z-10 hidden w-full shrink-0 pb-12 sm:pb-14 lg:flex lg:max-w-[min(100%,32rem)] lg:justify-self-end xl:max-w-[min(100%,36rem)]"
+          className="relative z-10 hidden w-full shrink-0 items-center justify-center lg:flex lg:justify-end"
         >
-          <img
-            src="/images/Pylon_icon.png"
-            alt="PUP Lopez campus pylon"
-            className="mx-auto h-auto w-full max-w-[15rem] object-contain sm:max-w-[18rem] md:max-w-[22rem] lg:max-w-full"
-          />
-
-          <div className="absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center gap-2 rounded-xl border-2 border-ink bg-white px-3 py-2 shadow-brutal-sm sm:gap-3 sm:rounded-2xl sm:border-4 sm:px-4 sm:py-2.5">
-            <img
-              src="/images/iska-head-icon.png"
-              alt="Iska"
-              className="h-10 w-10 object-contain sm:h-11 sm:w-11"
-            />
-            <img
-              src="/images/pup-logo.png"
-              alt="Polytechnic University of the Philippines"
-              className="h-11 w-11 object-contain sm:h-12 sm:w-12"
-            />
-            <img
-              src="/images/isko-head-icon.png"
-              alt="Isko"
-              className="h-10 w-10 object-contain sm:h-11 sm:w-11"
-            />
-          </div>
+          <HeroMascotPanel />
         </motion.div>
       </div>
 
