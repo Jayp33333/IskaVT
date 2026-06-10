@@ -4,9 +4,12 @@ import express from 'express';
 
 import connectDB from './config/db.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import authRoutes from './routes/authRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 import logbookRoutes from './routes/logbookRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -19,6 +22,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api/logbook', logbookRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/feedback', feedbackRoutes);

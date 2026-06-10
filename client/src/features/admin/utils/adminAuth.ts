@@ -1,7 +1,9 @@
 import { ADMIN_AUTH_SESSION_KEY } from "../constants";
+import { authAPI, type AuthUser, type UserRole } from "../../../services/authApi";
+import { setAuthTokenGetter } from "../../../services/apiClient";
 
-type AdminSession = {
-  username: string;
+export type AdminSession = AuthUser & {
+  token: string;
   authenticatedAt: number;
 };
 
@@ -17,8 +19,7 @@ function getExpectedCredentials() {
 }
 
 export function isAdminAuthConfigured(): boolean {
-  const { username, password } = getExpectedCredentials();
-  return Boolean(username && password);
+  return true;
 }
 
 export function validateAdminCredentials(
@@ -29,7 +30,6 @@ export function validateAdminCredentials(
   if (!expected.username || !expected.password) {
     return false;
   }
-
   return username === expected.username && password === expected.password;
 }
 
@@ -41,7 +41,7 @@ export function getAdminSession(): AdminSession | null {
 
   try {
     const parsed = JSON.parse(raw) as AdminSession;
-    if (!parsed.username || !parsed.authenticatedAt) {
+    if (!parsed.username || !parsed.token || !parsed.role) {
       return null;
     }
     return parsed;
@@ -51,12 +51,22 @@ export function getAdminSession(): AdminSession | null {
 }
 
 export function isAdminAuthenticated(): boolean {
-  return getAdminSession() !== null;
+  const session = getAdminSession();
+  return (
+    session !== null &&
+    (session.role === "admin" || session.role === "super_admin")
+  );
 }
 
-export function setAdminSession(username: string): void {
+export function isSuperAdminAuthenticated(): boolean {
+  const session = getAdminSession();
+  return session !== null && session.role === "super_admin";
+}
+
+export function setAdminSession(user: AuthUser, token: string): void {
   const session: AdminSession = {
-    username,
+    ...user,
+    token,
     authenticatedAt: Date.now(),
   };
   sessionStorage.setItem(ADMIN_AUTH_SESSION_KEY, JSON.stringify(session));
@@ -65,3 +75,21 @@ export function setAdminSession(username: string): void {
 export function clearAdminSession(): void {
   sessionStorage.removeItem(ADMIN_AUTH_SESSION_KEY);
 }
+
+export async function loginWithApi(
+  username: string,
+  password: string,
+  allowedRoles: UserRole[],
+): Promise<AdminSession> {
+  const response = await authAPI.login(username, password);
+  const { token, user } = response.data;
+
+  if (!allowedRoles.includes(user.role)) {
+    throw new Error("You do not have access to this portal.");
+  }
+
+  setAdminSession(user, token);
+  return getAdminSession()!;
+}
+
+setAuthTokenGetter(() => getAdminSession()?.token ?? null);

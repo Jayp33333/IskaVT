@@ -241,6 +241,7 @@ export default function ExperienceScene() {
       return;
     }
 
+    setTourStarted(true);
     audioManager.unlock();
     setShowWelcome(true);
   };

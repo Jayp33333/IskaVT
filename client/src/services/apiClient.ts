@@ -1,6 +1,12 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
+let authTokenGetter: (() => string | null) | null = null;
+
+export function setAuthTokenGetter(getter: () => string | null) {
+  authTokenGetter = getter;
+}
+
 export class ApiError extends Error {
   status: number;
 
@@ -24,10 +30,13 @@ export async function apiRequest<TResponse>(
 
   const hasJsonBody = body !== undefined && body !== null;
 
+  const token = authTokenGetter?.() ?? null;
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
     headers: {
       ...(hasJsonBody ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(headers || {}),
     },
     body: hasJsonBody ? JSON.stringify(body) : undefined,

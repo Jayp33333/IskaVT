@@ -6,21 +6,22 @@ import {
   EyeOff,
   Loader2,
   Lock,
+  Shield,
   User,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SectionDotGrid } from "../../../components/marketing/SectionDotGrid";
-import { loginWithApi } from "../utils/adminAuth";
+import { loginWithApi } from "../../admin/utils/adminAuth";
 
 const INPUT_CLASS =
   "w-full rounded-xl border-2 border-ink bg-muted/80 px-4 py-3 pl-11 text-sm font-semibold transition-all placeholder:font-medium placeholder:text-ink/30 focus:border-maroon focus:bg-white focus:outline-none disabled:opacity-60 sm:py-3.5 sm:text-base";
 
-export function AdminLoginForm() {
+export function SuperAdminLoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectTo =
-    (location.state as { from?: string } | null)?.from ?? "/admin";
+    (location.state as { from?: string } | null)?.from ?? "/super-admin";
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -31,11 +32,10 @@ export function AdminLoginForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-
     setSubmitting(true);
 
     try {
-      await loginWithApi(username.trim(), password, ["admin", "super_admin"]);
+      await loginWithApi(username.trim(), password, ["super_admin"]);
       navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(
@@ -63,38 +63,14 @@ export function AdminLoginForm() {
               initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1, duration: 0.45 }}
-              className="relative flex flex-col justify-center border-b-2 border-ink bg-maroon px-6 py-8 text-white sm:px-8 sm:py-10 lg:col-span-2 lg:border-b-0 lg:border-r-2"
+              className="relative flex flex-col justify-center border-b-2 border-ink bg-ink px-6 py-8 text-white sm:px-8 sm:py-10 lg:col-span-2 lg:border-b-0 lg:border-r-2"
             >
-              <div
-                className="pointer-events-none absolute inset-0 opacity-[0.08]"
-                aria-hidden
-                style={{
-                  backgroundImage:
-                    "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
-                }}
-              />
-
               <div className="relative">
-                <div className="mb-8 flex items-center gap-3">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-white sm:h-16 sm:w-16 sm:rounded-2xl">
-                    <img
-                      src="/images/pup-logo.png"
-                      alt="Polytechnic University of the Philippines"
-                      className="h-10 w-10 object-contain sm:h-11 sm:w-11"
-                    />
-                  </div>
-                  <div className="flex h-14 items-center rounded-xl border-2 border-white/20 bg-white/10 px-3 sm:h-16 sm:rounded-2xl sm:px-4">
-                    <img
-                      src="/images/iska-logo.png"
-                      alt="ISKA Virtual Tour"
-                      className="h-7 w-auto brightness-0 invert sm:h-8"
-                    />
-                  </div>
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl border-2 border-white/30 bg-white/10 sm:h-16 sm:w-16">
+                  <Shield className="h-8 w-8 text-gold" strokeWidth={2.5} />
                 </div>
-
                 <h1 className="text-2xl font-black uppercase leading-tight tracking-tighter sm:text-3xl">
-                  Admin Portal
+                  Super Admin
                 </h1>
                 <p className="mt-2 text-sm font-medium text-white/70">
                   ISKA Virtual Tour
@@ -115,7 +91,7 @@ export function AdminLoginForm() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="admin-username"
+                    htmlFor="super-admin-username"
                     className="text-[11px] font-black uppercase tracking-[0.14em] text-ink/55 sm:text-xs"
                   >
                     Username
@@ -123,7 +99,7 @@ export function AdminLoginForm() {
                   <div className="relative">
                     <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/35" />
                     <input
-                      id="admin-username"
+                      id="super-admin-username"
                       type="text"
                       value={username}
                       onChange={(event) => setUsername(event.target.value)}
@@ -138,7 +114,7 @@ export function AdminLoginForm() {
 
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="admin-password"
+                    htmlFor="super-admin-password"
                     className="text-[11px] font-black uppercase tracking-[0.14em] text-ink/55 sm:text-xs"
                   >
                     Password
@@ -146,7 +122,7 @@ export function AdminLoginForm() {
                   <div className="relative">
                     <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/35" />
                     <input
-                      id="admin-password"
+                      id="super-admin-password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
@@ -185,7 +161,7 @@ export function AdminLoginForm() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-maroon px-4 py-3.5 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-ink px-4 py-3.5 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {submitting ? (
                     <>

@@ -2,16 +2,21 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, X } from "lucide-react";
-import { GOOGLE_FORM_EMBED_URL } from "../../../constants/feedbackConfig";
 import useWorld from "../../../hooks/useWorld";
 
 const AUTO_PROMPT_DELAY_MS = 60_000;
 
 type FeedbackGoogleFormProps = {
   tourStarted: boolean;
+  embedUrl: string;
+  viewUrl: string;
 };
 
-export const FeedbackGoogleForm = ({ tourStarted }: FeedbackGoogleFormProps) => {
+export const FeedbackGoogleForm = ({
+  tourStarted,
+  embedUrl,
+  viewUrl,
+}: FeedbackGoogleFormProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
@@ -107,15 +112,28 @@ export const FeedbackGoogleForm = ({ tourStarted }: FeedbackGoogleFormProps) => 
                       </button>
                     </div>
 
-                    <div className="min-h-0 flex-1 overflow-hidden bg-white">
+                    <div className="min-h-0 flex-1 overflow-y-auto bg-white">
                       <iframe
-                        src={GOOGLE_FORM_EMBED_URL}
+                        src={embedUrl}
                         title="Feedback form"
-                        className="h-full w-full border-0"
-                        loading="lazy"
+                        className="block w-full border-0"
+                        style={{ minHeight: "28rem", height: "1500px" }}
+                        allow="fullscreen"
+                        referrerPolicy="no-referrer-when-downgrade"
                       >
                         Loading…
                       </iframe>
+                    </div>
+
+                    <div className="shrink-0 border-t-[3px] border-ink bg-muted px-3.5 py-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-4">
+                      <a
+                        href={viewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex w-full items-center justify-center rounded-xl border-[3px] border-ink bg-white py-2.5 text-xs font-black uppercase italic tracking-wide text-maroon shadow-brutal-sm transition-all hover:bg-cream active:translate-y-1 active:shadow-none sm:text-sm"
+                      >
+                        Open form in new tab
+                      </a>
                     </div>
                   </motion.div>
                 </motion.div>

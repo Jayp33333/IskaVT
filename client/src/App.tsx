@@ -1,9 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AdminProtectedRoute } from "./components/AdminProtectedRoute";
+import { SuperAdminProtectedRoute } from "./components/SuperAdminProtectedRoute";
+import { FeedbackSettingsProvider } from "./context/FeedbackSettingsContext";
 import ExperienceScene from "./pages/ExperienceScene";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLoginPage from "./pages/AdminLoginPage";
+import SuperAdminLoginPage from "./pages/SuperAdminLoginPage";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import AboutOverviewPage from "./pages/AboutOverviewPage";
@@ -18,6 +22,7 @@ import { UpdatePrompt } from "./components/UpdatePrompt";
 export default function App() {
   return (
     <Router>
+      <FeedbackSettingsProvider>
       <UpdatePrompt />
       <ScrollToTop />
       <Routes>
@@ -41,7 +46,17 @@ export default function App() {
             </AdminProtectedRoute>
           }
         />
+        <Route path="/super-admin/login" element={<SuperAdminLoginPage />} />
+        <Route
+          path="/super-admin"
+          element={
+            <SuperAdminProtectedRoute>
+              <SuperAdminDashboard />
+            </SuperAdminProtectedRoute>
+          }
+        />
       </Routes>
+      </FeedbackSettingsProvider>
     </Router>
   );
 }
