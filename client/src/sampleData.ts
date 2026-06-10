@@ -13,12 +13,19 @@ export type FixedLocationRoom = {
 export type FixedLocationPin = {
   id: string;
   name: string;
+  /** Where the pin appears on Map2D / MiniMap. */
   position: THREE.Vector3;
+  /** Where the player teleports on visit (POIs often differ from `position`). */
+  teleportPosition?: THREE.Vector3;
   imageSrc?: string;
   highlighted?: boolean;
   kind?: "poi" | "building";
   rooms?: FixedLocationRoom[];
 };
+
+export function getFixedPinTeleportPosition(pin: FixedLocationPin): THREE.Vector3 {
+  return pin.teleportPosition ?? pin.position;
+}
 
 export const SAMPLE_AVATAR_LIST = IS_DEV
   ? [
@@ -152,10 +159,22 @@ export const DESTINATIONS = [
   // { id: "rotc", name: "ROTC", position: new THREE.Vector3(0, 0, 0) },
   // { id: "rotc-office", name: "ROTC Office", position: new THREE.Vector3(0, 0, 0) },
 
-  // ===== LABORATORIES & ROOMS (YUMUL) =====
-  // { id: "room-100", name: "Room 100 (Kitchen Laboratory)", position: new THREE.Vector3(0, 0, 0) },
-  // { id: "room-101", name: "Room 101 (Beverage Laboratory)", position: new THREE.Vector3(0, 0, 0) },
-  // { id: "room-102", name: "Room 102 (Tissue Laboratory)", position: new THREE.Vector3(0, 0, 0) },
+  // ===== LABORATORIES & ROOMS (HM / YUMUL) =====
+  {
+    id: "room-100",
+    name: "Room 100 (Kitchen Laboratory)",
+    position: new THREE.Vector3(54.39, 0.78, -130.3),
+  },
+  {
+    id: "room-101",
+    name: "Room 101 (Beverage Laboratory)",
+    position: new THREE.Vector3(53.67, 0.78, -120.91),
+  },
+  {
+    id: "room-102",
+    name: "Room 102 (Tissue Laboratory)",
+    position: new THREE.Vector3(53.13, 0.78, -103.71),
+  },
   {
     id: "room-103",
     name: "ICT Laboratory 1 (Room 103)",
@@ -671,7 +690,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "grandstand",
     name: "Grandstand",
-    position: new THREE.Vector3(6, 2, -119), // Center of Grandstand zone
+    position: new THREE.Vector3(10, 2, -119), // Center of Grandstand zone
     highlighted: false,
     imageSrc: GRANDSTAND_IMAGE,
     kind: "poi",
@@ -689,9 +708,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
         {
           id: "rotc-office",
           name: "ROTC Office",
-          yOffset: 0,
-          xOffset: 1.6,
-          zOffset: 0,
+          position: new THREE.Vector3(15.43, 0.40, -112.02),
         },
       ],
     ),
@@ -699,7 +716,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "gymnasium",
     name: "PUP Gymnasium",
-    position: new THREE.Vector3(41, 0.2, -148), // Center of PUP Gymnasium zone
+    position: new THREE.Vector3(70, 0.2, -155), // Map pin — center of gymnasium zone
+    teleportPosition: new THREE.Vector3(41, 0.2, -148), // Walkable spot near gym entrance
     highlighted: false, // Yellow pin with label
     imageSrc: GYM_IMAGE,
     kind: "poi",
@@ -707,7 +725,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "yumul-building",
     name: "Yumul Building",
-    position: new THREE.Vector3(38.4, 0.2, -33.5), // Center of Yumul Building zone
+    position: new THREE.Vector3(44, 0.2, -33.5), // Center of Yumul Building zone
+    teleportPosition: new THREE.Vector3(38.12, 0.58, -34.35),
     highlighted: false,
     imageSrc: YUMUL_IMAGE,
     kind: "building",
@@ -716,7 +735,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "administration-building",
     name: "Administration Building",
-    position: new THREE.Vector3(15, 0.29, -6),
+    position: new THREE.Vector3(30, 0.29, 1),
     highlighted: false,
     imageSrc: ADMIN_BUILDING_IMAGE,
     kind: "building",
@@ -768,7 +787,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "nantes-building",
     name: "Nantes Building",
-    position: new THREE.Vector3(28, 0.2, -138), // Center of Nantes Building zone
+    position: new THREE.Vector3(23, 0.2, -138), // Center of Nantes Building zone
     highlighted: false,
     imageSrc: NANTES_IMAGE,
     kind: "building",
@@ -845,7 +864,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "hm-rooms",
     name: "HM Laboratories",
-    position: new THREE.Vector3(51.6, 0.2, -114),
+    position: new THREE.Vector3(57, 0.2, -114),
     highlighted: false,
     imageSrc: HM_ROOMS_IMAGE,
     kind: "poi",
@@ -856,23 +875,17 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
         {
           id: "room-100",
           name: "Room 100 (Kitchen Laboratory)",
-          yOffset: 0,
-          xOffset: -2.4,
-          zOffset: 0,
+          position: new THREE.Vector3(54.39, 0.78, -130.3),
         },
         {
           id: "room-101",
           name: "Room 101 (Beverage Laboratory)",
-          yOffset: 0,
-          xOffset: 0,
-          zOffset: 0,
+          position: new THREE.Vector3(53.67, 0.78, -120.91),
         },
         {
           id: "room-102",
           name: "Room 102 (Tissue Laboratory)",
-          yOffset: 0,
-          xOffset: 2.4,
-          zOffset: 0,
+          position: new THREE.Vector3(53.13, 0.78, -103.71),
         },
       ],
     ),
@@ -880,7 +893,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "health-sciences",
     name: "Health and Sciences Building",
-    position: new THREE.Vector3(-33, 0.2, -65), // Center of Health and Sciences Building zone
+    position: new THREE.Vector3(-38, 0.2, -62), // Center of Health and Sciences Building zone
     highlighted: false,
     imageSrc: HEALTH_SCIENCES_BUILDING_IMAGE,
     kind: "building",
@@ -946,7 +959,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "education-building",
     name: "Education Building",
-    position: new THREE.Vector3(-10, 0.2, -197), // Center of Education Building zone
+    position: new THREE.Vector3(-8, 0.2, -200), // Center of Education Building zone
     highlighted: false,
     imageSrc: EDUCATION_BUILDING_IMAGE,
     kind: "building",
@@ -1024,7 +1037,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "engineering-building",
     name: "Engineering Building",
-    position: new THREE.Vector3(-50, 0.2, -128), // Center of Engineering Building zone
+    position: new THREE.Vector3(-56.5, 0.2, -128), // Center of Engineering Building zone
     highlighted: false,
     imageSrc: ENGINEERING_BUILDING_IMAGE,
     kind: "building",
@@ -1119,7 +1132,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "pylon",
     name: "Pylon",
-    position: new THREE.Vector3(19, 1.2, -71), // Center of Pylon zone
+    position: new THREE.Vector3(19, 1.2, -73), // Map pin — center of pylon zone
+    teleportPosition: new THREE.Vector3(19.39, 1.25, -70.15), // Ground level at the pylon
     highlighted: false,
     imageSrc: PYLON_IMAGE,
     kind: "poi",
@@ -1127,7 +1141,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "comlab-1",
     name: "ICT Laboratory 1",
-    position: new THREE.Vector3(2, 0.2, -12.5), // Center of Comlab 1 zone
+    position: new THREE.Vector3(-2.5, 0.2, -17), // Map pin — center of comlab 1 zone
+    teleportPosition: new THREE.Vector3(2.16, 0.69, -12.64), // Outside lab entrance
     highlighted: false,
     imageSrc: COMLAB1_IMAGE,
     kind: "poi",
@@ -1135,7 +1150,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "comlab-2",
     name: "ICT Laboratory 2",
-    position: new THREE.Vector3(12, 0.2, -26.2), // Center of Comlab 2 zone
+    position: new THREE.Vector3(8, 0.2, -31), // Map pin — center of comlab 2 zone
+    teleportPosition: new THREE.Vector3(12.29, 0.72, -26.10), // Outside lab entrance
     highlighted: false,
     imageSrc: COMLAB2_IMAGE,
     kind: "poi",

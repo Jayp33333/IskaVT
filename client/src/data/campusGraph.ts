@@ -163,6 +163,7 @@ export const CAMPUS_NODES = {
   "grandstand-ramp4": new THREE.Vector3(13.94, 1.72, -105.87),
   "grandstand-ramp5": new THREE.Vector3(14.11, 1.72, -107.36),
   "grandstand-right-extended": new THREE.Vector3(6.2, 2.39, -112.09),
+  grandstand: new THREE.Vector3(6.0, 2.39, -118.4),
   "grandstand-left-extended": new THREE.Vector3(5.73, 2.39, -124.8),
   "grandstand-top-left-stair": new THREE.Vector3(5.24, 2.39, -128.95),
   "grandstand-lower-left-stair": new THREE.Vector3(5.05, 0.4, -131.95),
@@ -208,6 +209,22 @@ export const CAMPUS_NODES = {
   "nantes-hallway1": new THREE.Vector3(23.78, 0.82, -170.47),
   "nantes-hallway2": new THREE.Vector3(20.74, 0.82, -172.88),
   "nantes-hallway3": new THREE.Vector3(17.75, 0.82, -175.24),
+  "room-100": new THREE.Vector3(54.39, 0.78, -130.3),
+  "room-101": new THREE.Vector3(53.67, 0.78, -120.91),
+  "room-101-right": new THREE.Vector3(53.39, 0.78, -113.19),
+  "room-101-ramp": new THREE.Vector3(49.87, 0.4, -113.19),
+  "room-101-ramp-right": new THREE.Vector3(49.65, 0.4, -110.52),
+  "hm-dirtway1": new THREE.Vector3(44.5, 0.4, -113.15),
+  "hm-dirtway2": new THREE.Vector3(40.06, 0.4, -112.76),
+  "hm-dirtway3": new THREE.Vector3(35.44, 0.4, -112.74),
+  "room-102": new THREE.Vector3(53.13, 0.78, -103.71),
+  "room-102-left": new THREE.Vector3(53.44, 0.78, -110.14),
+  "field-north-center": new THREE.Vector3(36.95, 0.39, -135.6),
+  "field-north-1": new THREE.Vector3(42.36, 0.39, -139.75),
+  "field-north-2": new THREE.Vector3(44.88, 0.38, -132.86),
+  "field-north-3": new THREE.Vector3(49.24, 0.4, -131.31),
+  "field-north-4": new THREE.Vector3(39.37, 0.39, -129.97),
+  "field-north-5": new THREE.Vector3(35.67, 0.4, -124.73),
 } as const;
 
 export type AnchorNodeId = keyof typeof CAMPUS_NODES;
@@ -215,7 +232,7 @@ export type CampusNodeId = AnchorNodeId | `${string}--${string}-mid`;
 
 /** Preferred graph anchors for known destinations (sampleData ids). */
 export const DESTINATION_NODES: Partial<Record<string, AnchorNodeId>> = {
-  grandstand: "grandstand-ramp",
+  grandstand: "grandstand",
   gymnasium: "gym-approach",
   "room-103": "comlab-1",
   "room-104": "comlab-2",
@@ -571,6 +588,7 @@ connectChain([
   "grandstand-ramp5",
   "grandstand-ramp",
   "grandstand-right-extended",
+  "grandstand",
   "grandstand-left-extended",
   "grandstand-top-left-stair",
   "grandstand-lower-left-stair",
@@ -601,7 +619,7 @@ connectChain([
   "nantes-mid1-mid-stair",
   "nantes-mid2-mid-stair",
   "nantes-top-mid-stair",
-  "nantes-top-mid-stair-extended"
+  "nantes-top-mid-stair-extended",
 ]);
 
 connectChain([
@@ -617,8 +635,37 @@ connectChain([
   "room-216",
   "nantes-top-left-stair",
   "nantes-lower-left-stair",
-  "nantes-lower-left-stair-extended"
+  "nantes-lower-left-stair-extended",
 ]);
+
+connectChain([
+  "field-east-3",
+  "hm-dirtway3",
+  "hm-dirtway2",
+  "hm-dirtway1",
+  "room-101-ramp",
+  "room-101-right",
+  "room-101",
+  "room-100",
+  "field-north-3",
+  "field-north-2",
+  "field-north-1",
+  "gym-approach",
+])
+
+connectChain([
+  "hm-dirtway3", 
+  "field-north-5",
+  "field-north-4",
+  "field-north-2",
+])
+
+connectChain([
+  "room-101-ramp",
+  "room-101-ramp-right",
+  "room-102-left",
+  "room-102",
+])
 
 // Cross-links between parallel routes
 connectAnchors("bridge-west-lower-right-ramp", "bridge-west-upper-right-ramp");
@@ -660,6 +707,14 @@ connectAnchors("educ-walkway1", "north-center-field");
 connectAnchors("nantes-hallway3", "north-center-field");
 connectAnchors("eco-park", "north-center-field");
 connectAnchors("nantes-back-waywalk6", "field-east-1");
+connectAnchors("field-east-4", "field-north-5");
+connectAnchors("field-east-5", "field-north-5");
+connectAnchors("field-north-center", "field-north-5");
+connectAnchors("field-north-center", "field-east-5");
+connectAnchors("field-north-center", "nantes-building");
+connectAnchors("field-north-center", "gym-approach");
+connectAnchors("field-north-center", "field-north-2");
+
 
 const nodeIds = [...runtimeNodes.keys()];
 

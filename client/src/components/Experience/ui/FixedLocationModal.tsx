@@ -3,7 +3,11 @@ import { createPortal } from "react-dom";
 import { ChevronRight, MapPin, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Vector3 } from "three";
-import type { FixedLocationPin, FixedLocationRoom } from "../../../sampleData";
+import {
+  getFixedPinTeleportPosition,
+  type FixedLocationPin,
+  type FixedLocationRoom,
+} from "../../../sampleData";
 
 const landscapeShort =
   "[@media(orientation:landscape)_and_(max-height:768px)]";
@@ -257,7 +261,13 @@ export function FixedLocationModal({
               >
                 <button
                   type="button"
-                  onClick={() => onVisit(pin)}
+                  onClick={() =>
+                    onVisit({
+                      id: pin.id,
+                      name: pin.name,
+                      position: getFixedPinTeleportPosition(pin),
+                    })
+                  }
                   className="flex w-full items-center justify-center gap-2 rounded-xl border-[3px] border-ink bg-maroon py-2.5 text-sm font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-maroon/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-xs ${landscapeShort}:py-2 ${landscapeShort}:text-[11px]"
                 >
                   <MapPin className="h-4 w-4" strokeWidth={2.5} />

@@ -63,7 +63,7 @@ export function ExitTourConfirmDialog({
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-[1700] bg-ink/85"
+            className="fixed inset-0 z-[2220] bg-ink/85"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -71,7 +71,7 @@ export function ExitTourConfirmDialog({
           />
 
           <motion.div
-            className="pointer-events-none fixed inset-0 z-[1701] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
+            className="pointer-events-none fixed inset-0 z-[2221] flex items-end justify-center p-0 sm:items-center sm:p-4 [@media(max-height:500px)]:p-0 [@media(orientation:landscape)_and_(max-height:768px)]:p-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
