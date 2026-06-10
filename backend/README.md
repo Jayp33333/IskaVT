@@ -33,7 +33,28 @@ npm install
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/iska-vt
 NODE_ENV=development
+JWT_SECRET=your-long-random-secret
+SUPER_ADMIN_USERNAME=superadmin
+SUPER_ADMIN_PASSWORD="your-secure-password"
 ```
+
+Quote passwords that contain `#` or spaces. Then seed the super admin:
+
+```bash
+npm run seed:super-admin
+```
+
+### Vercel deployment
+
+Add these environment variables in the Vercel project for the backend:
+
+| Variable | Required |
+|----------|----------|
+| `MONGODB_URI` | Yes |
+| `JWT_SECRET` | Yes (login returns 500 without it) |
+| `NODE_ENV` | `production` |
+
+Super admin is seeded against your MongoDB Atlas database (run `npm run seed:super-admin` locally once).
 
 For MongoDB Atlas, use:
 ```env

@@ -5,7 +5,10 @@ import User from '../models/User.js';
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    throw new Error('JWT_SECRET environment variable is not set');
+    throw new HttpError(
+      503,
+      'Server authentication is not configured (JWT_SECRET missing)'
+    );
   }
   return secret;
 }
