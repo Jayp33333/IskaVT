@@ -137,6 +137,9 @@ const Character = () => {
       actionBindingOptions={{
         pointerCaptureRotationSpeed: lookSpeed,
         pointerLockRotationSpeed: lookSpeed,
+        // Default library dead zone is 24px (~43% of radius) — too large on our themed joystick.
+        screenJoystickDeadZonePx: 0,
+        screenJoystickRunDistancePx: 36,
       }}
       movement={{
         jump: { speed: isArrivalPaused ? 0 : 4 * moveMult },
