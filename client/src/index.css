@@ -172,6 +172,14 @@ body.mobile-controls-customize .viverse-joystick-handle {
   pointer-events: none !important;
 }
 
+body.npc-focus:not(.mobile-controls-customize) .viverse-joystick,
+body.npc-focus:not(.mobile-controls-customize) .viverse-button.viverse-jump {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
 @media (max-height: 500px) {
   .viverse-joystick {
     width: 5.5rem !important;

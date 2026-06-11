@@ -13,6 +13,7 @@ const JUMP_SELECTOR = ".viverse-button.viverse-jump";
 export function useMobileControlLayout(enabled: boolean) {
   const layout = useWorld((s) => s.mobileControlLayout);
   const customizeMode = useWorld((s) => s.mobileControlsCustomize);
+  const npcFocus = useWorld((s) => !!s.activeNPCDialog);
   const setMobileControlLayout = useWorld((s) => s.setMobileControlLayout);
   const dragRef = useRef<{
     target: "joystick" | "jump";
@@ -39,6 +40,16 @@ export function useMobileControlLayout(enabled: boolean) {
       window.clearInterval(interval);
     };
   }, [enabled, layout]);
+
+  useEffect(() => {
+    if (!enabled || !npcFocus) {
+      document.body.classList.remove("npc-focus");
+      return;
+    }
+
+    document.body.classList.add("npc-focus");
+    return () => document.body.classList.remove("npc-focus");
+  }, [enabled, npcFocus]);
 
   useEffect(() => {
     if (!enabled || !customizeMode) {

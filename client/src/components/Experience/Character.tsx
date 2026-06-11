@@ -36,6 +36,7 @@ const Character = () => {
 
   const interactionLocked =
     !!activeNPCDialog || isArrivalPaused || mobileControlsCustomize;
+  const movementPaused = !!activeNPCDialog || isArrivalPaused;
   const lookLocked = interactionLocked || (!isMobile && cursorRevealedByAlt);
   const lookSpeed = lookLocked ? 0 : sensitivityPercentToLookSpeed(sensitivity);
   const moveMult = sensitivityPercentToMoveMult(sensitivity);
@@ -138,9 +139,9 @@ const Character = () => {
         screenJoystickRunDistancePx: 36,
       }}
       movement={{
-        jump: { speed: isArrivalPaused ? 0 : 4 * moveMult },
-        walk: { speed: isArrivalPaused ? 0 : 3 * moveMult },
-        run: { speed: isArrivalPaused ? 0 : 5 * moveMult },
+        jump: { speed: movementPaused ? 0 : 4 * moveMult },
+        walk: { speed: movementPaused ? 0 : 3 * moveMult },
+        run: { speed: movementPaused ? 0 : 5 * moveMult },
       }}
       model={
         cameraMode === "third" && avatar
