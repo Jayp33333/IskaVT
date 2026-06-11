@@ -13,17 +13,17 @@ export function InspiredValuesGrid() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
             whileHover={{ scale: 1.08, rotate: 0 }}
-            className={`flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black text-lg font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:h-12 sm:w-12 sm:rounded-2xl sm:border-4 sm:text-2xl ${value.boxClass} ${value.letterClass}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border border-black text-lg font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:h-12 sm:w-12 sm:rounded-2xl sm:text-2xl ${value.boxClass} ${value.letterClass}`}
           >
             {value.letter}
           </motion.div>
         ))}
       </div>
 
-      <div className="hidden overflow-x-auto rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:block sm:rounded-3xl sm:border-4">
+      <div className="hidden overflow-x-auto rounded-2xl border border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] sm:block sm:rounded-3xl">
         <table className="w-full min-w-[720px] border-collapse text-left">
           <thead>
-            <tr className="border-b-4 border-black bg-[#800000] text-white">
+            <tr className="border-b border-black bg-[#800000] text-white">
               <th className="px-4 py-3 text-xs font-black uppercase tracking-wider sm:px-5 sm:py-4 sm:text-sm">
                 Values
               </th>
@@ -39,12 +39,12 @@ export function InspiredValuesGrid() {
             {inspiredValuesContent.map((value, index) => (
               <tr
                 key={`row-${value.letter}-${index}`}
-                className="border-b-2 border-black/10 align-top last:border-b-0 odd:bg-[#FFFDF5] even:bg-white"
+                className="border-b border-black/10 align-top last:border-b-0 odd:bg-[#FFFDF5] even:bg-white"
               >
                 <td className="px-4 py-4 sm:px-5 sm:py-5">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-black text-lg font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${value.boxClass} ${value.letterClass}`}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-black text-lg font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${value.boxClass} ${value.letterClass}`}
                     >
                       {value.letter}
                     </div>
@@ -86,12 +86,12 @@ export function InspiredValuesGrid() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
-            className="overflow-hidden rounded-2xl border-2 border-black bg-[#FFFDF5] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            className="overflow-hidden rounded-2xl border border-black bg-[#FFFDF5] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
           >
-            <div className="flex items-center gap-3 border-b-2 border-black bg-white px-4 py-3">
+            <div className="flex items-center gap-3 border-b border-black bg-white px-4 py-3">
               <motion.div
                 style={{ rotate: value.tilt }}
-                className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${value.boxClass}`}
+                className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${value.boxClass}`}
               >
                 <span className={`text-2xl font-black ${value.letterClass}`}>
                   {value.letter}

@@ -8,7 +8,7 @@ export function HomeCta() {
   const navigate = useNavigate();
 
   const secondaryLinkClass =
-    "inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-cream px-5 py-3 text-sm font-black uppercase tracking-tighter text-ink transition-colors hover:bg-ink hover:text-white sm:rounded-2xl sm:px-6";
+    "inline-flex items-center gap-2 rounded-xl border border-ink bg-cream px-5 py-3 text-sm font-black uppercase tracking-tighter text-ink transition-colors hover:bg-ink hover:text-white sm:rounded-2xl sm:px-6";
 
   return (
     <Section id="cta" variant="white" dotGrid>
@@ -16,7 +16,7 @@ export function HomeCta() {
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-brutal-lg sm:rounded-3xl sm:border-4"
+        className="overflow-hidden rounded-2xl border border-ink bg-white shadow-brutal-lg sm:rounded-3xl"
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="p-6 sm:p-8 lg:p-10">
@@ -32,7 +32,7 @@ export function HomeCta() {
               <button
                 type="button"
                 onClick={() => navigate("/experience")}
-                className="group inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-5 py-3 text-sm font-black uppercase tracking-tighter text-white shadow-brutal-sm transition-colors hover:bg-maroon/90 sm:rounded-2xl sm:px-6"
+                className="group inline-flex items-center gap-2 rounded-xl border border-ink bg-maroon px-5 py-3 text-sm font-black uppercase tracking-tighter text-white shadow-brutal-sm transition-colors hover:bg-maroon/90 sm:rounded-2xl sm:px-6"
               >
                 Start Tour
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -55,14 +55,14 @@ export function HomeCta() {
             </div>
           </div>
 
-          <div className="relative min-h-[200px] border-t-2 border-ink bg-muted lg:border-l-2 lg:border-t-0">
+          <div className="relative min-h-[200px] border-t border-ink bg-muted lg:border-l-2 lg:border-t-0">
             <img
               src="/images/campus-renderer.png"
               alt="3D Campus Preview"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent lg:bg-gradient-to-l lg:from-white/80" />
-            <div className="absolute bottom-3 left-3 rounded-lg border-2 border-ink bg-gold px-3 py-1.5 text-[10px] font-black uppercase tracking-tighter text-ink shadow-brutal-sm sm:bottom-4 sm:left-4 sm:border-4 sm:text-xs">
+            <div className="absolute bottom-3 left-3 rounded-lg border border-ink bg-gold px-3 py-1.5 text-[10px] font-black uppercase tracking-tighter text-ink shadow-brutal-sm sm:bottom-4 sm:left-4 sm:text-xs">
               3D Campus Preview
             </div>
           </div>

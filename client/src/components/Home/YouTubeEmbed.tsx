@@ -8,7 +8,7 @@ export function YouTubeEmbed({
   title = "YouTube video",
 }: YouTubeEmbedProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border-2 border-black bg-black shadow-[6px_6px_0px_0px_rgba(128,0,0,1)] sm:rounded-3xl sm:border-4">
+    <div className="overflow-hidden rounded-2xl border border-black bg-black shadow-[6px_6px_0px_0px_rgba(128,0,0,1)] sm:rounded-3xl">
       <div className="relative aspect-video w-full">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}`}

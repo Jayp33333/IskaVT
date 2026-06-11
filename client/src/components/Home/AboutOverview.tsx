@@ -41,7 +41,7 @@ export function AboutOverview() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="mb-10 overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-brutal-maroon sm:mb-12 sm:rounded-[2rem] sm:border-4"
+        className="mb-10 overflow-hidden rounded-2xl border border-ink bg-white shadow-brutal-maroon sm:mb-12 sm:rounded-[2rem]"
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-4 p-5 sm:space-y-5 sm:p-6 lg:p-8">
@@ -55,7 +55,7 @@ export function AboutOverview() {
             ))}
           </div>
 
-          <div className="border-t-2 border-ink bg-gold/20 p-5 sm:border-t-4 sm:p-6 lg:border-l-4 lg:border-t-0 lg:p-8">
+          <div className="border-t border-ink bg-gold/20 p-5 sm:border-t sm:p-6 lg:border-l lg:border-t-0 lg:p-8">
             <SectionEyebrow className="text-left not-italic tracking-[0.2em]">
               Campus at a Glance
             </SectionEyebrow>
@@ -63,7 +63,7 @@ export function AboutOverview() {
               {aboutOverviewIntro.stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl border-2 border-ink bg-white p-3 shadow-brutal-sm sm:rounded-2xl sm:border-4 sm:p-4"
+                  className="rounded-xl border border-ink bg-white p-3 shadow-brutal-sm sm:rounded-2xl sm:p-4"
                 >
                   <p className="text-[10px] font-black uppercase tracking-widest text-ink/50 sm:text-xs">
                     {stat.label}
@@ -102,9 +102,9 @@ export function AboutOverview() {
             >
               <Link
                 to={section.path}
-                className="group flex h-full flex-col rounded-2xl border-2 border-ink bg-white p-5 shadow-brutal-md transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-maroon sm:rounded-3xl sm:border-4 sm:p-6"
+                className="group flex h-full flex-col rounded-2xl border border-ink bg-white p-5 shadow-brutal-md transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-maroon sm:rounded-3xl sm:p-6"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border-2 border-ink bg-gold shadow-brutal-sm transition-transform group-hover:rotate-6 sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-ink bg-gold shadow-brutal-sm transition-transform group-hover:rotate-6 sm:h-14 sm:w-14 sm:rounded-2xl">
                   <Icon className="h-6 w-6 text-ink sm:h-7 sm:w-7" />
                 </div>
 

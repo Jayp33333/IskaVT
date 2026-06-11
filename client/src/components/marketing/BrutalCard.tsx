@@ -23,7 +23,7 @@ export function BrutalCard({
 }: BrutalCardProps) {
   return (
     <div
-      className={`rounded-2xl border-2 border-ink bg-white sm:rounded-3xl sm:border-4 ${accentShadow[accent]} ${
+      className={`rounded-2xl border border-ink bg-white sm:rounded-3xl ${accentShadow[accent]} ${
         hover ? "transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1" : ""
       } ${className}`}
     >

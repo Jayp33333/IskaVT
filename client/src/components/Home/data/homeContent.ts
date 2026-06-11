@@ -1,20 +1,69 @@
 import type { LucideIcon } from "lucide-react";
-import { Building2, Footprints, Map, MonitorPlay } from "lucide-react";
+import {
+  Building2,
+  Footprints,
+  Map,
+  MonitorPlay,
+  Users,
+} from "lucide-react";
+
+export type HomeWelcomeFeature = {
+  id: string;
+  title: string;
+  summary: string;
+  detail: string;
+  icon: LucideIcon;
+};
 
 export const homeWelcomeContent = {
-  headline: "Explore PUP Lopez online before your visit.",
+  headline:
+    "A free 3D campus guide built by PUP Lopez students — explore buildings, find offices, and plan your visit from anywhere.",
   image: "/images/campus-renderer.png",
   imageAlt: "ISKA Virtual Tour 3D campus preview",
   intro:
-    "ISKA Virtual Tour (ISKA VT) is a 3D campus guide developed by DIT students at PUP Lopez. Navigate key buildings, view location details, and plan your route before arriving on campus.",
-  highlights: [
-    "Interactive 3D walkthrough of major campus areas",
-    "Mini-map, location pins, and building information",
-    "Free public access — no account required",
+    "ISKA Virtual Tour (ISKA VT) lets you walk through PUP Lopez online. Use the mini-map, read building details, and get familiar with the campus before enrollment day or your first visit.",
+  features: [
+    {
+      id: "explore",
+      title: "Explore in 3D",
+      summary: "Walk through campus at your own pace.",
+      detail:
+        "Move freely across the virtual campus with keyboard or on-screen controls. Switch views, approach buildings, and discover landmarks before you arrive in person.",
+      icon: Footprints,
+    },
+    {
+      id: "navigate",
+      title: "Find your way",
+      summary: "Mini-map, pins, and teleport destinations.",
+      detail:
+        "Open the mini-map to see where you are, jump to key locations, and plan a route across admin offices, classrooms, labs, and outdoor venues.",
+      icon: Map,
+    },
+    {
+      id: "learn",
+      title: "Learn each location",
+      summary: "Building info when you get close.",
+      detail:
+        "Approach areas in the tour to view names, descriptions, and what each building is used for — from the Registrar to engineering labs and the gymnasium.",
+      icon: Building2,
+    },
+    {
+      id: "access",
+      title: "Open to everyone",
+      summary: "Free preview, no account needed.",
+      detail:
+        "Start the tour instantly from your browser. ISKA VT is designed for prospective students, parents, alumni, and anyone curious about PUP Lopez.",
+      icon: Users,
+    },
+  ] satisfies HomeWelcomeFeature[],
+  stats: [
+    { label: "Cost", value: "Free" },
+    { label: "Account", value: "Not required" },
+    { label: "Campus", value: "PUP Lopez" },
   ],
   projectCard: {
-    role: "PUP Lopez Virtual Campus Tour",
-    tagline: "For prospective students, parents, and visitors.",
+    role: "Student-built virtual campus",
+    tagline: "Developed by the DIT program at PUP Lopez, Quezon.",
   },
   projectDevelopers: {
     title: "Developed By",
@@ -87,7 +136,7 @@ export const homeHowItWorksSteps: HomeHowItWorksStep[] = [
   {
     title: "Launch the Tour",
     description:
-      'Click "Launch 3D Tour" in the navigation bar to enter the virtual campus. No login required for the public preview.',
+      'Click "Visit App" in the navigation bar to enter the virtual campus. No login required for the public preview.',
     icon: MonitorPlay,
   },
   {

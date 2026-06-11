@@ -69,7 +69,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
     }
   };
 
-  const inputBase = "w-full px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 text-sm [@media(max-height:500px)]:text-[11px] font-bold text-ink bg-white border-[3px] border-ink rounded-2xl outline-none shadow-brutal-sm focus:bg-yellow-50 placeholder:text-slate-400 transition-all";
+  const inputBase = "w-full px-4 py-3 [@media(max-height:500px)]:px-3 [@media(max-height:500px)]:py-2 text-sm [@media(max-height:500px)]:text-[11px] font-bold text-ink bg-white border border-ink rounded-2xl outline-none shadow-brutal-sm focus:bg-yellow-50 placeholder:text-slate-400 transition-all";
   const labelBase = "block text-xs [@media(max-height:500px)]:text-[9px] font-black text-ink/80 uppercase tracking-wider mb-2 ml-1";
 
   return (
@@ -91,7 +91,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="pointer-events-auto mx-auto flex h-[min(92dvh,34rem)] w-full max-w-[26rem] shrink-0 flex-col overflow-hidden rounded-2xl border-[4px] border-ink bg-cream text-ink shadow-brutal-lg [@media(max-height:500px)]:h-[min(96dvh,30rem)] [@media(max-height:500px)]:max-w-[min(92vw,20rem)] [@media(orientation:landscape)_and_(max-height:768px)]:h-[min(96dvh,28rem)]"
+              className="pointer-events-auto mx-auto flex h-[min(92dvh,34rem)] w-full max-w-[26rem] shrink-0 flex-col overflow-hidden rounded-2xl border border-ink bg-cream text-ink shadow-brutal-lg [@media(max-height:500px)]:h-[min(96dvh,30rem)] [@media(max-height:500px)]:max-w-[min(92vw,20rem)] [@media(orientation:landscape)_and_(max-height:768px)]:h-[min(96dvh,28rem)]"
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -102,7 +102,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
             >
               <div className="flex shrink-0 items-center justify-between gap-3 border-b-[3px] border-ink bg-maroon px-4 py-4 sm:px-5 [@media(max-height:500px)]:px-3.5 [@media(max-height:500px)]:py-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-ink bg-white p-1 [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:p-0.5">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-ink bg-white p-1 [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:p-0.5">
                     <img
                       src="/images/pup-logo.png"
                       alt="PUP Logo"
@@ -116,7 +116,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                 {!required && (
                   <button
                     onClick={onClose}
-                    className="shrink-0 rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
+                    className="shrink-0 rounded-xl border border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
                     aria-label="Close"
                     type="button"
                   >
@@ -196,7 +196,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                   </div>
 
                   {error && (
-                    <div className="mt-3 shrink-0 rounded-2xl border-2 border-ink bg-red-100 p-3 text-sm font-black text-red-700 shadow-brutal-sm [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-xs">
+                    <div className="mt-3 shrink-0 rounded-2xl border border-ink bg-red-100 p-3 text-sm font-black text-red-700 shadow-brutal-sm [@media(max-height:500px)]:mt-2 [@media(max-height:500px)]:text-xs">
                       {error}
                     </div>
                   )}
@@ -206,7 +206,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex w-full items-center justify-center gap-3 rounded-2xl border-[3px] border-ink bg-maroon py-3.5 text-base font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-[#c93333] active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 [@media(max-height:500px)]:py-2.5 [@media(max-height:500px)]:text-xs"
+                    className="flex w-full items-center justify-center gap-3 rounded-2xl border border-ink bg-maroon py-3.5 text-base font-black uppercase italic tracking-wide text-white shadow-brutal-md transition-all hover:bg-[#c93333] active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50 [@media(max-height:500px)]:py-2.5 [@media(max-height:500px)]:text-xs"
                   >
                     {isSubmitting ? "Starting..." : "Start Tour"}
                   </button>

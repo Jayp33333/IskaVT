@@ -11,7 +11,7 @@ export function Hero() {
   const [mapOpen, setMapOpen] = useState(false);
   return (
     <section
-      className="relative flex min-h-[calc(100dvh-3.5rem)] flex-col justify-center overflow-x-hidden bg-cream px-4 pb-16 pt-20 sm:min-h-[calc(100dvh-4rem)] sm:px-6 sm:pb-12 sm:pt-24 lg:min-h-[calc(100dvh-4.5rem)] lg:items-center lg:px-12 lg:pt-24 xl:min-h-[calc(100dvh-5rem)] xl:px-20"
+      className="relative flex min-h-[calc(100dvh-3rem)] flex-col justify-center overflow-x-hidden bg-cream px-4 pb-16 pt-14 sm:min-h-[calc(100dvh-3.5rem)] sm:px-6 sm:pb-12 sm:pt-16 lg:items-center lg:px-12 xl:px-20"
       id="home"
     >
       <HeroNeoBackground />
@@ -23,7 +23,7 @@ export function Hero() {
           transition={{ duration: 0.6 }}
           className="z-10 flex w-full max-w-2xl flex-col items-center text-center lg:max-w-3xl lg:items-start lg:text-left"
         >
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border-2 border-black bg-[#FFD700] px-3 py-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:mb-5 sm:gap-2 sm:border-4 sm:px-4">
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black bg-[#FFD700] px-3 py-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:mb-5 sm:gap-2 sm:px-4">
             <Sparkles className="h-3.5 w-3.5 text-black sm:h-4 sm:w-4" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-black italic sm:text-xs">
               New Experience
@@ -62,7 +62,7 @@ export function Hero() {
             <button
               type="button"
               onClick={() => navigate("/experience")}
-              className="group inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-5 py-2.5 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon/90 sm:gap-3 sm:px-6 sm:py-3 sm:text-base md:text-lg"
+              className="group inline-flex items-center gap-2 rounded-xl border border-ink bg-maroon px-5 py-2.5 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon/90 sm:gap-3 sm:px-6 sm:py-3 sm:text-base md:text-lg"
             >
               Start Tour
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
@@ -71,7 +71,7 @@ export function Hero() {
             <button
               type="button"
               onClick={() => setMapOpen(true)}
-              className="rounded-xl border-4 border-ink bg-cream px-5 py-2.5 text-sm font-black uppercase tracking-tighter transition-colors hover:bg-ink hover:text-white sm:px-6 sm:py-3 sm:text-base md:text-lg"
+              className="rounded-xl border border-ink bg-cream px-5 py-2.5 text-sm font-black uppercase tracking-tighter transition-colors hover:bg-ink hover:text-white sm:px-6 sm:py-3 sm:text-base md:text-lg"
             >
               View Map
             </button>

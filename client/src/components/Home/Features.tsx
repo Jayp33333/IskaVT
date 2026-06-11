@@ -47,10 +47,10 @@ export function Features({ showExtendedContent = false }: FeaturesProps) {
               transition={{ duration: 0.45, delay: index * 0.08 }}
               viewport={{ once: true }}
               whileHover={{ y: -6, x: -4 }}
-              className="rounded-2xl border-2 border-ink bg-white p-5 shadow-brutal-md transition-all duration-300 hover:shadow-brutal-maroon sm:rounded-3xl sm:border-4 sm:p-6 lg:p-7"
+              className="rounded-2xl border border-ink bg-white p-5 shadow-brutal-md transition-all duration-300 hover:shadow-brutal-maroon sm:rounded-3xl sm:p-6 lg:p-7"
             >
               <div
-                className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl border-2 border-ink shadow-brutal-sm transition-transform group-hover:rotate-6 sm:mb-5 sm:h-14 sm:w-14 sm:rounded-2xl sm:border-4 ${bgClass}`}
+                className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-ink shadow-brutal-sm transition-transform group-hover:rotate-6 sm:mb-5 sm:h-14 sm:w-14 sm:rounded-2xl ${bgClass}`}
               >
                 <Icon
                   className={`h-6 w-6 sm:h-7 sm:w-7 ${isMaroon ? "text-white" : "text-ink"}`}
@@ -66,7 +66,7 @@ export function Features({ showExtendedContent = false }: FeaturesProps) {
               </p>
 
               {showExtendedContent && (
-                <p className="mt-3 border-t-2 border-ink/10 pt-3 text-xs font-bold leading-relaxed text-ink/60 sm:text-sm">
+                <p className="mt-3 border-t border-ink/10 pt-3 text-xs font-bold leading-relaxed text-ink/60 sm:text-sm">
                   {feature.details}
                 </p>
               )}

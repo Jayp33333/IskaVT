@@ -147,7 +147,7 @@ export function About() {
         className={`mx-auto rounded-[32px] p-8 md:p-12 ${
           section === "values" || section === "goals" || section === "hymn"
             ? "max-w-6xl bg-transparent"
-            : "max-w-4xl border-4 border-ink bg-white shadow-brutal-gold-lg"
+            : "max-w-4xl border border-ink bg-white shadow-brutal-gold-lg"
         }`}
       >
           {section !== "hymn" && (

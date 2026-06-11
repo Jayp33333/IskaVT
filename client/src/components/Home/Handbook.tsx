@@ -25,12 +25,12 @@ export function Handbook() {
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="overflow-hidden rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(255,215,0,1)] sm:rounded-[2rem] sm:border-4"
+        className="overflow-hidden rounded-2xl border border-black bg-white shadow-[8px_8px_0px_0px_rgba(255,215,0,1)] sm:rounded-[2rem]"
       >
         <div className="grid grid-cols-1 lg:grid-cols-5">
-          <div className="border-b-2 border-black p-5 sm:p-6 lg:col-span-2 lg:border-b-0 lg:border-r-4 lg:p-8">
+          <div className="border-b border-black p-5 sm:p-6 lg:col-span-2 lg:border-b-0 lg:border-r lg:p-8">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-black bg-maroon sm:h-12 sm:w-12 sm:rounded-2xl sm:border-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-black bg-maroon sm:h-12 sm:w-12 sm:rounded-2xl">
                 <BookOpen className="h-5 w-5 text-white sm:h-6 sm:w-6" />
               </div>
               <h2 className="text-xl font-black uppercase tracking-tighter text-black sm:text-2xl">
@@ -42,7 +42,7 @@ export function Handbook() {
               {handbookPageIntro.summary}
             </p>
 
-            <div className="space-y-3 rounded-xl border-2 border-black bg-cream p-4 sm:rounded-2xl sm:border-4 sm:p-5">
+            <div className="space-y-3 rounded-xl border border-black bg-cream p-4 sm:rounded-2xl sm:p-5">
               <p className="text-[10px] font-black uppercase tracking-widest text-black/50 sm:text-xs">
                 What you&apos;ll find inside
               </p>
@@ -64,7 +64,7 @@ export function Handbook() {
                 href={STUDENT_HANDBOOK_VIEW_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-black bg-gold px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:border-4 sm:px-5 sm:py-3 sm:text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-black bg-gold px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm"
               >
                 Open in Google Drive
                 <ExternalLink className="h-4 w-4" />
@@ -73,7 +73,7 @@ export function Handbook() {
                 href={STUDENT_HANDBOOK_DOWNLOAD_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-black bg-white px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(128,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:border-4 sm:px-5 sm:py-3 sm:text-sm"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-black bg-white px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(128,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm"
               >
                 Download PDF
                 <Download className="h-4 w-4" />

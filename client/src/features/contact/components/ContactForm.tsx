@@ -19,7 +19,7 @@ export function ContactForm({
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      className="w-full rounded-2xl border-4 border-black bg-white p-5 shadow-[10px_10px_0px_0px_rgba(255,215,0,1)] sm:rounded-3xl sm:p-6 md:p-8 lg:w-3/5 xl:w-2/3 lg:rounded-[36px] lg:shadow-[16px_16px_0px_0px_rgba(255,215,0,1)]"
+      className="w-full rounded-2xl border border-black bg-white p-5 shadow-[10px_10px_0px_0px_rgba(255,215,0,1)] sm:rounded-3xl sm:p-6 md:p-8 lg:w-3/5 xl:w-2/3 lg:rounded-[36px] lg:shadow-[16px_16px_0px_0px_rgba(255,215,0,1)]"
     >
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6">
         <div className="flex flex-col gap-2">
@@ -82,7 +82,7 @@ export function ContactForm({
         {status.type !== "idle" && (
           <div
             role="status"
-            className={`flex items-start gap-2 rounded-xl border-2 border-black p-3 font-bold sm:gap-3 sm:rounded-2xl sm:border-4 sm:p-4 md:col-span-2 ${
+            className={`flex items-start gap-2 rounded-xl border border-black p-3 font-bold sm:gap-3 sm:rounded-2xl sm:p-4 md:col-span-2 ${
               status.type === "success"
                 ? "bg-[#FFD700]/30 text-black"
                 : "bg-[#800000] text-white"
@@ -101,7 +101,7 @@ export function ContactForm({
           <button
             type="submit"
             disabled={submitting}
-            className="group inline-flex items-center gap-2 rounded-xl border-4 border-ink bg-maroon px-6 py-3 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon/90 disabled:cursor-not-allowed disabled:opacity-70 sm:gap-3 sm:px-8 sm:py-3.5 sm:text-base"
+            className="group inline-flex items-center gap-2 rounded-xl border border-ink bg-maroon px-6 py-3 text-sm font-black uppercase tracking-tighter text-white transition-colors hover:bg-maroon/90 disabled:cursor-not-allowed disabled:opacity-70 sm:gap-3 sm:px-8 sm:py-3.5 sm:text-base"
           >
             {submitting ? (
               <>

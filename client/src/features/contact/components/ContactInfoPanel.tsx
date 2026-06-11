@@ -22,9 +22,9 @@ export function ContactInfoPanel() {
           {CONTACT_INFO_ITEMS.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-3 rounded-xl border-2 border-black bg-white p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:gap-4 sm:rounded-2xl sm:border-4 sm:p-4"
+              className="flex items-center gap-3 rounded-xl border border-black bg-white p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:gap-4 sm:rounded-2xl sm:p-4"
             >
-              <div className="rounded-lg border-2 border-black bg-[#FFD700] p-1.5 sm:p-2">
+              <div className="rounded-lg border border-black bg-[#FFD700] p-1.5 sm:p-2">
                 <item.icon className="h-4 w-4 text-black sm:h-5 sm:w-5" />
               </div>
               <div>
@@ -40,10 +40,10 @@ export function ContactInfoPanel() {
 
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className="relative mt-8 rounded-2xl border-2 border-black bg-[#800000] p-4 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:mt-10 sm:rounded-[28px] sm:border-4 sm:p-5"
+        className="relative mt-8 rounded-2xl border border-black bg-[#800000] p-4 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:mt-10 sm:rounded-[28px] sm:p-5"
       >
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white sm:h-11 sm:w-11">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white sm:h-11 sm:w-11">
             <Sparkles className="h-5 w-5 text-[#FFD700] sm:h-6 sm:w-6" />
           </div>
           <p className="text-sm font-black italic text-white sm:text-base">

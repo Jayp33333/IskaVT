@@ -373,7 +373,7 @@ export const CONTACT_FAQ_SECTIONS: ContactFaqSection[] = [
       {
         question: "How do I access the 3D campus tour?",
         answer:
-          'Click "Launch 3D Tour" in the navigation bar. No account is required for the public preview.',
+          'Click "Visit App" in the navigation bar. No account is required for the public preview.',
       },
       {
         question: "Who should I contact for enrollment questions?",
@@ -481,4 +481,4 @@ export const CONTACT_FORM_IDS = {
 } as const;
 
 export const CONTACT_INPUT_CLASS =
-  "bg-muted border-2 border-ink p-3 text-ink sm:border-4 sm:p-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold focus:bg-gold/10 focus:outline-none transition-colors placeholder:text-ink/30 disabled:opacity-60";
+  "bg-muted border border-ink p-3 text-ink sm:p-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold focus:bg-gold/10 focus:outline-none transition-colors placeholder:text-ink/30 disabled:opacity-60";

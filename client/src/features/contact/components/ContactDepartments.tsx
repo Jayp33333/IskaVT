@@ -22,7 +22,7 @@ export function ContactDepartments() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
-            className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:border-4 sm:p-6"
+            className="rounded-2xl border border-black bg-white p-5 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] sm:rounded-3xl sm:p-6"
           >
             <h3 className="mb-2 text-lg font-black uppercase tracking-tighter text-[#800000] sm:text-xl">
               {dept.name}

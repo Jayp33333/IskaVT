@@ -43,7 +43,7 @@ function SpeechBubble() {
         alt="Polytechnic University of the Philippines"
         className="absolute left-1/2 top-0 z-20 h-10 w-10 -translate-x-1/2 object-contain xl:h-11 xl:w-11"
       />
-      <div className="rounded-2xl border-[3px] border-ink bg-white px-5 pb-2.5 pt-6 text-center shadow-brutal-sm xl:px-5 xl:pb-3 xl:pt-7">
+      <div className="rounded-2xl border border-ink bg-white px-5 pb-2.5 pt-6 text-center shadow-brutal-sm xl:px-5 xl:pb-3 xl:pt-7">
         <p className="text-[11px] font-black uppercase leading-none tracking-[0.12em] text-ink xl:text-xs">
           Meet{" "}
           <span className="text-maroon italic tracking-[0.06em]">Isko</span>

@@ -21,7 +21,7 @@ export function HomeAudience() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.05 }}
             whileHover={{ y: -2, x: -2 }}
-            className="inline-flex rounded-full border-2 border-ink bg-white px-5 py-2.5 text-sm font-black uppercase tracking-tighter text-ink shadow-brutal-sm transition-shadow hover:shadow-brutal-md sm:border-4 sm:px-6 sm:py-3 sm:text-base"
+            className="inline-flex rounded-full border border-ink bg-white px-5 py-2.5 text-sm font-black uppercase tracking-tighter text-ink shadow-brutal-sm transition-shadow hover:shadow-brutal-md sm:px-6 sm:py-3 sm:text-base"
           >
             {card.title}
           </motion.span>

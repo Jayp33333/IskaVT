@@ -12,12 +12,12 @@ export function ContactLocation() {
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="mt-12 overflow-hidden rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(255,215,0,1)] sm:mt-16 sm:rounded-[2rem] sm:border-4"
+      className="mt-12 overflow-hidden rounded-2xl border border-black bg-white shadow-[8px_8px_0px_0px_rgba(255,215,0,1)] sm:mt-16 sm:rounded-[2rem]"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="border-b-2 border-black p-5 sm:p-6 lg:border-b-0 lg:border-r-4 lg:p-8">
+        <div className="border-b border-black p-5 sm:p-6 lg:border-b-0 lg:border-r lg:p-8">
           <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-black bg-[#800000] sm:h-12 sm:w-12 sm:rounded-2xl sm:border-4">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-black bg-[#800000] sm:h-12 sm:w-12 sm:rounded-2xl">
               <MapPin className="h-5 w-5 text-white sm:h-6 sm:w-6" />
             </div>
             <h2 className="text-xl font-black uppercase tracking-tighter text-black sm:text-2xl">
@@ -32,7 +32,7 @@ export function ContactLocation() {
             since 1979.
           </p>
 
-          <div className="space-y-3 rounded-xl border-2 border-black bg-[#FFFDF5] p-4 sm:rounded-2xl sm:border-4 sm:p-5">
+          <div className="space-y-3 rounded-xl border border-black bg-[#FFFDF5] p-4 sm:rounded-2xl sm:p-5">
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-black/50 sm:text-xs">
                 Full Address
@@ -64,7 +64,7 @@ export function ContactLocation() {
             href={CAMPUS_MAP_LINK_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl border-2 border-black bg-[#FFD700] px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:border-4 sm:px-5 sm:py-3 sm:text-sm"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl border border-black bg-[#FFD700] px-4 py-2.5 text-xs font-black uppercase tracking-tighter text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none sm:rounded-2xl sm:px-5 sm:py-3 sm:text-sm"
           >
             Open in Google Maps
             <ExternalLink className="h-4 w-4" />

@@ -17,7 +17,7 @@ export function HomeHowItWorks() {
 
       <div className="relative">
         <div
-          className="pointer-events-none absolute left-[8%] right-[8%] top-[3.75rem] hidden border-t-2 border-dashed border-ink/25 sm:top-[4.25rem] lg:block"
+          className="pointer-events-none absolute left-[8%] right-[8%] top-[3.75rem] hidden border-t border-dashed border-ink/25 sm:top-[4.25rem] lg:block"
           aria-hidden
         />
 
@@ -36,10 +36,10 @@ export function HomeHowItWorks() {
                 className="relative z-10 flex flex-col items-center text-center"
               >
                 <div className="relative mb-5 sm:mb-6">
-                  <div className="flex h-[7.5rem] w-[7.5rem] items-center justify-center rounded-2xl border-2 border-ink bg-white shadow-brutal-md sm:h-32 sm:w-32 sm:rounded-3xl sm:border-4">
+                  <div className="flex h-[7.5rem] w-[7.5rem] items-center justify-center rounded-2xl border border-ink bg-white shadow-brutal-md sm:h-32 sm:w-32 sm:rounded-3xl">
                     <Icon className="h-10 w-10 text-maroon sm:h-11 sm:w-11" />
                   </div>
-                  <span className="absolute -right-2 -top-2 rounded-lg border-2 border-ink bg-white px-2.5 py-1 text-xs font-black text-ink shadow-brutal-sm sm:text-sm">
+                  <span className="absolute -right-2 -top-2 rounded-lg border border-ink bg-white px-2.5 py-1 text-xs font-black text-ink shadow-brutal-sm sm:text-sm">
                     {stepLabel}
                   </span>
                 </div>

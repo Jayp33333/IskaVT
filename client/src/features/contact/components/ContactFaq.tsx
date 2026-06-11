@@ -23,10 +23,10 @@ function FaqSteps({ steps }: { steps: ContactFaqStep[] }) {
       {steps.map((step, stepIndex) => (
         <li
           key={step.title}
-          className="overflow-hidden rounded-xl border-2 border-ink bg-white sm:rounded-2xl"
+          className="overflow-hidden rounded-xl border border-ink bg-white sm:rounded-2xl"
         >
-          <div className="flex gap-3 border-b-2 border-ink/10 bg-cream px-4 py-3 sm:px-5">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 border-ink bg-maroon text-xs font-black text-white sm:h-8 sm:w-8 sm:text-sm">
+          <div className="flex gap-3 border-b border-ink/10 bg-cream px-4 py-3 sm:px-5">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-ink bg-maroon text-xs font-black text-white sm:h-8 sm:w-8 sm:text-sm">
               {stepIndex + 1}
             </span>
             <div className="min-w-0 pt-0.5">
@@ -57,14 +57,14 @@ function FaqSteps({ steps }: { steps: ContactFaqStep[] }) {
               <img
                 src={step.image}
                 alt={step.imageAlt ?? `Step ${stepIndex + 1}`}
-                className="w-full rounded-lg border-2 border-ink object-contain sm:rounded-xl"
+                className="w-full rounded-lg border border-ink object-contain sm:rounded-xl"
                 loading="lazy"
               />
             </div>
           )}
 
           {step.requirements && step.requirements.length > 0 && (
-            <div className="border-t-2 border-ink/10 bg-white px-4 py-4 sm:px-5">
+            <div className="border-t border-ink/10 bg-white px-4 py-4 sm:px-5">
               <p className="mb-3 text-xs font-black uppercase tracking-widest text-maroon sm:text-sm">
                 Requirements
               </p>
@@ -94,7 +94,7 @@ function FaqSteps({ steps }: { steps: ContactFaqStep[] }) {
                   key={`${img.src}-${imgIndex}`}
                   src={img.src}
                   alt={img.alt ?? `Step ${stepIndex + 1} — image ${imgIndex + 1}`}
-                  className="w-full rounded-lg border-2 border-ink object-contain sm:rounded-xl"
+                  className="w-full rounded-lg border border-ink object-contain sm:rounded-xl"
                   loading="lazy"
                 />
               ))}
@@ -167,7 +167,7 @@ function FaqAccordion({
     >
       <details
         ref={detailsRef}
-        className={`group rounded-2xl border-2 border-ink bg-white shadow-brutal-md open:shadow-brutal-maroon sm:rounded-3xl sm:border-4 ${
+        className={`group rounded-2xl border border-ink bg-white shadow-brutal-md open:shadow-brutal-maroon sm:rounded-3xl ${
           nested ? "border-ink/15 bg-cream shadow-none open:shadow-none" : ""
         }`}
       >
@@ -198,7 +198,7 @@ function FaqAccordion({
         {hasSteps && <FaqSteps steps={item.steps!} />}
 
         {hasRequirements && (
-          <div className="mt-4 rounded-xl border-2 border-ink/15 bg-cream px-4 py-4 sm:px-5 sm:py-5">
+          <div className="mt-4 rounded-xl border border-ink/15 bg-cream px-4 py-4 sm:px-5 sm:py-5">
             {"requirementsHeading" in item && item.requirementsHeading && (
               <p className="mb-4 text-xs font-black uppercase tracking-widest text-maroon sm:text-sm">
                 {item.requirementsHeading}
@@ -210,7 +210,7 @@ function FaqAccordion({
                   key={requirement}
                   className="flex items-start gap-3 text-xs font-bold leading-relaxed text-ink/75 sm:text-sm"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-maroon text-[10px] font-black text-white sm:h-7 sm:w-7 sm:text-xs">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-ink bg-maroon text-[10px] font-black text-white sm:h-7 sm:w-7 sm:text-xs">
                     {reqIndex + 1}
                   </span>
                   <span className="pt-0.5">{requirement}</span>

@@ -82,7 +82,7 @@ function DeveloperProfileCard({
       whileHover={{ y: -4 }}
       className="group mx-auto w-full max-w-[17rem] sm:max-w-none"
     >
-      <div className="relative aspect-square overflow-hidden rounded-2xl border-2 border-ink shadow-brutal-md transition-shadow group-hover:shadow-brutal-lg sm:rounded-3xl sm:border-4">
+      <div className="relative aspect-square overflow-hidden rounded-2xl border border-ink shadow-brutal-md transition-shadow group-hover:shadow-brutal-lg sm:rounded-3xl">
         <DeveloperPhoto member={member} index={index} />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />

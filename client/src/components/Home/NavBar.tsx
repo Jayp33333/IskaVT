@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { HiChevronDown } from "react-icons/hi2";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { aboutNavLinks } from "./data/pupLopezContent";
 import { resourceNavLinks } from "./data/resourcesContent";
+
+const navLinkBase =
+  "relative shrink-0 whitespace-nowrap px-2 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors after:absolute after:inset-x-1 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-maroon after:transition-transform after:duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/40 focus-visible:ring-offset-1 focus-visible:ring-offset-cream sm:text-xs";
+
+const navLinkActive = "text-maroon after:scale-x-100";
+const navLinkInactive =
+  "text-ink/75 hover:text-maroon hover:after:scale-x-100";
+
+const btnPrimary =
+  "inline-flex items-center justify-center gap-1.5 rounded-md border border-ink bg-maroon px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-maroon/90 sm:text-xs";
 
 type NavDropdownProps = {
   label: string;
@@ -40,36 +51,37 @@ function NavDropdown({
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="true"
-        className={`flex items-center gap-0.5 rounded-md px-1 py-1 font-black uppercase tracking-tighter transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream lg:text-xs xl:text-sm ${
-          active ? "text-maroon" : "text-ink hover:text-maroon"
+        className={`flex items-center gap-0.5 ${navLinkBase} ${
+          active || open ? navLinkActive : navLinkInactive
         }`}
       >
         <span className="relative whitespace-nowrap">{label}</span>
         <HiChevronDown
-          className={`h-3.5 w-3.5 shrink-0 transition-transform xl:h-4 xl:w-4 ${open ? "rotate-180" : ""}`}
+          className={`h-3 w-3 shrink-0 opacity-70 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       <AnimatePresence>
         {open && (
           <div
-            className={`absolute top-full z-50 pt-2 ${align === "right" ? "right-0" : "left-0"}`}
+            className={`absolute top-full z-50 pt-1.5 ${align === "right" ? "right-0" : "left-0"}`}
           >
             <motion.div
-              initial={{ opacity: 0, y: -8 }}
+              initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="scheme-light max-h-[min(70vh,24rem)] min-w-[12.5rem] overflow-y-auto rounded-xl border-4 border-ink bg-white text-ink shadow-brutal-md"
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
+              className="scheme-light max-h-[min(70vh,20rem)] min-w-[11rem] overflow-y-auto rounded-lg border border-ink bg-white py-1 text-ink shadow-brutal-sm"
             >
               {links.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={onClose}
-                  className={`block border-b-2 border-ink/10 px-4 py-2.5 font-black uppercase tracking-tight transition-colors last:border-b-0 lg:text-[10px] xl:px-5 xl:py-3 xl:text-xs ${
+                  className={`block px-3 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors sm:text-xs ${
                     pathname === link.path
                       ? "bg-maroon text-white"
-                      : "text-ink hover:bg-gold"
+                      : "text-ink/80 hover:bg-gold/40 hover:text-ink"
                   }`}
                 >
                   {link.name}
@@ -105,8 +117,11 @@ export const NavBar = () => {
   ];
 
   const navLinkClass = (active: boolean) =>
-    `relative shrink-0 whitespace-nowrap rounded-md px-1 py-1 font-black uppercase tracking-tighter transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon focus-visible:ring-offset-2 focus-visible:ring-offset-cream lg:text-xs xl:text-sm ${
-      active ? "text-maroon" : "text-ink hover:text-maroon"
+    `${navLinkBase} ${active ? navLinkActive : navLinkInactive}`;
+
+  const mobileNavLinkClass = (active: boolean) =>
+    `flex min-h-9 items-center rounded-md px-3 text-sm font-bold uppercase tracking-wide transition-colors ${
+      active ? "text-maroon" : "text-ink/80 hover:text-maroon"
     }`;
 
   const closeMobile = () => {
@@ -137,12 +152,12 @@ export const NavBar = () => {
   }, [isOpen]);
 
   return (
-    <nav className="scheme-light fixed top-0 z-100 w-full border-b-2 border-ink bg-cream text-ink sm:border-b-4">
-      <div className="mx-auto max-w-7xl px-3 sm:px-5 lg:px-6 xl:px-8">
-        <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-3 lg:h-[4.5rem] xl:h-20">
+    <nav className="scheme-light fixed top-0 z-50 w-full border-b border-ink bg-cream/95 text-ink backdrop-blur-sm">
+      <div className="mx-auto max-w-7xl px-3 sm:px-5 lg:px-6">
+        <div className="flex h-12 items-center justify-between gap-3 sm:h-14">
           <button
             type="button"
-            className="group shrink-0 cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon"
+            className="group shrink-0 cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/40"
             onClick={() => navigate("/home")}
             aria-label="Go to home"
           >
@@ -150,13 +165,13 @@ export const NavBar = () => {
               <img
                 src={logo}
                 alt="ISKA Virtual Tour"
-                className="relative z-10 h-7 w-auto sm:h-8 lg:h-9 xl:h-10"
+                className="relative z-10 h-6 w-auto sm:h-7 lg:h-8"
               />
-              <div className="absolute -inset-2 z-0 scale-0 rounded-full bg-gold transition-transform duration-300 group-hover:scale-100" />
+              <div className="absolute -inset-1.5 z-0 scale-0 rounded-full bg-gold/60 transition-transform duration-300 group-hover:scale-100" />
             </div>
           </button>
 
-          <div className="hidden min-w-0 flex-1 items-center justify-center gap-3 lg:flex xl:gap-5 2xl:gap-8">
+          <div className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex xl:gap-1">
             {primaryNavLinks.map((link) => (
               <Link
                 key={link.name}
@@ -207,100 +222,84 @@ export const NavBar = () => {
             </Link>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <Link
-              to="/admin/login"
-              className={`hidden rounded-lg border-2 border-ink px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors sm:rounded-xl sm:border-4 sm:px-4 sm:py-2.5 lg:inline-flex xl:text-xs ${
-                pathname.startsWith("/admin")
-                  ? "bg-maroon text-white"
-                  : "bg-white text-ink hover:bg-muted"
-              }`}
-            >
-              Login
-            </Link>
-
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => navigate("/experience")}
-              className="hidden items-center gap-1.5 rounded-lg border-2 border-ink bg-maroon px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 sm:rounded-xl sm:border-4 sm:px-4 sm:py-2.5 lg:inline-flex xl:gap-2 xl:px-6 xl:py-3 xl:text-xs"
+              className={`${btnPrimary} hidden lg:inline-flex`}
             >
-              <span className="lg:inline xl:hidden">3D Tour</span>
-              <span className="hidden xl:inline">Launch 3D Tour</span>
+              Visit App
             </button>
 
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="rounded-lg border-2 border-ink bg-gold p-2 transition-colors hover:bg-gold/90 active:scale-95 sm:rounded-xl sm:border-4 lg:hidden"
+              className="inline-flex items-center justify-center rounded-md p-2 text-ink transition-colors hover:text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/40 active:scale-95 lg:hidden"
               aria-label="Open menu"
               aria-expanded={isOpen}
             >
-              <HiOutlineMenu className="text-xl text-ink sm:text-2xl" />
+              <HiOutlineMenu className="h-5 w-5" />
             </button>
           </div>
         </div>
       </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={closeMobile}
-              className="fixed inset-0 z-110 bg-black/60 backdrop-blur-sm lg:hidden"
-            />
+      {createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <motion.div
+                key="mobile-menu-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={closeMobile}
+                aria-hidden
+                className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-[2px] lg:hidden"
+              />
 
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="scheme-light fixed inset-y-0 right-0 z-120 flex h-[100dvh] w-[min(92vw,20rem)] flex-col border-l-4 border-ink bg-cream text-ink pb-[env(safe-area-inset-bottom)] sm:w-[min(85vw,22rem)] lg:hidden"
-            >
-              <div className="flex shrink-0 items-center justify-between border-b-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
-                <img src={logo} alt="ISKA Virtual Tour" className="h-7 sm:h-8" />
+              <motion.div
+                key="mobile-menu-drawer"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 280 }}
+                className="scheme-light fixed inset-y-0 right-0 z-[210] flex h-[100dvh] w-[min(88vw,18rem)] flex-col bg-white text-ink pb-[env(safe-area-inset-bottom)] lg:hidden"
+              >
+              <div className="flex shrink-0 items-center justify-between px-4 py-3">
+                <img src={logo} alt="ISKA Virtual Tour" className="h-6" />
                 <button
                   type="button"
                   onClick={closeMobile}
-                  className="rounded-lg border-2 border-ink bg-white p-2 text-ink transition-colors hover:bg-muted sm:rounded-xl sm:border-4"
+                  className="rounded-md p-2 text-ink transition-colors hover:text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-maroon/40"
                   aria-label="Close menu"
                 >
-                  <HiOutlineX className="text-lg text-ink sm:text-xl" />
+                  <HiOutlineX className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 sm:py-5">
-                <div className="flex flex-col gap-1 sm:gap-2">
+              <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain px-3 py-3">
+                <div className="flex flex-col gap-0.5">
                   {primaryNavLinks.map((link) => (
                     <Link
                       key={link.name}
                       to={link.href}
                       onClick={closeMobile}
-                      className={`flex min-h-11 items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
-                        link.active
-                          ? "bg-maroon/10 text-maroon"
-                          : "text-ink hover:bg-muted hover:text-maroon"
-                      }`}
+                      className={mobileNavLinkClass(link.active)}
                     >
-{link.name}
+                      {link.name}
                     </Link>
                   ))}
 
-                  <div className="pt-1">
+                  <div className="pt-0.5">
                     <button
                       type="button"
                       onClick={() => setMobileAboutOpen((open) => !open)}
-                      className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
-                        isAboutPupSection
-                          ? "bg-maroon/10 text-maroon"
-                          : "text-ink hover:bg-muted hover:text-maroon"
-                      }`}
+                      className={`${mobileNavLinkClass(isAboutPupSection)} w-full`}
                     >
-About PUPLQ
+                      About PUPLQ
                       <HiChevronDown
-                        className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`}
+                        className={`ml-auto h-4 w-4 shrink-0 opacity-70 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`}
                       />
                     </button>
 
@@ -310,18 +309,18 @@ About PUPLQ
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden pl-5 sm:pl-6"
+                          className="overflow-hidden pl-3"
                         >
-                          <div className="mt-1 space-y-1 border-l-2 border-ink/15 py-1 pl-4">
+                          <div className="mt-0.5 space-y-0.5 border-l border-ink/15 py-1 pl-3">
                             {aboutNavLinks.map((link) => (
                               <Link
                                 key={link.path}
                                 to={link.path}
                                 onClick={closeMobile}
-                                className={`flex min-h-10 items-center text-sm font-black uppercase tracking-tight sm:text-base ${
+                                className={`flex min-h-8 items-center text-xs font-semibold uppercase tracking-wide ${
                                   pathname === link.path
                                     ? "text-maroon"
-                                    : "text-ink/70 hover:text-maroon"
+                                    : "text-ink/65 hover:text-maroon"
                                 }`}
                               >
                                 {link.name}
@@ -337,15 +336,11 @@ About PUPLQ
                     <button
                       type="button"
                       onClick={() => setMobileResourcesOpen((open) => !open)}
-                      className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
-                        isResourcesSection
-                          ? "bg-maroon/10 text-maroon"
-                          : "text-ink hover:bg-muted hover:text-maroon"
-                      }`}
+                      className={`${mobileNavLinkClass(isResourcesSection)} w-full`}
                     >
-Resources
+                      Resources
                       <HiChevronDown
-                        className={`ml-auto h-5 w-5 shrink-0 transition-transform ${mobileResourcesOpen ? "rotate-180" : ""}`}
+                        className={`ml-auto h-4 w-4 shrink-0 opacity-70 transition-transform ${mobileResourcesOpen ? "rotate-180" : ""}`}
                       />
                     </button>
 
@@ -355,18 +350,18 @@ Resources
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden pl-5 sm:pl-6"
+                          className="overflow-hidden pl-3"
                         >
-                          <div className="mt-1 space-y-1 border-l-2 border-ink/15 py-1 pl-4">
+                          <div className="mt-0.5 space-y-0.5 border-l border-ink/15 py-1 pl-3">
                             {resourceNavLinks.map((link) => (
                               <Link
                                 key={link.path}
                                 to={link.path}
                                 onClick={closeMobile}
-                                className={`flex min-h-10 items-center text-sm font-black uppercase tracking-tight sm:text-base ${
+                                className={`flex min-h-8 items-center text-xs font-semibold uppercase tracking-wide ${
                                   pathname === link.path
                                     ? "text-maroon"
-                                    : "text-ink/70 hover:text-maroon"
+                                    : "text-ink/65 hover:text-maroon"
                                 }`}
                               >
                                 {link.name}
@@ -381,53 +376,37 @@ Resources
                   <Link
                     to="/contact"
                     onClick={closeMobile}
-                    className={`flex min-h-11 items-center gap-3 rounded-lg px-2 text-lg font-black uppercase tracking-tighter transition-colors sm:min-h-12 sm:text-xl ${
-                      isContactPage
-                        ? "bg-maroon/10 text-maroon"
-                        : "text-ink hover:bg-muted hover:text-maroon"
-                    }`}
+                    className={mobileNavLinkClass(isContactPage)}
                   >
-Contact
+                    Contact
                   </Link>
                 </div>
 
-                <div className="mt-5 flex flex-col gap-3 sm:mt-6">
-                  <Link
-                    to="/admin/login"
-                    onClick={closeMobile}
-                    className={`w-full rounded-xl border-4 border-ink py-3 text-center text-xs font-black uppercase tracking-widest transition-colors active:scale-[0.98] sm:py-3.5 sm:text-sm ${
-                      pathname.startsWith("/admin")
-                        ? "bg-maroon text-white"
-                        : "bg-white text-ink hover:bg-muted"
-                    }`}
-                  >
-                    Admin Login
-                  </Link>
-
+                <div className="mt-4 pt-2">
                   <button
                     type="button"
                     onClick={() => {
                       closeMobile();
                       navigate("/experience");
                     }}
-                    className="w-full rounded-xl border-4 border-ink bg-maroon py-3 text-center text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-maroon/90 active:scale-[0.98] sm:py-3.5 sm:text-sm"
+                    className={`${btnPrimary} w-full`}
                   >
-                    Launch 3D Tour
+                    Visit App
                   </button>
                 </div>
               </div>
 
-              <div className="shrink-0 border-t-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
-                <div className="rounded-xl border-2 border-ink bg-gold px-3 py-2.5 sm:rounded-2xl sm:border-4 sm:px-4 sm:py-3">
-                  <p className="text-center text-[10px] font-black uppercase tracking-widest text-ink sm:text-xs">
-                    PUP Lopez Campus v2.0
-                  </p>
-                </div>
+              <div className="shrink-0 px-3 py-3">
+                <p className="text-center text-[10px] font-bold uppercase tracking-widest text-ink/50">
+                  PUP Lopez Campus v2.0
+                </p>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </nav>
   );
 };
