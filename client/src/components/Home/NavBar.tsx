@@ -59,7 +59,7 @@ function NavDropdown({
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="max-h-[min(70vh,24rem)] min-w-[12.5rem] overflow-y-auto rounded-xl border-4 border-ink bg-white shadow-brutal-md"
+              className="scheme-light max-h-[min(70vh,24rem)] min-w-[12.5rem] overflow-y-auto rounded-xl border-4 border-ink bg-white text-ink shadow-brutal-md"
             >
               {links.map((link) => (
                 <Link
@@ -137,7 +137,7 @@ export const NavBar = () => {
   }, [isOpen]);
 
   return (
-    <nav className="fixed top-0 z-100 w-full border-b-2 border-ink bg-cream sm:border-b-4">
+    <nav className="scheme-light fixed top-0 z-100 w-full border-b-2 border-ink bg-cream text-ink sm:border-b-4">
       <div className="mx-auto max-w-7xl px-3 sm:px-5 lg:px-6 xl:px-8">
         <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-3 lg:h-[4.5rem] xl:h-20">
           <button
@@ -257,17 +257,17 @@ export const NavBar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 right-0 z-120 flex h-[100dvh] w-[min(92vw,20rem)] flex-col border-l-4 border-ink bg-cream pb-[env(safe-area-inset-bottom)] sm:w-[min(85vw,22rem)] lg:hidden"
+              className="scheme-light fixed inset-y-0 right-0 z-120 flex h-[100dvh] w-[min(92vw,20rem)] flex-col border-l-4 border-ink bg-cream text-ink pb-[env(safe-area-inset-bottom)] sm:w-[min(85vw,22rem)] lg:hidden"
             >
               <div className="flex shrink-0 items-center justify-between border-b-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
                 <img src={logo} alt="ISKA Virtual Tour" className="h-7 sm:h-8" />
                 <button
                   type="button"
                   onClick={closeMobile}
-                  className="rounded-lg border-2 border-ink bg-white p-2 transition-colors hover:bg-muted sm:rounded-xl sm:border-4"
+                  className="rounded-lg border-2 border-ink bg-white p-2 text-ink transition-colors hover:bg-muted sm:rounded-xl sm:border-4"
                   aria-label="Close menu"
                 >
-                  <HiOutlineX className="text-lg sm:text-xl" />
+                  <HiOutlineX className="text-lg text-ink sm:text-xl" />
                 </button>
               </div>
 
@@ -419,7 +419,7 @@ Contact
 
               <div className="shrink-0 border-t-2 border-ink/10 px-4 py-3 sm:px-5 sm:py-4">
                 <div className="rounded-xl border-2 border-ink bg-gold px-3 py-2.5 sm:rounded-2xl sm:border-4 sm:px-4 sm:py-3">
-                  <p className="text-center text-[10px] font-black uppercase tracking-widest sm:text-xs">
+                  <p className="text-center text-[10px] font-black uppercase tracking-widest text-ink sm:text-xs">
                     PUP Lopez Campus v2.0
                   </p>
                 </div>

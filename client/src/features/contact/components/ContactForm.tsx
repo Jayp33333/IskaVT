@@ -24,7 +24,7 @@ export function ContactForm({
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6">
         <div className="flex flex-col gap-2">
           <label
-            className="ml-1 text-xs font-black uppercase tracking-widest sm:text-sm"
+            className="ml-1 text-xs font-black uppercase tracking-widest text-ink sm:text-sm"
             htmlFor={CONTACT_FORM_IDS.name}
           >
             Your Name
@@ -43,7 +43,7 @@ export function ContactForm({
 
         <div className="flex flex-col gap-2">
           <label
-            className="ml-1 text-xs font-black uppercase tracking-widest sm:text-sm"
+            className="ml-1 text-xs font-black uppercase tracking-widest text-ink sm:text-sm"
             htmlFor={CONTACT_FORM_IDS.email}
           >
             Email Address
@@ -62,7 +62,7 @@ export function ContactForm({
 
         <div className="flex flex-col gap-2 md:col-span-2">
           <label
-            className="ml-1 text-xs font-black uppercase tracking-widest sm:text-sm"
+            className="ml-1 text-xs font-black uppercase tracking-widest text-ink sm:text-sm"
             htmlFor={CONTACT_FORM_IDS.message}
           >
             Message

@@ -481,4 +481,4 @@ export const CONTACT_FORM_IDS = {
 } as const;
 
 export const CONTACT_INPUT_CLASS =
-  "bg-[#F5F5F5] border-2 border-black p-3 sm:border-4 sm:p-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold focus:bg-[#FFD700]/10 focus:outline-none transition-colors placeholder:opacity-30 disabled:opacity-60";
+  "bg-muted border-2 border-ink p-3 text-ink sm:border-4 sm:p-3.5 rounded-xl sm:rounded-2xl text-sm sm:text-base font-bold focus:bg-gold/10 focus:outline-none transition-colors placeholder:text-ink/30 disabled:opacity-60";

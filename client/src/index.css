@@ -19,6 +19,8 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
+  background-color: var(--color-cream);
 }
 
 body {
@@ -30,6 +32,39 @@ body {
   -webkit-font-smoothing: antialiased;
   background-color: var(--color-cream);
   color: var(--color-ink);
+}
+
+#root {
+  min-height: 100%;
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+}
+
+/* Marketing pages: home, features, about, resources, contact, programs */
+body.marketing-site,
+body.marketing-site #root {
+  color-scheme: light;
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+}
+
+/* Keep form controls on-brand when the OS/browser prefers dark */
+input,
+textarea,
+select,
+button {
+  color-scheme: light;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-muted) inset !important;
+  -webkit-text-fill-color: var(--color-ink) !important;
+  caret-color: var(--color-ink);
 }
 
 ::selection {
