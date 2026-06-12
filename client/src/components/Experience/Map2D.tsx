@@ -5,7 +5,11 @@ import { FiPlus, FiMinus, FiMaximize2, FiCompass } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Vector3 } from "three";
 import GameState from "../../hooks/useWorld";
-import { FIXED_LOCATION_PINS, type FixedLocationPin } from "../../sampleData";
+import {
+  FIXED_LOCATION_PINS,
+  TOUR_MAP_FEATURED_PIN_ID,
+  type FixedLocationPin,
+} from "../../sampleData";
 import { FixedLocationModal } from "./ui/FixedLocationModal";
 import { EnterTransitionOverlay } from "./ui/EnterTransitionOverlay";
 import { runTeleportTransition } from "../../utils/teleportTransition";
@@ -423,6 +427,7 @@ export default function Map2D() {
       {/* Mini circular campus map preview (top-right corner) */}
       <button
         type="button"
+        data-tour="minimap"
         onClick={() => setMap2DOpen(true)}
         title="Open campus map"
         aria-label="Open campus map"
@@ -530,6 +535,7 @@ export default function Map2D() {
             onClick={() => setMap2DOpen(false)}
           >
             <motion.div
+              data-tour="map-expanded"
               className="
                 relative
                 bg-cream rounded-[2rem] [@media(max-height:500px)]:rounded-2xl
@@ -574,6 +580,7 @@ export default function Map2D() {
               {/* Map body */}
               <div
                 ref={mapViewportRef}
+                data-tour="map-drop-area"
                 className="relative p-3 sm:p-4 [@media(max-height:500px)]:p-2 [@media(orientation:landscape)_and_(max-height:600px)]:px-3 [@media(orientation:landscape)_and_(max-height:600px)]:py-2 flex-1 min-h-0 flex items-center justify-center bg-muted overflow-hidden touch-none select-none"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
@@ -660,6 +667,11 @@ export default function Map2D() {
                     <button
                       key={`fixed-${pin.id}`}
                       type="button"
+                      data-tour={
+                        pin.id === TOUR_MAP_FEATURED_PIN_ID
+                          ? "map-fixed-pin"
+                          : undefined
+                      }
                       onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -734,6 +746,7 @@ export default function Map2D() {
                 >
                   <button
                     type="button"
+                    data-tour="map-zoom-in"
                     onClick={zoomIn}
                     disabled={zoom >= MAP_MAX_ZOOM}
                     aria-label="Zoom in"
@@ -744,6 +757,7 @@ export default function Map2D() {
                   </button>
                   <button
                     type="button"
+                    data-tour="map-zoom-out"
                     onClick={zoomOut}
                     disabled={zoom <= MAP_MIN_ZOOM}
                     aria-label="Zoom out"
@@ -754,6 +768,7 @@ export default function Map2D() {
                   </button>
                   <button
                     type="button"
+                    data-tour="map-reset-view"
                     onClick={resetView}
                     aria-label="Reset view"
                     title="Reset view"
@@ -798,9 +813,13 @@ export default function Map2D() {
                   )}
                 </p>
 
-                <div className="flex items-center gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 shrink-0">
+                <div
+                  data-tour="map-pin-actions"
+                  className="flex items-center gap-2 [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 shrink-0"
+                >
                   {pinPosition && (
                     <button
+                      data-tour="map-remove-pin"
                       onClick={handleUnpin}
                       className="py-2 px-3 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-white text-ink border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
                       type="button"
@@ -810,6 +829,7 @@ export default function Map2D() {
                   )}
 
                   <button
+                    data-tour="map-teleport"
                     onClick={handleTeleport}
                     disabled={!pinPosition || teleporting}
                     className={`py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide flex items-center gap-1.5 ${

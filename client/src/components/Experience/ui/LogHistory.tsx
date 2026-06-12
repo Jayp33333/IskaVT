@@ -320,6 +320,7 @@ export const LogHistory = () => {
   return (
     <>
       <button
+        data-tour="logbook"
         onClick={() => setIsOpen(true)}
         className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl"
         title="My visit history"

@@ -79,6 +79,7 @@ export const DestinationPicker = () => {
   return (
     <>
       <button
+        data-tour="destinations"
         onClick={() => {
           setOpen(true);
           useWorld.getState().setShowDestinationPicker(true);

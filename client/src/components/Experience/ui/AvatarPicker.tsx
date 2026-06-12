@@ -69,6 +69,7 @@ export const AvatarPicker = () => {
     <div className="relative">
       {/* Current Avatar Button */}
       <button
+        data-tour="avatar"
         className="group relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
         onClick={() => setOpenMenu(!openMenu)}
         title="Choose avatar"

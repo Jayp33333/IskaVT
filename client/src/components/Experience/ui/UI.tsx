@@ -14,6 +14,7 @@ import { CampusNodeAddTool } from "./CampusNodeAddTool";
 
 import { LogHistory } from "./LogHistory";
 import { Feedback } from "./Feedback";
+import { GuideButton } from "./GuideButton";
 import { ExperienceSettings } from "./ExperienceSettings";
 import Map2D from "../Map2D"; 
 import { NPCDialog } from "./NPCDialog";
@@ -23,16 +24,10 @@ import { useMobileControlLayout } from "../../../hooks/useMobileControlLayout";
 import { useIsMobileDevice } from "../../../hooks/useIsMobileDevice";
 
 type UIProps = {
-  tourGuideDialogOpen?: boolean;
   experienceStarted?: boolean;
-  tourStarted?: boolean;
 };
 
-export const UI = ({
-  tourGuideDialogOpen = false,
-  experienceStarted = false,
-  tourStarted = false,
-}: UIProps) => {
+export const UI = ({ experienceStarted = false }: UIProps) => {
   const isMobileDevice = useIsMobileDevice();
   const [exitTourConfirmOpen, setExitTourConfirmOpen] = useState(false);
   useMobileControlLayout(isMobileDevice && experienceStarted);
@@ -45,15 +40,18 @@ export const UI = ({
     cursorRevealedByAlt,
     showFps,
     mobileControlsCustomize,
+    tourCoachOpen,
+    tourCoachPickerOpen,
   } = useWorld((s: any) => s);
+  const tourGuideBlocking = tourCoachOpen || tourCoachPickerOpen;
   const fps = useFps(showFps);
   const npcFocus = !!activeNPCDialog;
   const hideAreaInfo =
-    npcFocus || map2DOpen || tourGuideDialogOpen || exitTourConfirmOpen;
+    npcFocus || map2DOpen || tourGuideBlocking || exitTourConfirmOpen;
   const showEnterInteraction =
     !npcFocus &&
     !map2DOpen &&
-    !tourGuideDialogOpen &&
+    !tourGuideBlocking &&
     !exitTourConfirmOpen &&
     !cursorRevealedByAlt &&
     !mobileControlsCustomize;
@@ -69,13 +67,17 @@ export const UI = ({
       {!npcFocus && (
         <div className="fixed top-[max(0.5rem,1.5vh)] left-[max(0.5rem,1.5vw)] z-[300] flex max-w-[calc(100vw-1rem)] flex-col gap-2 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1.5">
           <div className="flex flex-col gap-0.5">
-            <div className="rounded-2xl border-[3px] border-ink bg-cream/95 p-1.5 shadow-brutal-sm backdrop-blur-sm [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-1">
+            <div
+              data-tour="toolbar"
+              className="rounded-2xl border-[3px] border-ink bg-cream/95 p-1.5 shadow-brutal-sm backdrop-blur-sm [@media(orientation:landscape)_and_(max-height:500px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:500px)]:border-2 [@media(orientation:landscape)_and_(max-height:500px)]:p-1"
+            >
               <div className="flex max-w-full flex-wrap items-center gap-1.5 [@media(orientation:landscape)_and_(max-height:500px)]:gap-1">
                 <AvatarPicker />
                 <ExperienceSettings onConfirmOpenChange={setExitTourConfirmOpen} />
                 <DestinationPicker />
+                {experienceStarted && <GuideButton />}
                 <LogHistory />
-                <Feedback tourStarted={tourStarted} />
+                <Feedback />
               </div>
             </div>
             {showFps && (

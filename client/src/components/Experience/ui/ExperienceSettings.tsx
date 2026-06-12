@@ -595,6 +595,7 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
   return (
     <div className="relative">
       <button
+        data-tour="settings"
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon transition-colors hover:bg-gold/85 active:scale-95 [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl ${openMenu ? "bg-maroon text-white" : ""}`}
         onClick={() => setOpenMenu(!openMenu)}
         title="Settings"

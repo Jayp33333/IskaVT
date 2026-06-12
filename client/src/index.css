@@ -215,6 +215,164 @@ body.npc-focus:not(.mobile-controls-customize) .viverse-button.viverse-jump {
   transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
+/* In-game tour coach — spotlight & motion demos */
+@keyframes tour-coach-spotlight-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.84), 0 0 0 0 rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.84), 0 0 12px 4px rgba(255, 215, 0, 0.65);
+  }
+}
+
+@keyframes tour-coach-joystick-nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(18%, -12%);
+  }
+  50% {
+    transform: translate(22%, 10%);
+  }
+  75% {
+    transform: translate(8%, 18%);
+  }
+}
+
+@keyframes tour-coach-fade-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes tour-coach-tap-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes tour-coach-tap-hand {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.88);
+  }
+}
+
+@keyframes tour-coach-key-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    background-color: var(--color-gold);
+  }
+  50% {
+    transform: translateY(-3px);
+    background-color: #fff3a0;
+  }
+}
+
+@keyframes tour-coach-mouse-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tour-coach-mouse-move {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(14%, -10%);
+  }
+  50% {
+    transform: translate(-12%, 8%);
+  }
+  75% {
+    transform: translate(10%, 12%);
+  }
+}
+
+@keyframes tour-coach-drag-hand {
+  0%,
+  100% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+
+@media (max-height: 500px) {
+  @keyframes tour-coach-drag-hand {
+    0%,
+    100% {
+      transform: translateX(-5px);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+  }
+}
+
+.tour-coach-spotlight {
+  animation: tour-coach-spotlight-pulse 2s ease-in-out infinite;
+}
+
+.tour-coach-joystick-nudge {
+  animation: tour-coach-joystick-nudge 2.2s ease-in-out infinite;
+}
+
+.tour-coach-fade-pulse {
+  animation: tour-coach-fade-pulse 1.4s ease-in-out infinite;
+}
+
+.tour-coach-tap-ring {
+  animation: tour-coach-tap-ring 1.2s ease-out infinite;
+}
+
+.tour-coach-tap-hand {
+  animation: tour-coach-tap-hand 1.2s ease-in-out infinite;
+}
+
+.tour-coach-key-pulse {
+  animation: tour-coach-key-pulse 1.6s ease-in-out infinite;
+}
+
+.tour-coach-mouse-orbit {
+  animation: tour-coach-mouse-orbit 4s linear infinite;
+}
+
+.tour-coach-mouse-move {
+  animation: tour-coach-mouse-move 2.5s ease-in-out infinite;
+}
+
+.tour-coach-drag-hand {
+  animation: tour-coach-drag-hand 1.8s ease-in-out infinite;
+}
+
+body.tour-coach-active .viverse-joystick,
+body.tour-coach-active .viverse-button.viverse-jump {
+  z-index: 2100 !important;
+}
+
 @media (max-height: 500px) {
   .viverse-joystick {
     width: 5.5rem !important;

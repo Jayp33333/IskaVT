@@ -147,6 +147,14 @@ interface WorldState {
   resetMobileControlLayout: () => void;
   mobileControlsCustomize: boolean;
   setMobileControlsCustomize: (value: boolean) => void;
+  tourCoachOpen: boolean;
+  tourCoachPickerOpen: boolean;
+  tourCoachInitialStep: number;
+  tourCoachSingleStep: boolean;
+  openTourCoachFull: () => void;
+  openTourCoachStep: (stepIndex: number) => void;
+  openTourCoachPicker: () => void;
+  closeTourCoach: () => void;
 }
 
 const useWorld = create<WorldState>((set) => ({
@@ -183,6 +191,10 @@ const useWorld = create<WorldState>((set) => ({
   customAmbientTrackName: readCustomAmbientTrackName(),
   mobileControlLayout: readMobileControlLayout(),
   mobileControlsCustomize: false,
+  tourCoachOpen: false,
+  tourCoachPickerOpen: false,
+  tourCoachInitialStep: 0,
+  tourCoachSingleStep: false,
   npcsInRange: new Map(),
   activeNPCDialog: null,
   avatarSwapGeneration: 0,
@@ -354,6 +366,30 @@ const useWorld = create<WorldState>((set) => ({
     set({ mobileControlLayout: DEFAULT_MOBILE_CONTROL_LAYOUT });
   },
   setMobileControlsCustomize: (mobileControlsCustomize) => set({ mobileControlsCustomize }),
+  openTourCoachFull: () =>
+    set({
+      tourCoachOpen: true,
+      tourCoachPickerOpen: false,
+      tourCoachInitialStep: 0,
+      tourCoachSingleStep: false,
+    }),
+  openTourCoachStep: (stepIndex) =>
+    set({
+      tourCoachOpen: true,
+      tourCoachPickerOpen: false,
+      tourCoachInitialStep: Math.max(0, stepIndex),
+      tourCoachSingleStep: true,
+    }),
+  openTourCoachPicker: () =>
+    set({
+      tourCoachPickerOpen: true,
+      tourCoachOpen: false,
+    }),
+  closeTourCoach: () =>
+    set({
+      tourCoachOpen: false,
+      tourCoachPickerOpen: false,
+    }),
 }));
 
 export default useWorld;

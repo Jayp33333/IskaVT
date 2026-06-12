@@ -684,6 +684,12 @@ function withRoomOffsets(
   });
 }
 
+/** Campus guide map step spotlights this fixed-location pin. */
+export const TOUR_MAP_FEATURED_PIN_ID = "administration-building";
+
+/** Demo custom pin shown during the campus guide teleport step. */
+export const TOUR_MAP_DEMO_PIN_POSITION = new THREE.Vector3(30, 0.2, 1);
+
 // Fixed location pins for minimap
 // These represent points of interest that are always visible on the minimap
 export const FIXED_LOCATION_PINS: FixedLocationPin[] = [

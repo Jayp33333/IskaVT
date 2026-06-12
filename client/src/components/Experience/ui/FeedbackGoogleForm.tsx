@@ -1,19 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, X } from "lucide-react";
 import useWorld from "../../../hooks/useWorld";
 
-const AUTO_PROMPT_DELAY_MS = 60_000;
-
 type FeedbackGoogleFormProps = {
-  tourStarted: boolean;
   embedUrl: string;
   viewUrl: string;
 };
 
 export const FeedbackGoogleForm = ({
-  tourStarted,
   embedUrl,
   viewUrl,
 }: FeedbackGoogleFormProps) => {
@@ -22,9 +18,6 @@ export const FeedbackGoogleForm = ({
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
   const setShowFeedback = useWorld((s: any) => s.setShowFeedback);
 
-  const autoPromptShownRef = useRef(false);
-  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   useEffect(() => {
     if (isOpen) {
       setShowFeedback(true);
@@ -32,23 +25,6 @@ export const FeedbackGoogleForm = ({
       setShowFeedback(false);
     }
   }, [isOpen, setShowFeedback]);
-
-  useEffect(() => {
-    if (!tourStarted) return;
-
-    autoTimerRef.current = setTimeout(() => {
-      if (autoPromptShownRef.current) return;
-      autoPromptShownRef.current = true;
-      setIsOpen(true);
-    }, AUTO_PROMPT_DELAY_MS);
-
-    return () => {
-      if (autoTimerRef.current) {
-        clearTimeout(autoTimerRef.current);
-        autoTimerRef.current = null;
-      }
-    };
-  }, [tourStarted]);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
@@ -146,6 +122,7 @@ export const FeedbackGoogleForm = ({
   return (
     <>
       <button
+        data-tour="feedback"
         onClick={openModal}
         className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
         title="Share feedback"

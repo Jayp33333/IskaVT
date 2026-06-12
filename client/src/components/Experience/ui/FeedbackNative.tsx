@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, Star, X } from "lucide-react";
@@ -10,12 +10,6 @@ import {
   setSessionFullName,
 } from "../../../constants/logbookSession";
 import useWorld from "../../../hooks/useWorld";
-
-const AUTO_PROMPT_DELAY_MS = 60_000;
-
-type FeedbackNativeProps = {
-  tourStarted: boolean;
-};
 
 function StarRating({
   value,
@@ -54,7 +48,7 @@ function StarRating({
   );
 }
 
-export const FeedbackNative = ({ tourStarted }: FeedbackNativeProps) => {
+export const FeedbackNative = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -65,9 +59,6 @@ export const FeedbackNative = ({ tourStarted }: FeedbackNativeProps) => {
 
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
   const setShowFeedback = useWorld((s: any) => s.setShowFeedback);
-
-  const autoPromptShownRef = useRef(false);
-  const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -113,23 +104,6 @@ export const FeedbackNative = ({ tourStarted }: FeedbackNativeProps) => {
       cancelled = true;
     };
   }, [isOpen]);
-
-  useEffect(() => {
-    if (!tourStarted) return;
-
-    autoTimerRef.current = setTimeout(() => {
-      if (autoPromptShownRef.current) return;
-      autoPromptShownRef.current = true;
-      setIsOpen(true);
-    }, AUTO_PROMPT_DELAY_MS);
-
-    return () => {
-      if (autoTimerRef.current) {
-        clearTimeout(autoTimerRef.current);
-        autoTimerRef.current = null;
-      }
-    };
-  }, [tourStarted]);
 
   const openModal = () => {
     setError(null);
@@ -348,6 +322,7 @@ export const FeedbackNative = ({ tourStarted }: FeedbackNativeProps) => {
   return (
     <>
       <button
+        data-tour="feedback"
         onClick={openModal}
         className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
         title="Share feedback"

@@ -6,7 +6,8 @@ import LoadingOverlay from "../components/Experience/ui/LoadingOverlay";
 import { UI } from "../components/Experience/ui/UI";
 import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
-import { TourGuideDialog } from "../components/Experience/ui/TourGuideDialog.tsx";
+import { TourCoachOverlay } from "../components/Experience/ui/TourCoachOverlay";
+import { TourGuideStepPicker } from "../components/Experience/ui/TourGuideStepPicker";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
@@ -18,7 +19,6 @@ import { useModelPreload } from "../hooks/useModelPreload";
 import { useExperienceAudio } from "../hooks/useExperienceAudio";
 import { useCustomAmbientMusic } from "../hooks/useCustomAmbientMusic";
 import { useFaqSpeech } from "../features/contact/hooks/useFaqSpeech";
-import { WELCOME_TTS_MESSAGE } from "../data/campusGuideContent";
 
 
 const LOGBOOK_ENTRY_ID_KEY = 'logbookEntryId';
@@ -27,11 +27,13 @@ export default function ExperienceScene() {
   useAudioPreload();
   useCustomAmbientMusic();
   useModelPreload();
-  const [showWelcome, setShowWelcome] = useState(false);
   const [logbookOpen, setLogbookOpen] = useState(false);
   const [loadingFinished, setLoadingFinished] = useState(false);
-  const [tourStarted, setTourStarted] = useState(false);
-  const { speak, stop, isSupported } = useFaqSpeech();
+  const { stop } = useFaqSpeech();
+  const tourCoachOpen = useWorld((s) => s.tourCoachOpen);
+  const tourCoachPickerOpen = useWorld((s) => s.tourCoachPickerOpen);
+  const openTourCoachFull = useWorld((s) => s.openTourCoachFull);
+  const closeTourCoach = useWorld((s) => s.closeTourCoach);
 
   const isTouring = loadingFinished && !logbookOpen;
   useExperienceAudio(isTouring);
@@ -77,16 +79,9 @@ export default function ExperienceScene() {
     };
   }, [loadingFinished]);
 
-  useEffect(() => {
-    if (!showWelcome) {
-      stop();
-      return;
-    }
-
-    if (isSupported) {
-      speak("tour-welcome", WELCOME_TTS_MESSAGE);
-    }
-  }, [showWelcome, speak, stop, isSupported]);
+  const startTourCoach = () => {
+    openTourCoachFull();
+  };
 
   // Keyboard shortcuts:
   // - F: talk to nearest NPC in range (if any, and no overlay conflicts)
@@ -100,7 +95,7 @@ export default function ExperienceScene() {
       }
 
       if (e.key === 'm' || e.key === 'M') {
-        if (!loadingFinished || logbookOpen || showWelcome) return;
+        if (!loadingFinished || logbookOpen || tourCoachOpen || tourCoachPickerOpen) return;
 
         const {
           showLogHistory,
@@ -139,7 +134,7 @@ export default function ExperienceScene() {
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [loadingFinished, logbookOpen, showWelcome]);
+  }, [loadingFinished, logbookOpen, tourCoachOpen, tourCoachPickerOpen]);
 
   // While logbook is required, block movement keys so the user can't "tour" early.
   useEffect(() => {
@@ -241,16 +236,14 @@ export default function ExperienceScene() {
       return;
     }
 
-    setTourStarted(true);
     audioManager.unlock();
-    setShowWelcome(true);
+    startTourCoach();
   };
 
   const handleLogbookSuccess = () => {
     setLogbookOpen(false);
-    setTourStarted(true);
     audioManager.unlock();
-    setShowWelcome(true);
+    startTourCoach();
   };
 
   return (
@@ -260,14 +253,15 @@ export default function ExperienceScene() {
       <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
 
-      <TourGuideDialog
-        open={showWelcome}
+      <TourGuideStepPicker />
+
+      <TourCoachOverlay
+        open={tourCoachOpen}
         onClose={() => {
           stop();
-          setShowWelcome(false);
+          closeTourCoach();
           audioManager.unlock();
         }}
-        portraitSrc="/images/headIconGirl.png"
       />
 
       <LogbookFormDialog
@@ -277,11 +271,7 @@ export default function ExperienceScene() {
         onSuccess={handleLogbookSuccess}
       />
 
-      <UI
-        tourGuideDialogOpen={showWelcome}
-        experienceStarted={loadingFinished}
-        tourStarted={tourStarted}
-      />
+      <UI experienceStarted={loadingFinished} />
 
       {/* <Map2D /> */}
       
