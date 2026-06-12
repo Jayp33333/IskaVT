@@ -188,7 +188,6 @@ export const ExitTourButton = ({
   onMenuClose,
 }: ExitTourButtonProps) => {
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
-  const showLogHistory = useWorld((s: any) => s.showLogHistory);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   useEffect(() => {
@@ -208,9 +207,7 @@ export const ExitTourButton = ({
     ) : (
       <button
         onClick={handleOpenConfirm}
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm ${
-          showLogHistory ? "pointer-events-none blur-sm opacity-50" : ""
-        }`}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
         title="Exit tour"
         aria-label="Exit tour"
         type="button"

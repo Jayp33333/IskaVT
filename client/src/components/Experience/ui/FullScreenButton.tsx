@@ -12,7 +12,6 @@ export const FullScreenButton = ({
   onMenuClose,
 }: FullScreenButtonProps) => {
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
-  const showLogHistory = useWorld((s: any) => s.showLogHistory);
   const [isFullScreen, setIsFullScreen] = useState(
     typeof document !== "undefined" && !!document.fullscreenElement
   );
@@ -45,9 +44,7 @@ export const FullScreenButton = ({
     return (
       <button
         onClick={toggleFullScreen}
-        className={`flex min-h-11 min-w-0 w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-cream px-3 py-2.5 text-[10px] font-black uppercase tracking-wide text-ink transition-colors hover:bg-white active:scale-[0.98] [@media(max-height:500px)]:min-h-10 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:768px)]:min-h-9 [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px] ${
-          showLogHistory ? "pointer-events-none blur-sm opacity-50" : ""
-        }`}
+        className="flex min-h-11 min-w-0 w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-cream px-3 py-2.5 text-[10px] font-black uppercase tracking-wide text-ink transition-colors hover:bg-white active:scale-[0.98] [@media(max-height:500px)]:min-h-10 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:768px)]:min-h-9 [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]"
         type="button"
       >
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-[2px] border-ink bg-gold [@media(max-height:500px)]:h-6 [@media(max-height:500px)]:w-6">
@@ -64,9 +61,7 @@ export const FullScreenButton = ({
   return (
     <button
       onClick={toggleFullScreen}
-      className={`flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm ${
-        showLogHistory ? "pointer-events-none blur-sm opacity-50" : ""
-      }`}
+      className="flex h-10 w-10 items-center justify-center rounded-2xl border-[3px] border-ink bg-gold text-maroon shadow-brutal-sm transition-all hover:bg-gold/90 active:translate-y-1 active:shadow-none [@media(max-height:500px)]:h-9 [@media(max-height:500px)]:w-9 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:shadow-brutal-sm"
       title={label}
       aria-label={label}
       type="button"

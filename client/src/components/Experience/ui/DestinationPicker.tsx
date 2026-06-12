@@ -15,7 +15,6 @@ export const DestinationPicker = () => {
   const [open, setOpen] = useState(false);
 
   const showMiniMap = useWorld((s: any) => s.showMiniMap);
-  const showLogHistory = useWorld((s: any) => s.showLogHistory);
   const query = useWorld((s: any) => s.query);
   const selectedDestination = useWorld((s: any) => s.selectedDestination);
   const characterPosition = useWorld((s: any) => s.characterPosition);
@@ -88,7 +87,7 @@ export const DestinationPicker = () => {
           selectedDestination
             ? "bg-maroon text-white"
             : "bg-gold text-maroon hover:bg-gold/90"
-        } ${showLogHistory ? "pointer-events-none opacity-50 blur-sm" : ""}`}
+        }`}
         title={selectedDestination ?? "Destinations"}
         aria-label="Destinations"
         aria-expanded={open}
