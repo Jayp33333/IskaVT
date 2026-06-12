@@ -4,6 +4,7 @@ import {
   LOGBOOK_ENTRY_ID_KEY,
   clearLogbookSession,
 } from '../constants/logbookSession';
+import { markDeviceVisitCheckedOut } from '../constants/logbookDeviceHistory';
 import { logbookAPI } from '../services/api';
 import { API_BASE_URL } from '../services/apiClient';
 
@@ -11,6 +12,8 @@ const LOGBOOK_SKIP_PAGEHIDE_KEY = 'logbook-skip-pagehide';
 
 /** Ends the logbook session via a request that can complete after the page unloads. */
 function endLogbookSessionKeepalive(entryId: string): void {
+  const timeOut = new Date().toISOString();
+  markDeviceVisitCheckedOut(entryId, timeOut);
   fetch(`${API_BASE_URL}/logbook/${entryId}/timeout`, {
     method: 'PATCH',
     body: JSON.stringify({}),
@@ -78,9 +81,11 @@ export const useLogbookTimeout = () => {
     isUpdatingRef.current = true;
 
     try {
-      await logbookAPI.updateTimeout(entryId);
+      const response = await logbookAPI.updateTimeout(entryId);
+      const timeOut = response.data.timeOut ?? new Date().toISOString();
+      markDeviceVisitCheckedOut(entryId, timeOut);
       clearLogbookSession();
-      
+
       if (shouldNavigate) {
         navigate('/');
       }

@@ -48,8 +48,8 @@ export const campusGuidePages: CampusGuidePage[] = [
         color: "bg-gold",
       },
       {
-        label: "Visitor Logbook",
-        description: "Your sign-in is saved for this session.",
+        label: "My Visit History",
+        description: "Open the logbook icon to see your past tours saved on this device.",
         icon: Building2,
         color: "bg-blue-400",
       },

@@ -6,6 +6,7 @@ import {
   LOGBOOK_TIME_IN_KEY,
   setSessionFullName,
 } from "../../constants/logbookSession";
+import { upsertDeviceVisit } from "../../constants/logbookDeviceHistory";
 import { DESTINATIONS } from "../../sampleData";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
@@ -57,6 +58,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
         localStorage.setItem(LOGBOOK_TIME_IN_KEY, new Date().toISOString());
         const name = response.data.fullName?.trim() || formData.fullName.trim();
         setSessionFullName(name);
+        upsertDeviceVisit(response.data);
       }
       
       onSuccess();
