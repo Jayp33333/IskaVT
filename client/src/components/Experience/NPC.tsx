@@ -41,11 +41,13 @@ export const NPC = ({
     registerNPCInRange,
     unregisterNPCInRange,
     setActiveNPCDialog,
+    shadowsEnabled,
   } = useWorld((state: any) => ({
     characterPosition: state.characterPosition,
     registerNPCInRange: state.registerNPCInRange,
     unregisterNPCInRange: state.unregisterNPCInRange,
     setActiveNPCDialog: state.setActiveNPCDialog,
+    shadowsEnabled: state.shadowsEnabled,
   }));
 
   const npcWorldPos = useRef(new THREE.Vector3());
@@ -114,18 +116,22 @@ export const NPC = ({
       ]}
     >
       {model ? (
-        <Gltf src={model} castShadow receiveShadow />
+        <Gltf
+          src={model}
+          castShadow={shadowsEnabled}
+          receiveShadow={shadowsEnabled}
+        />
       ) : (
         <group>
-          <mesh castShadow position={[0, 0.95, 0]}>
+          <mesh castShadow={shadowsEnabled} position={[0, 0.95, 0]}>
             <capsuleGeometry args={[0.28, 0.8, 8, 16]} />
             <meshStandardMaterial color={color} roughness={0.55} />
           </mesh>
-          <mesh castShadow position={[0, 1.62, 0]}>
+          <mesh castShadow={shadowsEnabled} position={[0, 1.62, 0]}>
             <sphereGeometry args={[0.28, 24, 24]} />
             <meshStandardMaterial color="#f2c4a3" roughness={0.5} />
           </mesh>
-          <mesh castShadow position={[0, 1.9, 0]}>
+          <mesh castShadow={shadowsEnabled} position={[0, 1.9, 0]}>
             <sphereGeometry args={[0.3, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2]} />
             <meshStandardMaterial color="#1f2937" roughness={0.7} />
           </mesh>

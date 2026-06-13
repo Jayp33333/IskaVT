@@ -41,6 +41,7 @@ export default function ExperienceScene() {
   // Global NPC dialog / arrival pause — temporarily lock movement/camera
   const activeNPCDialog = useWorld((s: any) => s.activeNPCDialog);
   const isArrivalPaused = useWorld((s: any) => s.isArrivalPaused);
+  const shadowsEnabled = useWorld((s) => s.shadowsEnabled);
   const movementBlocked = !!activeNPCDialog || isArrivalPaused;
 
   const hasLogbookEntry = useMemo(() => {
@@ -278,6 +279,7 @@ export default function ExperienceScene() {
 
       <Canvas
         dpr={[1, 1.5]}
+        shadows={shadowsEnabled}
         style={{
           position: "absolute",
           inset: 0,

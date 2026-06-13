@@ -38,8 +38,10 @@ const Character = () => {
     !!activeNPCDialog || isArrivalPaused || mobileControlsCustomize;
   const movementPaused = !!activeNPCDialog || isArrivalPaused;
   const lookLocked = interactionLocked || (!isMobile && cursorRevealedByAlt);
-  const lookSpeed = lookLocked ? 0 : sensitivityPercentToLookSpeed(sensitivity);
-  const moveMult = sensitivityPercentToMoveMult(sensitivity);
+  const lookSpeed = lookLocked
+    ? 0
+    : sensitivityPercentToLookSpeed(sensitivity, isMobile);
+  const moveMult = sensitivityPercentToMoveMult(sensitivity, isMobile);
 
   const characterRef = useRef<any>(null);
   const cameraRotationRef = useRef(new Vector3());

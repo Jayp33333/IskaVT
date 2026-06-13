@@ -19,6 +19,13 @@ import {
   type MobileControlLayout,
 } from "../utils/experienceMobileControls";
 import { readCustomAmbientTrackName } from "../utils/customAmbientMusic";
+import {
+  clampLightIntensityPercent,
+  readLightIntensityPreference,
+  readShadowsEnabledPreference,
+  SHADOWS_ENABLED_KEY,
+  LIGHT_INTENSITY_KEY,
+} from "../utils/experienceLightingSettings";
 
 const SHOW_FPS_KEY = "experience-show-fps";
 const SHOW_CAMPUS_GRAPH_KEY = "experience-show-campus-graph";
@@ -147,6 +154,10 @@ interface WorldState {
   resetMobileControlLayout: () => void;
   mobileControlsCustomize: boolean;
   setMobileControlsCustomize: (value: boolean) => void;
+  lightIntensity: number;
+  setLightIntensity: (value: number) => void;
+  shadowsEnabled: boolean;
+  setShadowsEnabled: (value: boolean) => void;
   tourCoachOpen: boolean;
   tourCoachPickerOpen: boolean;
   tourCoachInitialStep: number;
@@ -191,6 +202,8 @@ const useWorld = create<WorldState>((set) => ({
   customAmbientTrackName: readCustomAmbientTrackName(),
   mobileControlLayout: readMobileControlLayout(),
   mobileControlsCustomize: false,
+  lightIntensity: readLightIntensityPreference(),
+  shadowsEnabled: readShadowsEnabledPreference(),
   tourCoachOpen: false,
   tourCoachPickerOpen: false,
   tourCoachInitialStep: 0,
@@ -366,6 +379,19 @@ const useWorld = create<WorldState>((set) => ({
     set({ mobileControlLayout: DEFAULT_MOBILE_CONTROL_LAYOUT });
   },
   setMobileControlsCustomize: (mobileControlsCustomize) => set({ mobileControlsCustomize }),
+  setLightIntensity: (lightIntensity) => {
+    const clamped = clampLightIntensityPercent(lightIntensity);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(LIGHT_INTENSITY_KEY, String(clamped));
+    }
+    set({ lightIntensity: clamped });
+  },
+  setShadowsEnabled: (shadowsEnabled) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SHADOWS_ENABLED_KEY, String(shadowsEnabled));
+    }
+    set({ shadowsEnabled });
+  },
   openTourCoachFull: () =>
     set({
       tourCoachOpen: true,

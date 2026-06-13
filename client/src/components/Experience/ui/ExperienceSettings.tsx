@@ -15,6 +15,8 @@ import {
   Settings,
   Tags,
   SlidersHorizontal,
+  Sun,
+  SunDim,
   User,
   Users,
   Volume2,
@@ -305,6 +307,10 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
   const setMobileControlsCustomize = useWorld((s: any) => s.setMobileControlsCustomize);
   const setMobileControlLayout = useWorld((s: any) => s.setMobileControlLayout);
   const resetMobileControlLayout = useWorld((s: any) => s.resetMobileControlLayout);
+  const lightIntensity = useWorld((s: any) => s.lightIntensity);
+  const setLightIntensity = useWorld((s: any) => s.setLightIntensity);
+  const shadowsEnabled = useWorld((s: any) => s.shadowsEnabled);
+  const setShadowsEnabled = useWorld((s: any) => s.setShadowsEnabled);
 
   const [openMenu, setOpenMenu] = useState(false);
   const [activeTab, setActiveTab] = useState<SettingsTab>("display");
@@ -471,6 +477,20 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                           label="Show FPS"
                           checked={showFps}
                           onChange={setShowFps}
+                        />
+                        <SettingToggle
+                          icon={shadowsEnabled ? Sun : SunDim}
+                          label="Shadows"
+                          checked={shadowsEnabled}
+                          onChange={setShadowsEnabled}
+                        />
+                        <SettingSlider
+                          icon={Sun}
+                          label="Light Intensity"
+                          value={lightIntensity}
+                          onChange={setLightIntensity}
+                          ariaLabel="Light intensity"
+                          dimAtZero
                         />
                         {import.meta.env.DEV && (
                           <>
