@@ -21,10 +21,10 @@ export function readLightIntensityPreference(): number {
 }
 
 export function readShadowsEnabledPreference(): boolean {
-  if (typeof window === "undefined") return true;
+  if (typeof window === "undefined") return false;
 
   const stored = localStorage.getItem(SHADOWS_ENABLED_KEY);
-  return stored === null ? true : stored === "true";
+  return stored === null ? false : stored === "true";
 }
 
 export function lightIntensityPercentToDirectional(percent: number): number {
