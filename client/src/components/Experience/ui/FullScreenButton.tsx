@@ -44,6 +44,7 @@ export const FullScreenButton = ({
     return (
       <button
         onClick={toggleFullScreen}
+        data-settings-guide="fullscreen"
         className="flex min-h-11 min-w-0 w-full items-center justify-center gap-2 rounded-xl border-2 border-ink bg-cream px-3 py-2.5 text-[10px] font-black uppercase tracking-wide text-ink transition-colors hover:bg-white active:scale-[0.98] [@media(max-height:500px)]:min-h-10 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:px-2.5 [@media(max-height:500px)]:py-2 [@media(max-height:500px)]:text-[9px] [@media(orientation:landscape)_and_(max-height:768px)]:min-h-9 [@media(orientation:landscape)_and_(max-height:768px)]:px-2 [@media(orientation:landscape)_and_(max-height:768px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:768px)]:text-[8px]"
         type="button"
       >

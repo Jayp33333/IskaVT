@@ -7,7 +7,7 @@ import { UI } from "../components/Experience/ui/UI";
 import { audioManager } from "../services/AudioManager";
 import useAudioPreload from "../hooks/useAudioPreload";
 import { TourCoachOverlay } from "../components/Experience/ui/TourCoachOverlay";
-import { TourGuideStepPicker } from "../components/Experience/ui/TourGuideStepPicker";
+import { CampusGuideBook } from "../components/Experience/ui/CampusGuideBook";
 import { GlobalLoadingOverlay } from "../components/Experience/ui/GlobalLoadingOverlay";
 import { useLogbookTimeout } from "../hooks/useLogbookTimeout";
 import { OrientationGuard } from "../components/Experience/ui/OrientationGuard";
@@ -31,7 +31,7 @@ export default function ExperienceScene() {
   const [loadingFinished, setLoadingFinished] = useState(false);
   const { stop } = useFaqSpeech();
   const tourCoachOpen = useWorld((s) => s.tourCoachOpen);
-  const tourCoachPickerOpen = useWorld((s) => s.tourCoachPickerOpen);
+  const guideBookOpen = useWorld((s) => s.guideBookOpen);
   const openTourCoachFull = useWorld((s) => s.openTourCoachFull);
   const closeTourCoach = useWorld((s) => s.closeTourCoach);
 
@@ -96,7 +96,7 @@ export default function ExperienceScene() {
       }
 
       if (e.key === 'm' || e.key === 'M') {
-        if (!loadingFinished || logbookOpen || tourCoachOpen || tourCoachPickerOpen) return;
+        if (!loadingFinished || logbookOpen || tourCoachOpen || guideBookOpen) return;
 
         const {
           showLogHistory,
@@ -135,7 +135,7 @@ export default function ExperienceScene() {
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [loadingFinished, logbookOpen, tourCoachOpen, tourCoachPickerOpen]);
+  }, [loadingFinished, logbookOpen, tourCoachOpen, guideBookOpen]);
 
   // While logbook is required, block movement keys so the user can't "tour" early.
   useEffect(() => {
@@ -254,7 +254,7 @@ export default function ExperienceScene() {
       <LoadingOverlay onFinished={handleLoadingFinished} />
       <GlobalLoadingOverlay />
 
-      <TourGuideStepPicker />
+      <CampusGuideBook />
 
       <TourCoachOverlay
         open={tourCoachOpen}

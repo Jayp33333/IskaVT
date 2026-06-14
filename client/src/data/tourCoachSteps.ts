@@ -35,7 +35,7 @@ const mobileSteps: TourCoachStep[] = [
   },
   {
     id: "toolbar",
-    title: "Meet Your Toolbar",
+    title: "Toolbar",
     body: "This toolbar holds everything — avatar, settings, destinations, guide, visit history, and feedback. Tap the book icon anytime to replay this tour.",
     target: '[data-tour="toolbar"]',
     placement: "below",
@@ -53,7 +53,7 @@ const mobileSteps: TourCoachStep[] = [
   {
     id: "settings",
     title: "Settings",
-    body: "Tap the gear icon to change camera view, sensitivity, volume, and mobile control layout.",
+    body: "Tap the gear icon, then browse Display, Controls, and Audio in the Campus Guide book for every setting explained.",
     target: '[data-tour="settings"]',
     placement: "below",
     padding: 6,
@@ -205,7 +205,7 @@ const desktopSteps: TourCoachStep[] = [
   },
   {
     id: "toolbar",
-    title: "Meet Your Toolbar",
+    title: "Toolbar",
     body: "This toolbar holds everything — avatar, settings, destinations, guide, visit history, and feedback. Click the book icon anytime to replay this tour.",
     target: '[data-tour="toolbar"]',
     placement: "below",
@@ -222,7 +222,7 @@ const desktopSteps: TourCoachStep[] = [
   {
     id: "settings",
     title: "Settings",
-    body: "Click the gear icon to change camera view, mouse sensitivity, volume, and other tour options.",
+    body: "Click the gear icon, then browse Display, Controls, and Audio in the Campus Guide book for every setting explained.",
     target: '[data-tour="settings"]',
     placement: "below",
     padding: 6,

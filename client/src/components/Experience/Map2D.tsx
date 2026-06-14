@@ -842,14 +842,6 @@ export default function Map2D() {
                     <FaLocationCrosshairs size={14} />
                     Teleport
                   </button>
-
-                  <button
-                    onClick={() => setMap2DOpen(false)}
-                    className="py-2 px-3 sm:px-4 [@media(max-height:500px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[11px] bg-maroon text-white border-[3px] border-ink rounded-xl text-xs sm:text-sm font-black italic shadow-brutal-sm active:translate-y-0.5 active:shadow-none transition-all uppercase tracking-wide"
-                    type="button"
-                  >
-                    Close
-                  </button>
                 </div>
               </div>
             </motion.div>

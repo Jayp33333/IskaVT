@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  BookOpen,
   Camera,
   Gauge,
   Headphones,
@@ -311,12 +312,21 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
   const setLightIntensity = useWorld((s: any) => s.setLightIntensity);
   const shadowsEnabled = useWorld((s: any) => s.shadowsEnabled);
   const setShadowsEnabled = useWorld((s: any) => s.setShadowsEnabled);
+  const settingsOpenRequest = useWorld((s) => s.settingsOpenRequest);
+  const settingsOpenTab = useWorld((s) => s.settingsOpenTab);
+  const openGuideBook = useWorld((s) => s.openGuideBook);
 
   const [openMenu, setOpenMenu] = useState(false);
   const [activeTab, setActiveTab] = useState<SettingsTab>("display");
   const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
 
   const showExitTour = hasActiveTourEntry() && !showMiniMap;
+
+  useEffect(() => {
+    if (!settingsOpenRequest) return;
+    setOpenMenu(true);
+    if (settingsOpenTab) setActiveTab(settingsOpenTab);
+  }, [settingsOpenRequest, settingsOpenTab]);
 
   useEffect(() => {
     onConfirmOpenChange?.(exitConfirmOpen);
@@ -372,6 +382,11 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
 
   const closeMenu = () => setOpenMenu(false);
 
+  const openSettingsGuide = () => {
+    setOpenMenu(false);
+    openGuideBook({ categoryId: "settings", articleId: "settings-overview" });
+  };
+
   const panel =
     typeof document !== "undefined"
       ? createPortal(
@@ -424,18 +439,30 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                           Settings
                         </h2>
                       </div>
-                      <button
-                        onClick={closeMenu}
-                        className="rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
-                        aria-label="Close settings"
-                        type="button"
-                      >
-                        <X className="h-4 w-4" strokeWidth={3} />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={openSettingsGuide}
+                          className="rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
+                          aria-label="Open campus guide"
+                          title="Campus guide"
+                        >
+                          <BookOpen className="h-4 w-4" strokeWidth={2.75} />
+                        </button>
+                        <button
+                          onClick={closeMenu}
+                          className="rounded-xl border-2 border-ink bg-white p-1.5 text-ink transition-colors hover:bg-cream active:scale-95 [@media(max-height:500px)]:p-1"
+                          aria-label="Close settings"
+                          type="button"
+                        >
+                          <X className="h-4 w-4" strokeWidth={3} />
+                        </button>
+                      </div>
                     </div>
 
                     <div className={`shrink-0 pt-4 ${panelPadX} [@media(max-height:500px)]:pt-3 ${landscapeShort}:pt-2.5`}>
                       <div
+                        data-settings-guide="tabs"
                         className={`grid grid-cols-3 gap-2 rounded-xl border-2 border-ink bg-cream p-2 [@media(max-height:500px)]:gap-1.5 [@media(max-height:500px)]:p-1.5 ${landscapeShort}:gap-1.5 ${landscapeShort}:p-1.5`}
                         role="tablist"
                         aria-label="Settings sections"
@@ -472,26 +499,32 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                       className={`min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-cream pt-4 pb-4 custom-scrollbar ${panelPadX} [@media(max-height:500px)]:pt-3 [@media(max-height:500px)]:pb-3 ${landscapeShort}:pt-2.5 ${landscapeShort}:pb-2.5`}
                     >
                       <TabPanel activeTab={activeTab} tab="display">
-                        <SettingToggle
-                          icon={Gauge}
-                          label="Show FPS"
-                          checked={showFps}
-                          onChange={setShowFps}
-                        />
-                        <SettingToggle
-                          icon={shadowsEnabled ? Sun : SunDim}
-                          label="Shadows"
-                          checked={shadowsEnabled}
-                          onChange={setShadowsEnabled}
-                        />
-                        <SettingSlider
-                          icon={Sun}
-                          label="Light Intensity"
-                          value={lightIntensity}
-                          onChange={setLightIntensity}
-                          ariaLabel="Light intensity"
-                          dimAtZero
-                        />
+                        <div data-settings-guide="show-fps">
+                          <SettingToggle
+                            icon={Gauge}
+                            label="Show FPS"
+                            checked={showFps}
+                            onChange={setShowFps}
+                          />
+                        </div>
+                        <div data-settings-guide="shadows">
+                          <SettingToggle
+                            icon={shadowsEnabled ? Sun : SunDim}
+                            label="Shadows"
+                            checked={shadowsEnabled}
+                            onChange={setShadowsEnabled}
+                          />
+                        </div>
+                        <div data-settings-guide="light-intensity">
+                          <SettingSlider
+                            icon={Sun}
+                            label="Light Intensity"
+                            value={lightIntensity}
+                            onChange={setLightIntensity}
+                            ariaLabel="Light intensity"
+                            dimAtZero
+                          />
+                        </div>
                         {import.meta.env.DEV && (
                           <>
                             <SettingToggle
@@ -514,7 +547,7 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                             />
                           </>
                         )}
-                        <div className={`${cardClass} ${cardPad}`}>
+                        <div data-settings-guide="camera" className={`${cardClass} ${cardPad}`}>
                           <div className="mb-4 flex items-center gap-3.5 [@media(max-height:500px)]:mb-3">
                             <span className={iconWrapClass}>
                               <Camera className="h-4 w-4 text-maroon" strokeWidth={2.5} />
@@ -531,15 +564,20 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                       </TabPanel>
 
                       <TabPanel activeTab={activeTab} tab="controls">
-                        <SettingSlider
-                          icon={MousePointer2}
-                          label="Sensitivity"
-                          value={sensitivity}
-                          onChange={setSensitivity}
-                          ariaLabel="Sensitivity"
-                        />
+                        <div data-settings-guide="sensitivity">
+                          <SettingSlider
+                            icon={MousePointer2}
+                            label="Sensitivity"
+                            value={sensitivity}
+                            onChange={setSensitivity}
+                            ariaLabel="Sensitivity"
+                          />
+                        </div>
                         {isMobileDevice && (
-                          <div className={`${cardClass} ${cardPad}`}>
+                          <div
+                            data-settings-guide="mobile-controls"
+                            className={`${cardClass} ${cardPad}`}
+                          >
                             <div className="mb-4 flex items-center gap-3.5 [@media(max-height:500px)]:mb-3">
                               <span className={iconWrapClass}>
                                 <Move className="h-4 w-4 text-maroon" strokeWidth={2.5} />
@@ -571,21 +609,25 @@ export const ExperienceSettings = ({ onConfirmOpenChange }: ExperienceSettingsPr
                       </TabPanel>
 
                       <TabPanel activeTab={activeTab} tab="audio">
-                        <SettingToggle
-                          icon={masterEnabled ? Volume2 : VolumeX}
-                          label="Volume"
-                          checked={masterEnabled}
-                          onChange={setMasterEnabled}
-                        />
+                        <div data-settings-guide="volume">
+                          <SettingToggle
+                            icon={masterEnabled ? Volume2 : VolumeX}
+                            label="Volume"
+                            checked={masterEnabled}
+                            onChange={setMasterEnabled}
+                          />
+                        </div>
                         <CustomAmbientMusicPicker />
-                        <SettingSlider
-                          icon={Music}
-                          label="Background Music"
-                          value={ambientVolume}
-                          onChange={setAmbientVolume}
-                          ariaLabel="Background music volume"
-                          dimAtZero
-                        />
+                        <div data-settings-guide="background-music">
+                          <SettingSlider
+                            icon={Music}
+                            label="Background Music"
+                            value={ambientVolume}
+                            onChange={setAmbientVolume}
+                            ariaLabel="Background music volume"
+                            dimAtZero
+                          />
+                        </div>
                       </TabPanel>
                     </div>
 

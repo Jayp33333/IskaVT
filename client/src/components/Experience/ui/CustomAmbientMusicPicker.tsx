@@ -49,7 +49,10 @@ export function CustomAmbientMusicPicker() {
   const isCustom = !!customAmbientTrackName;
 
   return (
-    <div className="rounded-2xl border-2 border-ink bg-white p-4 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-3.5">
+    <div
+      data-settings-guide="custom-music"
+      className="rounded-2xl border-2 border-ink bg-white p-4 [@media(max-height:500px)]:rounded-xl [@media(max-height:500px)]:p-3.5"
+    >
       <div className="mb-4 flex items-center gap-3.5 [@media(max-height:500px)]:mb-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-2 border-ink bg-gold [@media(max-height:500px)]:h-8 [@media(max-height:500px)]:w-8">
           <FolderOpen

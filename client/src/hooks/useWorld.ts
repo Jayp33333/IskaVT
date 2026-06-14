@@ -19,6 +19,7 @@ import {
   type MobileControlLayout,
 } from "../utils/experienceMobileControls";
 import { readCustomAmbientTrackName } from "../utils/customAmbientMusic";
+import type { GuideSettingsTab } from "../data/campusGuideBook";
 import {
   clampLightIntensityPercent,
   readLightIntensityPreference,
@@ -159,13 +160,18 @@ interface WorldState {
   shadowsEnabled: boolean;
   setShadowsEnabled: (value: boolean) => void;
   tourCoachOpen: boolean;
-  tourCoachPickerOpen: boolean;
+  guideBookOpen: boolean;
+  guideBookFocus: { categoryId?: string; articleId?: string } | null;
   tourCoachInitialStep: number;
   tourCoachSingleStep: boolean;
   openTourCoachFull: () => void;
   openTourCoachStep: (stepIndex: number) => void;
-  openTourCoachPicker: () => void;
+  openGuideBook: (focus?: { categoryId?: string; articleId?: string }) => void;
+  closeGuideBook: () => void;
   closeTourCoach: () => void;
+  settingsOpenRequest: number;
+  settingsOpenTab: GuideSettingsTab | null;
+  requestOpenSettings: (tab?: GuideSettingsTab) => void;
 }
 
 const useWorld = create<WorldState>((set) => ({
@@ -205,9 +211,12 @@ const useWorld = create<WorldState>((set) => ({
   lightIntensity: readLightIntensityPreference(),
   shadowsEnabled: readShadowsEnabledPreference(),
   tourCoachOpen: false,
-  tourCoachPickerOpen: false,
+  guideBookOpen: false,
+  guideBookFocus: null,
   tourCoachInitialStep: 0,
   tourCoachSingleStep: false,
+  settingsOpenRequest: 0,
+  settingsOpenTab: null,
   npcsInRange: new Map(),
   activeNPCDialog: null,
   avatarSwapGeneration: 0,
@@ -395,27 +404,41 @@ const useWorld = create<WorldState>((set) => ({
   openTourCoachFull: () =>
     set({
       tourCoachOpen: true,
-      tourCoachPickerOpen: false,
+      guideBookOpen: false,
+      guideBookFocus: null,
       tourCoachInitialStep: 0,
       tourCoachSingleStep: false,
     }),
   openTourCoachStep: (stepIndex) =>
     set({
       tourCoachOpen: true,
-      tourCoachPickerOpen: false,
+      guideBookOpen: false,
+      guideBookFocus: null,
       tourCoachInitialStep: Math.max(0, stepIndex),
       tourCoachSingleStep: true,
     }),
-  openTourCoachPicker: () =>
+  openGuideBook: (focus) =>
     set({
-      tourCoachPickerOpen: true,
+      guideBookOpen: true,
+      guideBookFocus: focus ?? null,
       tourCoachOpen: false,
+    }),
+  closeGuideBook: () =>
+    set({
+      guideBookOpen: false,
+      guideBookFocus: null,
     }),
   closeTourCoach: () =>
     set({
       tourCoachOpen: false,
-      tourCoachPickerOpen: false,
+      guideBookOpen: false,
+      guideBookFocus: null,
     }),
+  requestOpenSettings: (tab) =>
+    set((state) => ({
+      settingsOpenRequest: state.settingsOpenRequest + 1,
+      settingsOpenTab: tab ?? null,
+    })),
 }));
 
 export default useWorld;

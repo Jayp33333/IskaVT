@@ -41,9 +41,9 @@ export const UI = ({ experienceStarted = false }: UIProps) => {
     showFps,
     mobileControlsCustomize,
     tourCoachOpen,
-    tourCoachPickerOpen,
+    guideBookOpen,
   } = useWorld((s: any) => s);
-  const tourGuideBlocking = tourCoachOpen || tourCoachPickerOpen;
+  const tourGuideBlocking = tourCoachOpen || guideBookOpen;
   const fps = useFps(showFps);
   const npcFocus = !!activeNPCDialog;
   const hideAreaInfo =
