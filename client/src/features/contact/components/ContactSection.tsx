@@ -3,7 +3,6 @@ import { PageHeader, Section } from "../../../components/marketing";
 import { CONTACT_PAGE_INTRO } from "../constants";
 import { ContactForm } from "./ContactForm";
 import { ContactInfoPanel } from "./ContactInfoPanel";
-import { ContactDepartments } from "./ContactDepartments";
 import { ContactLocation } from "./ContactLocation";
 
 type ContactSectionProps = {
@@ -35,12 +34,7 @@ export function ContactSection({
         <ContactForm {...form} />
       </div>
 
-      {showExtendedContent && (
-        <>
-          <ContactDepartments />
-          <ContactLocation />
-        </>
-      )}
+      {showExtendedContent && <ContactLocation />}
     </Section>
   );
 }

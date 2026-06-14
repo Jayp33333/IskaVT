@@ -2,6 +2,7 @@ import { Gltf } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import type { SpeechVoiceProfile } from "../../features/contact/hooks/useFaqSpeech";
 import useWorld from "../../hooks/useWorld";
 
 type DialogStep = {
@@ -18,6 +19,9 @@ type NPCProps = {
   rotation?: [number, number, number]; // degrees (x, y, z)
   dialogs: DialogStep[];
   color?: string;
+  voiceProfile?: SpeechVoiceProfile;
+  voicePitch?: number;
+  voiceRate?: number;
 };
 
 const INTERACT_DISTANCE = 1.5;
@@ -31,6 +35,9 @@ export const NPC = ({
   rotation = [0, 0, 0],
   dialogs,
   color = "#D43F3F",
+  voiceProfile,
+  voicePitch,
+  voiceRate,
 }: NPCProps) => {
   const npcRef = useRef<THREE.Group>(null);
   const [showDialog, setShowDialog] = useState(false);
@@ -92,6 +99,9 @@ export const NPC = ({
       setActiveNPCDialog({
         title: name,
         message: currentDialog.message,
+        voiceProfile,
+        voicePitch,
+        voiceRate,
         options: currentDialog.options?.map((opt) => ({
           label: opt.label,
           onClick: () => handleOptionClick(opt.next),
@@ -102,7 +112,7 @@ export const NPC = ({
       setActiveNPCDialog(null);
     }
     return () => setActiveNPCDialog(null);
-  }, [showDialog, currentDialog, name]);
+  }, [showDialog, currentDialog, name, voiceProfile, voicePitch, voiceRate]);
 
   return (
     <group

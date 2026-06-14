@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, Square, Volume2, X } from "lucide-react";
+import { useFaqSpeech } from "../../../features/contact/hooks/useFaqSpeech";
 import useWorld from "../../../hooks/useWorld";
 
 export type DialogOption = {
@@ -12,6 +13,9 @@ type NPCDialogProps = {
   open: boolean;
   title: string;
   message: string;
+  voiceProfile?: "male" | "female";
+  voicePitch?: number;
+  voiceRate?: number;
   options?: DialogOption[];
   onClose: () => void;
 };
@@ -22,14 +26,26 @@ export const NPCDialog = ({
   open,
   title,
   message,
+  voiceProfile = "male",
+  voicePitch,
+  voiceRate,
   options,
   onClose,
 }: NPCDialogProps) => {
   const showLogHistory = useWorld((state: any) => state.showLogHistory);
+  const masterEnabled = useWorld((state: any) => state.masterEnabled);
+  const { speak, stop, speakingId, isSupported } = useFaqSpeech({
+    profile: voiceProfile,
+    pitch: voicePitch,
+    rate: voiceRate,
+  });
+  const speechId = `npc-dialog-${title}`;
+  const isSpeaking = speakingId === speechId;
   const [displayedText, setDisplayedText] = useState("");
   const [typingDone, setTypingDone] = useState(false);
   const indexRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const optionsListRef = useRef<HTMLDivElement>(null);
 
   const clearTypingInterval = () => {
     if (intervalRef.current) {
@@ -67,6 +83,29 @@ export const NPCDialog = ({
     return clearTypingInterval;
   }, [open, message]);
 
+  useEffect(() => {
+    if (!open || !message.trim() || !isSupported || !masterEnabled) {
+      stop();
+      return;
+    }
+
+    speak(speechId, message);
+
+    return () => stop();
+  }, [open, message, speechId, isSupported, masterEnabled, speak, stop]);
+
+  useEffect(() => {
+    if (!open) {
+      stop();
+    }
+  }, [open, stop]);
+
+  useEffect(() => {
+    if (typingDone && optionsListRef.current) {
+      optionsListRef.current.scrollTop = 0;
+    }
+  }, [typingDone, options]);
+
   const hasOptions = options && options.length > 0;
   const speakerInitial = title.trim().charAt(0).toUpperCase() || "?";
 
@@ -91,27 +130,32 @@ export const NPCDialog = ({
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-2.5 pointer-events-auto sm:gap-3 [@media(orientation:landscape)_and_(max-height:600px)]:max-w-3xl [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5">
             {typingDone && (
               <motion.div
-                className="ml-auto flex w-full max-w-[20rem] flex-col gap-1.5 rounded-2xl border-[3px] border-ink bg-white p-2.5 shadow-brutal-sm sm:border-[4px] sm:p-3 sm:shadow-brutal-md [@media(orientation:landscape)_and_(max-height:600px)]:max-w-[20rem] [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:p-2"
+                className="ml-auto flex w-full max-w-md flex-col gap-1.5 rounded-2xl border-[3px] border-ink bg-white p-2.5 shadow-brutal-sm sm:max-w-lg sm:border-[4px] sm:p-3 sm:shadow-brutal-md [@media(orientation:landscape)_and_(max-height:600px)]:max-w-sm [@media(orientation:landscape)_and_(max-height:600px)]:gap-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-xl [@media(orientation:landscape)_and_(max-height:600px)]:border-[3px] [@media(orientation:landscape)_and_(max-height:600px)]:p-2"
                 initial={{ opacity: 0, x: 18 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 18 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="flex items-center gap-1.5 px-1 text-[9px] font-black uppercase leading-none tracking-widest text-ink/50 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
+                <div className="flex shrink-0 items-center gap-1.5 px-1 text-[9px] font-black uppercase leading-none tracking-widest text-ink/50 [@media(orientation:landscape)_and_(max-height:600px)]:text-[8px]">
                   <MessageCircle size={14} strokeWidth={4} />
                   Your Reply
                 </div>
                 {hasOptions ? (
-                  options!.map((opt, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className="rounded-xl border-[3px] border-ink bg-gold px-3 py-2 text-left text-xs font-extrabold leading-snug text-ink shadow-brutal-sm transition-all hover:bg-gold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
-                      onClick={opt.onClick}
-                    >
-                      {opt.label}
-                    </button>
-                  ))
+                  <div
+                    ref={optionsListRef}
+                    className="flex max-h-[min(42vh,14rem)] min-h-0 flex-col gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:thin] [@media(orientation:landscape)_and_(max-height:600px)]:max-h-[min(36vh,9.5rem)]"
+                  >
+                    {options!.map((opt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="shrink-0 rounded-xl border-[3px] border-ink bg-gold px-3 py-2 text-left text-xs font-extrabold leading-snug text-ink shadow-brutal-sm transition-all hover:bg-gold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none [@media(orientation:landscape)_and_(max-height:600px)]:px-2.5 [@media(orientation:landscape)_and_(max-height:600px)]:py-1.5 [@media(orientation:landscape)_and_(max-height:600px)]:text-[10px]"
+                        onClick={opt.onClick}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 ) : (
                   <button
                     type="button"
@@ -139,6 +183,27 @@ export const NPCDialog = ({
                     {title}
                   </h3>
                 </div>
+                {isSupported && masterEnabled && (
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-xl border-[3px] border-ink bg-gold p-1.5 text-ink transition-transform active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (isSpeaking) {
+                        stop();
+                      } else {
+                        speak(speechId, message);
+                      }
+                    }}
+                    aria-label={isSpeaking ? "Stop voice" : "Replay voice"}
+                  >
+                    {isSpeaking ? (
+                      <Square size={18} strokeWidth={3} className="fill-current" />
+                    ) : (
+                      <Volume2 size={18} strokeWidth={3} />
+                    )}
+                  </button>
+                )}
                 <button
                   type="button"
                   className="shrink-0 rounded-xl border-[3px] border-ink bg-white p-1.5 text-ink transition-transform active:scale-95 [@media(orientation:landscape)_and_(max-height:600px)]:rounded-lg [@media(orientation:landscape)_and_(max-height:600px)]:p-1"

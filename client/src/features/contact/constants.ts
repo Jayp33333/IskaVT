@@ -1,14 +1,48 @@
 import { Clock, Mail, MapPin, Phone, type LucideIcon } from "lucide-react";
 
+export const PUP_LOPEZ_OFFICIAL_EMAIL = "lopez@pup.edu.ph";
+
+export const PUP_LOPEZ_CAMPUS_HOTLINES = [
+  "(042) 302-5249",
+  "(042) 841-1149",
+  "(042) 841-1890",
+] as const;
+
+export const PUP_TRUNK_LINE = "+63 2 5335-1787";
+
+export const PUP_LOPEZ_HOTLINE_TEXT = PUP_LOPEZ_CAMPUS_HOTLINES.join("\n");
+
+export const PUP_LOPEZ_FULL_PHONE_TEXT = [
+  ...PUP_LOPEZ_CAMPUS_HOTLINES,
+  `${PUP_TRUNK_LINE} (PUP trunk line — connects all campuses including Lopez)`,
+].join("\n");
+
+export const PUP_LOPEZ_OFFICE_HOURS_TEXT = [
+  "Monday – Friday: 8:00 AM – 5:00 PM",
+  "Saturday: 8:00 AM – 5:00 PM (limited offices only)",
+  "Sunday: Closed",
+  "Lunch break: usually 12:00 NN – 1:00 PM (some offices pause operations)",
+].join("\n");
+
 export type ContactInfoItem = {
   icon: LucideIcon;
   label: string;
   value: string;
+  multiline?: boolean;
 };
 
 export const CONTACT_INFO_ITEMS: ContactInfoItem[] = [
-  { icon: Mail, label: "General Email", value: "support@pup-lopez.edu" },
-  { icon: Phone, label: "Campus Hotline", value: "+63 (042) 123 4567" },
+  {
+    icon: Mail,
+    label: "Official Email",
+    value: PUP_LOPEZ_OFFICIAL_EMAIL,
+  },
+  {
+    icon: Phone,
+    label: "Campus Hotline",
+    value: PUP_LOPEZ_FULL_PHONE_TEXT,
+    multiline: true,
+  },
   {
     icon: MapPin,
     label: "Address",
@@ -17,45 +51,8 @@ export const CONTACT_INFO_ITEMS: ContactInfoItem[] = [
   {
     icon: Clock,
     label: "Office Hours",
-    value: "Mon–Fri, 8:00 AM – 5:00 PM",
-  },
-];
-
-export type ContactDepartment = {
-  name: string;
-  email: string;
-  phone: string;
-  description: string;
-};
-
-export const CONTACT_DEPARTMENTS: ContactDepartment[] = [
-  {
-    name: "Registrar's Office",
-    email: "registrar@pup-lopez.edu",
-    phone: "+63 (042) 123 4568",
-    description:
-      "Enrollment, transcripts, credentials, and student records.",
-  },
-  {
-    name: "Guidance & Counseling",
-    email: "guidance@pup-lopez.edu",
-    phone: "+63 (042) 123 4569",
-    description:
-      "Student wellness, career advising, and personal development support.",
-  },
-  {
-    name: "IT & Virtual Tour Support",
-    email: "it-support@pup-lopez.edu",
-    phone: "+63 (042) 123 4570",
-    description:
-      "Technical help with the 3D campus tour, account access, and platform bugs.",
-  },
-  {
-    name: "Campus Director's Office",
-    email: "director@pup-lopez.edu",
-    phone: "+63 (042) 123 4571",
-    description:
-      "Partnerships, campus-wide concerns, and official correspondence.",
+    value: PUP_LOPEZ_OFFICE_HOURS_TEXT,
+    multiline: true,
   },
 ];
 
@@ -388,7 +385,7 @@ export const CONTACT_FAQ_SECTIONS: ContactFaqSection[] = [
       {
         question: "Can I visit the campus in person?",
         answer:
-          "Yes. Walk-in visitors are welcome during office hours. For group tours or official visits, email the Campus Director's Office in advance.",
+          "Yes. Walk-in visitors are welcome during office hours — Monday to Friday, 8:00 AM to 5:00 PM, and Saturday 8:00 AM to 5:00 PM for limited offices only. The campus is closed on Sundays. Note that some offices pause during lunch break, usually 12:00 NN to 1:00 PM. For group tours or official visits, email lopez@pup.edu.ph in advance.",
       },
     ],
   },
@@ -455,7 +452,7 @@ export const CONTACT_FAQ_ITEMS: ContactFaqItem[] = CONTACT_FAQ_SECTIONS.flatMap(
 export const CONTACT_PAGE_INTRO = {
   headline: "We're Here to Help",
   description:
-    "Whether you need enrollment guidance, technical support for the virtual tour, or general campus information, our offices are ready to assist. Browse department contacts below or send us a message directly.",
+    "Whether you need enrollment guidance, technical support for the virtual tour, or general campus information, our offices are ready to assist. Send us a message directly using the form below.",
 };
 
 /** Official PUP Lopez campus location (Wikipedia / PUP Lopez contact info). */

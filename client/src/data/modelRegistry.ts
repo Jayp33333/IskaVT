@@ -2,7 +2,7 @@
 const MODEL_PATHS_BASE = {
   campus: "./models/PUP_CAMPUS.glb",
   guard: "/models/avatars/guard.glb",
-  professor: "/models/avatars/professor1.glb",
+  campusDirector: "/models/avatars/campus-director.glb",
   iskaVrm: "models/avatars/Iska.vrm",
   iskoVrm: "models/avatars/Isko.vrm",
 } as const;
@@ -15,7 +15,7 @@ function withBuildVersion(path: string): string {
 export const MODEL_PATHS = {
   campus: withBuildVersion(MODEL_PATHS_BASE.campus),
   guard: withBuildVersion(MODEL_PATHS_BASE.guard),
-  professor: withBuildVersion(MODEL_PATHS_BASE.professor),
+  campusDirector: withBuildVersion(MODEL_PATHS_BASE.campusDirector),
   iskaVrm: withBuildVersion(MODEL_PATHS_BASE.iskaVrm),
   iskoVrm: withBuildVersion(MODEL_PATHS_BASE.iskoVrm),
 } as const;

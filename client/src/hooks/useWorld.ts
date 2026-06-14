@@ -82,6 +82,9 @@ interface WorldState {
   activeNPCDialog: {
     title: string;
     message: string;
+    voiceProfile?: "male" | "female";
+    voicePitch?: number;
+    voiceRate?: number;
     options?: { label: string; onClick: () => void }[];
     onClose: () => void;
   } | null;
@@ -93,6 +96,9 @@ interface WorldState {
     d: {
       title: string;
       message: string;
+      voiceProfile?: "male" | "female";
+      voicePitch?: number;
+      voiceRate?: number;
       options?: { label: string; onClick: () => void }[];
       onClose: () => void;
     } | null

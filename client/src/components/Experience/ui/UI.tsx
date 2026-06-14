@@ -106,6 +106,9 @@ export const UI = ({ experienceStarted = false }: UIProps) => {
           open={true}
           title={activeNPCDialog.title}
           message={activeNPCDialog.message}
+          voiceProfile={activeNPCDialog.voiceProfile}
+          voicePitch={activeNPCDialog.voicePitch}
+          voiceRate={activeNPCDialog.voiceRate}
           options={activeNPCDialog.options}
           onClose={activeNPCDialog.onClose}
         />

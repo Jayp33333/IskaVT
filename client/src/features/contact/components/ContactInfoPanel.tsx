@@ -14,8 +14,8 @@ export function ContactInfoPanel() {
           Get in Touch
         </motion.span>
         <p className="mb-6 max-w-md text-sm font-bold leading-relaxed text-ink/70 sm:mb-8 sm:text-base">
-          Have questions about the 3D campus or found a bug? Send us a message and our team will
-          get back to you within 1–2 business days.
+          Have questions about enrollment, campus services, or the virtual tour? Reach PUP Lopez
+          through the contact details below — our team will get back to you within 1–2 business days.
         </p>
 
         <div className="space-y-3 sm:space-y-4">
@@ -31,7 +31,20 @@ export function ContactInfoPanel() {
                 <p className="text-[10px] font-black uppercase leading-none opacity-50">
                   {item.label}
                 </p>
-                <p className="text-xs font-black sm:text-sm">{item.value}</p>
+                {item.label === "Official Email" ? (
+                  <a
+                    href={`mailto:${item.value}`}
+                    className="text-xs font-black transition-colors hover:text-[#800000] sm:text-sm"
+                  >
+                    {item.value}
+                  </a>
+                ) : (
+                  <p
+                    className={`text-xs font-black sm:text-sm${item.multiline ? " whitespace-pre-line leading-relaxed" : ""}`}
+                  >
+                    {item.value}
+                  </p>
+                )}
               </div>
             </div>
           ))}
