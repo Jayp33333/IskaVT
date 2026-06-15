@@ -51,8 +51,8 @@ const MINIMAP_ZOOM = 5;
 //   - Positive START_OFFSET_Y moves the marker DOWN
 // Tip: walk to your actual spawn point in-game, then tweak these until
 // the red arrow lines up with the same spot on CampusMap.png.
-const START_OFFSET_X = -8.7;
-const START_OFFSET_Y = 45;
+const START_OFFSET_X = -7.9;
+const START_OFFSET_Y = 44.3;
 
 // Convert a normalized map position (% within the image, 0..100)
 // back into world-space X/Z coords (inverse of the marker math).
