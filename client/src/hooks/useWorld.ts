@@ -34,9 +34,9 @@ const SHOW_CAMPUS_GRAPH_LABELS_KEY = "experience-show-campus-graph-labels";
 const SHOW_CAMPUS_NODE_ADD_TOOL_KEY = "experience-show-campus-node-add-tool";
 
 function readShowFpsPreference(): boolean {
-  if (typeof window === "undefined") return true;
+  if (typeof window === "undefined") return false;
   const stored = localStorage.getItem(SHOW_FPS_KEY);
-  return stored === null ? true : stored === "true";
+  return stored === "true";
 }
 
 function readShowCampusGraphPreference(): boolean {
