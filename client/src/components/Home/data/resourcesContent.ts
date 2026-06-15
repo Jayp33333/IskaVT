@@ -9,13 +9,19 @@ export const STUDENT_HANDBOOK_DOWNLOAD_URL =
 
 export const resourceNavLinks: { name: string; path: string }[] = [
   { name: "Student Handbook", path: "/resources/handbook" },
-  { name: "FAQ", path: "/resources/faq" },
+  { name: "Tour FAQ", path: "/resources/faq/tour" },
+  { name: "PUPLQ FAQ", path: "/resources/faq/puplq" },
   { name: "About the Developer", path: "/resources/developers" },
 ];
 
-export const faqPageIntro = {
+export const tourFaqPageIntro = {
   description:
-    "Find answers about the ISKA Virtual Tour, campus access, and how to get support when you need help.",
+    "Answers about using ISKA Virtual Tour — controls, navigation, troubleshooting, and how to get technical help.",
+};
+
+export const puplqFaqPageIntro = {
+  description:
+    "Answers about PUP Lopez — enrollment steps, campus visits, registrar services, and student procedures.",
 };
 
 export const developersPageIntro = {

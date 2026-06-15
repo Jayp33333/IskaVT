@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Award,
@@ -19,6 +19,9 @@ import {
   undergraduateDegreeCourses,
   undergraduateDiplomaCourses,
   graduatePrograms,
+  programCollegeNames,
+  programsPageIntro,
+  type ProgramCollege,
   type ProgramOffer,
 } from "./data/pupLopezContent";
 
@@ -87,33 +90,71 @@ const diplomaCount = undergraduateDiplomaCourses.length;
 const graduateCount = graduatePrograms.length;
 const totalPrograms = degreeCount + diplomaCount + graduateCount;
 
+const collegeOrder: ProgramCollege[] = [
+  "COA",
+  "CB",
+  "COED",
+  "CEA",
+  "CTHRM",
+  "COPA",
+  "CT",
+  "CAS",
+];
+
 function matchesQuery(program: ProgramOffer, query: string) {
   const normalized = query.trim().toLowerCase();
   if (!normalized) return true;
+  const collegeName = program.college
+    ? programCollegeNames[program.college].toLowerCase()
+    : "";
   return (
     program.code.toLowerCase().includes(normalized) ||
-    program.title.toLowerCase().includes(normalized)
+    program.title.toLowerCase().includes(normalized) ||
+    collegeName.includes(normalized) ||
+    (program.college?.toLowerCase().includes(normalized) ?? false)
   );
+}
+
+function groupProgramsByCollege(programs: ProgramOffer[]) {
+  const grouped = new Map<ProgramCollege | "other", ProgramOffer[]>();
+
+  for (const program of programs) {
+    const key = program.college ?? "other";
+    const items = grouped.get(key) ?? [];
+    items.push(program);
+    grouped.set(key, items);
+  }
+
+  const ordered: { college: ProgramCollege | "other"; items: ProgramOffer[] }[] =
+    [];
+
+  for (const college of collegeOrder) {
+    const items = grouped.get(college);
+    if (items?.length) {
+      ordered.push({ college, items });
+      grouped.delete(college);
+    }
+  }
+
+  const other = grouped.get("other");
+  if (other?.length) {
+    ordered.push({ college: "other", items: other });
+  }
+
+  return ordered;
 }
 
 function ProgramCard({
   program,
-  index,
   accentClass,
   badgeClass,
 }: {
   program: ProgramOffer;
-  index: number;
   accentClass: string;
   badgeClass: string;
 }) {
   return (
-    <motion.li
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ delay: Math.min(index * 0.03, 0.24) }}
+    <li
       className={`group flex flex-col rounded-xl border border-ink/15 bg-white p-4 transition-colors hover:border-ink hover:bg-cream sm:rounded-2xl sm:p-5 ${accentClass} border-l`}
     >
       <span
@@ -124,7 +165,7 @@ function ProgramCard({
       <p className="mt-3 text-sm font-bold leading-snug text-ink sm:text-base">
         {program.title}
       </p>
-    </motion.li>
+    </li>
   );
 }
 
@@ -139,13 +180,13 @@ function CategorySection({
   const visibleItems = category.items.filter((program) =>
     matchesQuery(program, query),
   );
+  const collegeGroups = groupProgramsByCollege(visibleItems);
 
   if (visibleItems.length === 0) return null;
 
   return (
     <motion.section
       id={`programs-${category.id}`}
-      layout
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -169,19 +210,27 @@ function CategorySection({
         </div>
       </div>
 
-      <ul className="grid grid-cols-1 gap-3 bg-cream/50 p-4 sm:grid-cols-2 sm:gap-4 sm:p-6 lg:grid-cols-3">
-        <AnimatePresence mode="popLayout">
-          {visibleItems.map((program, index) => (
-            <ProgramCard
-              key={`${program.code}-${program.title}`}
-              program={program}
-              index={index}
-              accentClass={category.accentClass}
-              badgeClass={category.badgeClass}
-            />
-          ))}
-        </AnimatePresence>
-      </ul>
+      <div className="flex flex-col gap-6 bg-cream/50 p-4 sm:gap-8 sm:p-6">
+        {collegeGroups.map((group) => (
+          <div key={group.college}>
+            {group.college !== "other" ? (
+              <h3 className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-maroon sm:mb-4 sm:text-sm">
+                {programCollegeNames[group.college]}
+              </h3>
+            ) : null}
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+              {group.items.map((program) => (
+                <ProgramCard
+                  key={`${program.code}-${program.title}`}
+                  program={program}
+                  accentClass={category.accentClass}
+                  badgeClass={category.badgeClass}
+                />
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </motion.section>
   );
 }
@@ -232,7 +281,7 @@ export function Programs() {
             </span>
           </>
         }
-        description="Browse undergraduate and graduate offerings designed to meet local and international standards of quality and excellence."
+        description={programsPageIntro}
       />
 
       <motion.div
@@ -422,7 +471,7 @@ export function Programs() {
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Link
-              to="/resources/faq"
+              to="/resources/faq/puplq"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-ink bg-gold px-5 py-3 text-xs font-black uppercase tracking-wide text-ink transition-colors hover:bg-gold/90 sm:text-sm"
             >
               View enrollment FAQ

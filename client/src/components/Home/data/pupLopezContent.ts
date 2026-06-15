@@ -1,4 +1,5 @@
 export type AboutSectionId =
+  | "administration"
   | "vision-mission"
   | "philosophy"
   | "goals"
@@ -13,6 +14,7 @@ export type AboutContentBlock =
   | { type: "inspired-values" }
   | { type: "strategic-goals" }
   | { type: "hymns" }
+  | { type: "administration" }
   | {
       type: "sections-with-video";
       sections: { title: string; content: AboutContentBlock }[];
@@ -27,6 +29,7 @@ export type AboutContentBlock =
 export const aboutNavLinks: { name: string; path: string }[] = [
   { name: "Overview", path: "/about" },
   { name: "Programs", path: "/programs" },
+  { name: "Administration", path: "/about/administration" },
   { name: "Vision & Mission", path: "/about/vision-mission" },
   { name: "Philosophy", path: "/about/philosophy" },
   { name: "Strategic Goals", path: "/about/goals" },
@@ -47,7 +50,7 @@ export const aboutOverviewIntro = {
   stats: [
     { label: "Established", value: "1979" },
     { label: "Campus Area", value: "23,724 sqm" },
-    { label: "Programs", value: "24+" },
+    { label: "Programs", value: "25" },
     { label: "Location", value: "Lopez, Quezon" },
   ],
 };
@@ -58,6 +61,13 @@ export const aboutOverviewSections: {
   description: string;
   path: string;
 }[] = [
+  {
+    id: "administration",
+    title: "Administration",
+    description:
+      "Meet campus leadership, office staff, faculty, and the accreditation task force serving PUP Lopez.",
+    path: "/about/administration",
+  },
   {
     id: "vision-mission",
     title: "Vision & Mission",
@@ -110,54 +120,154 @@ export function isAboutSectionId(value: string): value is AboutSectionId {
   return aboutSectionIds.includes(value as AboutSectionId);
 }
 
+export type ProgramCollege =
+  | "COA"
+  | "CB"
+  | "COED"
+  | "CEA"
+  | "CTHRM"
+  | "COPA"
+  | "CT"
+  | "CAS";
+
+export const programCollegeNames: Record<ProgramCollege, string> = {
+  COA: "College of Accountancy",
+  CB: "College of Business",
+  COED: "College of Education",
+  CEA: "College of Engineering and Architecture",
+  CTHRM: "College of Tourism and Hotel and Restaurant Management",
+  COPA: "College of Public Administration",
+  CT: "College of Technology",
+  CAS: "College of Allied Sciences",
+};
+
 export type ProgramOffer = {
   code: string;
   title: string;
+  college?: ProgramCollege;
 };
 
+export const programsPageIntro =
+  "The branch offers sixteen (16) undergraduate degree programs and six (6) diploma programs across eight colleges, plus graduate offerings through PUP Open University.";
+
 export const undergraduateDegreeCourses: ProgramOffer[] = [
-  { code: "BEED", title: "Bachelor of Elementary Education" },
-  { code: "BPA", title: "Bachelor of Public Administration" },
   {
-    code: "BPA-FA",
-    title: "Bachelor of Public Administration major in Fiscal Administration",
+    code: "BSA",
+    title: "Bachelor of Science in Accountancy",
+    college: "COA",
   },
-  { code: "BSA", title: "Bachelor of Science in Accountancy" },
-  { code: "BSAM", title: "Bachelor of Science in Agribusiness Management" },
-  { code: "BSArch", title: "Bachelor of Science in Architecture" },
+  {
+    code: "BSAM",
+    title: "Bachelor of Science in Agri-business Management",
+    college: "CB",
+  },
   {
     code: "BSBA-FM",
-    title: "Bachelor of Science in Business Administration major in Financial Management",
+    title:
+      "Bachelor of Science in Business Administration Major in Financial Management",
+    college: "CB",
   },
   {
     code: "BSBA-MM",
-    title: "Bachelor of Science in Business Administration major in Marketing Management",
+    title:
+      "Bachelor of Science in Business Administration Major in Marketing Management",
+    college: "CB",
   },
-  { code: "BSBio", title: "Bachelor of Science in Biology" },
-  { code: "BSCE", title: "Bachelor of Science in Civil Engineering" },
+  {
+    code: "BEED",
+    title: "Bachelor in Elementary Education",
+    college: "COED",
+  },
   {
     code: "BSED-MT",
-    title: "Bachelor of Secondary Education major in Mathematics",
+    title: "Bachelor in Secondary Education Major in Mathematics",
+    college: "COED",
   },
-  { code: "BSEE", title: "Bachelor of Science in Electrical Engineering" },
-  { code: "BSHM", title: "Bachelor of Science in Hospitality Management" },
-  { code: "BSIT", title: "Bachelor of Science in Information Technology" },
-  { code: "BSND", title: "Bachelor of Science in Nutrition and Dietetics" },
-  { code: "BSOA", title: "Bachelor of Science in Office Administration" },
+  {
+    code: "BSARCHI",
+    title: "Bachelor of Science in Architecture",
+    college: "CEA",
+  },
+  {
+    code: "BSCE",
+    title: "Bachelor of Science in Civil Engineering",
+    college: "CEA",
+  },
+  {
+    code: "BSEE",
+    title: "Bachelor of Science in Electrical Engineering",
+    college: "CEA",
+  },
+  {
+    code: "BSHM",
+    title: "Bachelor of Science in Hospitality Management",
+    college: "CTHRM",
+  },
+  {
+    code: "BPA",
+    title: "Bachelor in Public Administration",
+    college: "COPA",
+  },
+  {
+    code: "BPA-FA",
+    title: "Bachelor in Public Administration Major in Fiscal Administration",
+    college: "COPA",
+  },
+  {
+    code: "BSOA-LOA",
+    title:
+      "Bachelor of Science in Office Administration Major in Legal Office Administration",
+    college: "COPA",
+  },
+  {
+    code: "BSIT",
+    title: "Bachelor of Science in Information Technology",
+    college: "CT",
+  },
+  {
+    code: "BSBIO",
+    title: "Bachelor of Science in Biology",
+    college: "CAS",
+  },
+  {
+    code: "BSND",
+    title: "Bachelor of Science in Nutrition and Dietetics",
+    college: "CAS",
+  },
 ];
 
 export const undergraduateDiplomaCourses: ProgramOffer[] = [
-  { code: "DCVET", title: "Diploma in Civil Engineering Technology" },
-  { code: "DCET", title: "Diploma in Computer Engineering Technology" },
-  { code: "DEET", title: "Diploma in Electrical Engineering Technology" },
-  { code: "DIT", title: "Diploma in Information Technology" },
   {
-    code: "DOMT-L",
-    title: "Diploma in Office Management Technology – Legal Office Management",
+    code: "DCVET",
+    title: "Diploma in Civil Engineering Technology",
+    college: "CT",
   },
   {
-    code: "DOMT-M",
-    title: "Diploma in Office Management Technology – Medical Office Management",
+    code: "DEET",
+    title: "Diploma in Electrical Engineering Technology",
+    college: "CT",
+  },
+  {
+    code: "DIT",
+    title: "Diploma in Information Technology",
+    college: "CT",
+  },
+  {
+    code: "DOMT-LOM",
+    title:
+      "Diploma in Office Management and Technology – Major in Legal Office Management",
+    college: "CT",
+  },
+  {
+    code: "DOMT-MOM",
+    title:
+      "Diploma in Office Management and Technology – Major in Medical Office Management",
+    college: "CT",
+  },
+  {
+    code: "DCPET",
+    title: "Diploma in Computer Engineering Technology",
+    college: "CT",
   },
 ];
 
@@ -169,10 +279,29 @@ export const graduatePrograms: ProgramOffer[] = [
 
 export const aboutContent: Record<
   AboutSectionId,
-  { title: string; content: AboutContentBlock }
+  {
+    title: string;
+    headerBefore: string;
+    headerHighlight: string;
+    description: string;
+    content: AboutContentBlock;
+  }
 > = {
+  administration: {
+    title: "Administration",
+    headerBefore: "Campus ",
+    headerHighlight: "Administration",
+    description: "",
+    content: {
+      type: "administration",
+    },
+  },
   "vision-mission": {
     title: "Vision & Mission",
+    headerBefore: "Our ",
+    headerHighlight: "Vision & Mission",
+    description:
+      "Discover PUP's guiding vision for excellence in polytechnic education and our mission to advance inclusive, equitable learning.",
     content: {
       type: "sections-with-video",
       youtubeId: "Lp_x4dWvLs4",
@@ -197,6 +326,10 @@ export const aboutContent: Record<
   },
   philosophy: {
     title: "Philosophy",
+    headerBefore: "Campus ",
+    headerHighlight: "Philosophy",
+    description:
+      "Understand the beliefs that shape our approach to education, national development, and humanist internationalism.",
     content: {
       type: "list",
       intro: "As a State University, PUP Lopez believes that:",
@@ -208,18 +341,30 @@ export const aboutContent: Record<
   },
   goals: {
     title: "Strategic Goals",
+    headerBefore: "Strategic ",
+    headerHighlight: "Goals",
+    description:
+      "Explore the strategic priorities that drive campus initiatives, academic quality, and community impact.",
     content: {
       type: "strategic-goals",
     },
   },
   values: {
     title: "Core Values",
+    headerBefore: "Core ",
+    headerHighlight: "Values",
+    description:
+      "Meet the INSPIRED values that define character, integrity, and service across the PUP community.",
     content: {
       type: "inspired-values",
     },
   },
   history: {
     title: "History",
+    headerBefore: "Campus ",
+    headerHighlight: "History",
+    description:
+      "Trace our journey from Southern Pacific College to a thriving state university campus with decades of milestones.",
     content: {
       type: "paragraphs",
       items: [
@@ -237,6 +382,10 @@ export const aboutContent: Record<
   },
   hymn: {
     title: "Hymn",
+    headerBefore: "PUP ",
+    headerHighlight: "Hymn",
+    description:
+      "Read and listen to the PUP hymn — a symbol of pride, unity, and dedication shared by every Iskolar ng Bayan.",
     content: {
       type: "hymns",
     },

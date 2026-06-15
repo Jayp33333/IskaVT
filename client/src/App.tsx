@@ -33,7 +33,8 @@ export default function App() {
         <Route path="/about" element={<AboutOverviewPage />} />
         <Route path="/about/:section" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/resources/faq" element={<FaqPage />} />
+        <Route path="/resources/faq" element={<Navigate to="/resources/faq/puplq" replace />} />
+        <Route path="/resources/faq/:variant" element={<FaqPage />} />
         <Route path="/resources/handbook" element={<HandbookPage />} />
         <Route path="/resources/developers" element={<DevelopersPage />} />
         <Route path="/experience" element={<ExperienceScene />} />

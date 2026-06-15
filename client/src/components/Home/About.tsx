@@ -1,6 +1,7 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { PageHeader, Section, SpeakTextButton } from "../marketing";
+import { PageHeader, Section, SpeakTextButton, GoldUnderline } from "../marketing";
+import { AdministrationContent } from "./AdministrationContent";
 import { InspiredValuesGrid } from "./InspiredValuesGrid";
 import { StrategicGoalsGrid } from "./StrategicGoalsGrid";
 import { HymnsContent } from "./HymnsContent";
@@ -54,6 +55,10 @@ function renderContent(content: AboutContentBlock) {
 
   if (content.type === "hymns") {
     return <HymnsContent />;
+  }
+
+  if (content.type === "administration") {
+    return <AdministrationContent />;
   }
 
   if (content.type === "sections-with-video") {
@@ -132,12 +137,21 @@ export function About() {
       <PageHeader
         title={
           <>
-            About <span className="text-maroon">Our Campus</span>
+            {page.headerBefore}
+            <span className="relative text-maroon">
+              {page.headerHighlight}
+              <GoldUnderline />
+            </span>
           </>
         }
-        description="Learn about our vision, mission, values, and the history that shaped PUP Lopez into a premier campus in the region."
-        backLink={{ to: "/about", label: "← Back to About Overview" }}
+        description={page.description}
       />
+
+      {historySpeechText && (
+        <div className="mb-6 flex justify-center sm:mb-8">
+          <SpeakTextButton text={historySpeechText} />
+        </div>
+      )}
 
       <motion.div
         key={section}
@@ -145,19 +159,14 @@ export function About() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
         className={`mx-auto rounded-[32px] p-8 md:p-12 ${
-          section === "values" || section === "goals" || section === "hymn"
+          section === "values" ||
+          section === "goals" ||
+          section === "hymn" ||
+          section === "administration"
             ? "max-w-6xl bg-transparent"
             : "max-w-4xl border border-ink bg-white shadow-brutal-gold-lg"
         }`}
       >
-          {section !== "hymn" && (
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="text-3xl font-black uppercase tracking-tighter text-[#800000] md:text-4xl">
-                {page.title}
-              </h3>
-              {historySpeechText && <SpeakTextButton text={historySpeechText} />}
-            </div>
-          )}
           {renderContent(page.content)}
         </motion.div>
     </Section>

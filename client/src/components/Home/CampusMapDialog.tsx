@@ -16,9 +16,9 @@ const clamp = (n: number, min: number, max: number) =>
   Math.min(max, Math.max(min, n));
 
 const LOCATION_HIGHLIGHTS: Record<string, string[]> = {
-  grandstand: ["Events", "Assemblies", "Outdoor venue"],
-  pylon: ["Landmark", "Photo spot"],
-  "hm-rooms": ["Kitchen lab", "Beverage lab", "Hospitality"],
+  grandstand: ["School programs", "Ceremonies", "Sports activities"],
+  pylon: ["True, good, beautiful", "Wisdom, strength, beauty", "Campus landmark"],
+  "hm-rooms": ["Culinary arts", "Restaurant service", "Beverage management"],
 };
 
 function getLocationDetails(pinId: string) {

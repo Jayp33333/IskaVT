@@ -31,6 +31,7 @@ export default defineConfig({
       injectRegister: "auto",
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
+        globIgnores: ["**/images/administrations/**"],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         skipWaiting: false,
         clientsClaim: true,
@@ -42,6 +43,21 @@ export default defineConfig({
               cacheName: "iska-models",
               expiration: {
                 maxEntries: 32,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith("/images/administrations/"),
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "iska-administration-photos",
+              expiration: {
+                maxEntries: 128,
                 maxAgeSeconds: 60 * 60 * 24 * 30,
               },
               cacheableResponse: {

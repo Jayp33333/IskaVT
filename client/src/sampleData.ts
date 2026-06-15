@@ -545,6 +545,15 @@ export const floorZones = [
     yMax: 7,
   },
   {
+    name: "HM Laboratories ",
+    xMin: 40,
+    xMax: 62,
+    zMin: -136,
+    zMax: -98,
+    yMin: 0,
+    yMax: 7,
+  },
+  {
     name: "Grandstand",
     xMin: 2.2,
     xMax: 16,
@@ -598,6 +607,33 @@ export const floorZones = [
     yMin: 0,
     yMax: 7,
   },
+  {
+    name: "Eco Park ",
+    xMin: -8,
+    xMax: 20,
+    zMin: -178,
+    zMax: -158,
+    yMin: 0,
+    yMax: 7,
+  },
+  {
+    name: "Green House ",
+    xMin: -52,
+    xMax: -18,
+    zMin: -178,
+    zMax: -152,
+    yMin: 0,
+    yMax: 7,
+  },
+  {
+    name: "PUP Sintahanan ",
+    xMin: 4,
+    xMax: 14,
+    zMin: -146,
+    zMax: -134,
+    yMin: 0,
+    yMax: 8,
+  },
 ];
 
 export type FloorZone = (typeof floorZones)[number];
@@ -647,6 +683,10 @@ const EDUCATION_BUILDING_IMAGE = "/images/buildings/EducationBuilding.png";
 const COMLAB1_IMAGE = "/images/buildings/Comlab1.jpg";
 const COMLAB2_IMAGE = "/images/buildings/Comlab2.jpg";
 const HM_ROOMS_IMAGE = "/images/buildings/HMRooms.jpg";
+const ECO_PARK_IMAGE = "/images/buildings/EcoPark.jpg";
+const GREEN_HOUSE_IMAGE = "/images/buildings/GreenHouse.jpg";
+const PUP_SINTAHAN_IMAGE = "/images/buildings/PUPSintahan.jpg";
+const NEW_CANTEEN_IMAGE = "/images/buildings/NewCanteen.jpg";
 
 function withRoomOffsets(
   buildingId: string,
@@ -1162,11 +1202,52 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     imageSrc: COMLAB2_IMAGE,
     kind: "poi",
   },
+  {
+    id: "eco-park",
+    name: "Eco Park",
+    position: new THREE.Vector3(10, 0.4, -168),
+    teleportPosition: new THREE.Vector3(9.87, 0.4, -171.91),
+    highlighted: false,
+    imageSrc: ECO_PARK_IMAGE,
+    kind: "poi",
+  },
+  {
+    id: "green-house",
+    name: "Green House",
+    position: new THREE.Vector3(-34, 0.4, -166),
+    teleportPosition: new THREE.Vector3(-34, 0.4, -166),
+    highlighted: false,
+    imageSrc: GREEN_HOUSE_IMAGE,
+    kind: "poi",
+  },
+  {
+    id: "pup-sintahan",
+    name: "PUP Sintahanan",
+    // WOOD_BUILDING mesh in PUP_CAMPUS.glb + Gltf offset [10, 0.1, 0]
+    position: new THREE.Vector3(9.18, 4.5, -140.12),
+    teleportPosition: new THREE.Vector3(9.18, 0.4, -140.12),
+    highlighted: false,
+    imageSrc: PUP_SINTAHAN_IMAGE,
+    kind: "poi",
+  },
+  {
+    id: "new-canteen",
+    name: "New Canteen",
+    position: new THREE.Vector3(3, 0.5, -86),
+    teleportPosition: new THREE.Vector3(4.17, 0.5, -94.49),
+    highlighted: false,
+    imageSrc: NEW_CANTEEN_IMAGE,
+    kind: "poi",
+  },
 ];
 
 /** Floor-zone names that differ from map pin display names. */
 const FLOOR_ZONE_PIN_IDS: Record<string, string> = {
   Gymnasium: "gymnasium",
+  "New Canteen": "new-canteen",
+  "Eco Park": "eco-park",
+  "Green House": "green-house",
+  "PUP Sintahanan": "pup-sintahan",
 };
 
 export function getPinForFloorZoneName(

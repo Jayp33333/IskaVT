@@ -17,9 +17,9 @@ const AREA_DESCRIPTIONS: Record<string, string> = {
   "Director's Office":
     "The director's office within the Administration Building, used for campus leadership and executive affairs.",
   Pylon:
-    "A campus landmark and point of interest commonly used as a reference location around the grounds.",
+    "The Pylon originally stood for the true, the good and the beautiful. The triad of pillars may also stand for wisdom, strength and beauty because there should be wisdom to contrive, strength to support and beauty to adorn any great or important undertaking.",
   Grandstand:
-    "An open campus area used for gatherings, events, outdoor activities, and large school programs.",
+    "The Grandstand of PUP Lopez Campus is a sports and event structure usually used for school programs, gatherings, ceremonies, and sometimes sports activities. It's part of the campus facilities developed to support large events and student activities.",
   "Tau Gamma":
     "A marked campus area included in the navigation map for location awareness.",
 };

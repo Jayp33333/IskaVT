@@ -2,19 +2,18 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import {
-  CONTACT_FAQ_SECTIONS,
   type ContactFaqItem,
+  type ContactFaqSection,
   type ContactFaqStep,
   type ContactFaqSubItem,
 } from "../constants";
 import { useFaqSpeech } from "../hooks/useFaqSpeech";
 import { getFaqSpeechText } from "../utils/faqSpeechText";
 
-const FAQ_SUBTITLE =
-  "Everything you need to know about the virtual tour and campus inquiries.";
-
 type ContactFaqProps = {
+  sections: ContactFaqSection[];
   showHeader?: boolean;
+  subtitle?: string;
 };
 
 function FaqSteps({ steps }: { steps: ContactFaqStep[] }) {
@@ -243,37 +242,53 @@ function FaqAccordion({
   );
 }
 
-export function ContactFaq({ showHeader = true }: ContactFaqProps) {
+export function ContactFaq({
+  sections,
+  showHeader = true,
+  subtitle,
+}: ContactFaqProps) {
   const { speak, stop, speakingIdRef, isSupported } = useFaqSpeech();
+  const showSectionTitles = sections.length > 1;
+  let itemIndex = 0;
 
   return (
     <section className={showHeader ? "mt-12 sm:mt-16" : undefined}>
-      {showHeader && (
+      {showHeader && subtitle && (
         <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
           <h2 className="text-2xl font-black uppercase leading-tight tracking-tighter text-ink sm:text-3xl md:text-4xl">
             Frequently Asked <span className="text-maroon">Questions</span>
           </h2>
           <p className="mt-3 max-w-xl text-sm font-bold text-ink/60 sm:text-base">
-            {FAQ_SUBTITLE}
+            {subtitle}
           </p>
         </div>
       )}
 
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5">
-        {CONTACT_FAQ_SECTIONS.flatMap((section) => section.items).map(
-          (item, index) => (
-            <FaqAccordion
-              key={item.question}
-              item={item}
-              index={index}
-              speechId={item.question}
-              speak={speak}
-              stop={stop}
-              speakingIdRef={speakingIdRef}
-              isSupported={isSupported}
-            />
-          ),
-        )}
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 sm:gap-10">
+        {sections.map((section) => (
+          <div key={section.title} className="flex flex-col gap-4 sm:gap-5">
+            {showSectionTitles && (
+              <h3 className="text-xs font-black uppercase tracking-widest text-maroon sm:text-sm">
+                {section.title}
+              </h3>
+            )}
+            {section.items.map((item) => {
+              const index = itemIndex++;
+              return (
+                <FaqAccordion
+                  key={item.question}
+                  item={item}
+                  index={index}
+                  speechId={item.question}
+                  speak={speak}
+                  stop={stop}
+                  speakingIdRef={speakingIdRef}
+                  isSupported={isSupported}
+                />
+              );
+            })}
+          </div>
+        ))}
       </div>
     </section>
   );

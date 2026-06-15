@@ -184,9 +184,9 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     name: "Pylon",
     tag: "Landmark",
     image: "/images/campus-image.jpg",
-    highlights: ["Campus icon", "Photo spot", "Landmark"],
+    highlights: ["True, good, beautiful", "Wisdom, strength, beauty", "Campus landmark"],
     description:
-      "The iconic campus pylon at the heart of PUP Lopez.",
+      "A symbolic campus landmark whose pillars represent the true, the good, the beautiful — and wisdom, strength, and beauty.",
   },
   {
     name: "Yumul Building",
@@ -200,9 +200,9 @@ export const homeExploreLocations: HomeExploreLocation[] = [
     name: "HM Laboratories",
     tag: "Laboratories",
     image: "/images/buildings/HMRooms.jpg",
-    highlights: ["Kitchen lab", "Beverage lab", "Hospitality"],
+    highlights: ["Culinary arts", "Restaurant service", "Beverage management"],
     description:
-      "Hospitality Management laboratories for kitchen, beverage, and tissue lab coursework.",
+      "Industry-based HM labs for housekeeping, food preparation, culinary arts, restaurant service, and beverage management.",
   },
   {
     name: "ICT Laboratory 1",
@@ -262,11 +262,43 @@ export const homeExploreLocations: HomeExploreLocation[] = [
   },
   {
     name: "Grandstand",
-    tag: "Outdoor",
+    tag: "Events",
     image: "/images/buildings/Grandstand.jpg",
-    highlights: ["Events", "Assemblies", "Outdoor activities"],
+    highlights: ["School programs", "Ceremonies", "Sports activities"],
     description:
-      "Open-air venue for major events and outdoor campus activities.",
+      "Sports and event structure for programs, gatherings, ceremonies, and campus activities.",
+  },
+  {
+    name: "Eco Park",
+    tag: "Outdoor",
+    image: "/images/buildings/EcoPark.jpg",
+    highlights: ["Green space", "Seating", "Relaxation"],
+    description:
+      "A landscaped outdoor area for rest, gatherings, and campus greenery.",
+  },
+  {
+    name: "Green House",
+    tag: "Facilities",
+    image: "/images/buildings/GreenHouse.jpg",
+    highlights: ["Agriculture", "Plants", "Learning"],
+    description:
+      "Campus greenhouse used for plant cultivation and related coursework.",
+  },
+  {
+    name: "PUP Sintahanan",
+    tag: "Community",
+    image: "/images/buildings/PUPSintahan.jpg",
+    highlights: ["Meetings", "Student activities", "Bayanihan"],
+    description:
+      "A multi-purpose community space built through faculty and staff bayanihan, used for meetings, activities, and campus gatherings.",
+  },
+  {
+    name: "New Canteen",
+    tag: "Dining",
+    image: "/images/buildings/NewCanteen.jpg",
+    highlights: ["Meals", "Snacks", "Covered walkway"],
+    description:
+      "Student dining area along the covered walkway for meals between classes.",
   },
 ];
 

@@ -8,6 +8,7 @@ import {
   Music,
   Target,
   Eye,
+  Users,
 } from "lucide-react";
 import { PageHeader, Section, SectionEyebrow } from "../marketing";
 import {
@@ -17,6 +18,7 @@ import {
 } from "./data/pupLopezContent";
 
 const sectionIcons: Record<AboutSectionId, typeof Eye> = {
+  administration: Users,
   "vision-mission": Eye,
   philosophy: BookOpen,
   goals: Target,

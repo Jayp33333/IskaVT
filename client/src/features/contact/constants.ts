@@ -363,15 +363,83 @@ const GRADUATION_REQUIREMENTS = [
   "No student will be issued a diploma and a transcript of records unless they have been cleared of all accountabilities.",
 ];
 
-export const CONTACT_FAQ_SECTIONS: ContactFaqSection[] = [
+export const TOUR_FAQ_SECTIONS: ContactFaqSection[] = [
   {
-    title: "General",
+    title: "Getting Started",
     items: [
       {
         question: "How do I access the 3D campus tour?",
         answer:
           'Click "Visit App" in the navigation bar. No account is required for the public preview.',
       },
+      {
+        question: "Do I need to create an account?",
+        answer:
+          "No. The public campus tour works without login. Visit history is saved locally on your device only.",
+      },
+      {
+        question: "How do I learn the controls?",
+        answer:
+          "A guided walkthrough runs the first time you enter the tour. Replay it anytime from the book icon in the toolbar, or open the Campus Guide for help on movement, the map, and settings.",
+      },
+    ],
+  },
+  {
+    title: "Using the Tour",
+    items: [
+      {
+        question: "How do I move around?",
+        answer:
+          "On desktop, use WASD or arrow keys to walk and hold Shift to sprint. Move the mouse to look around. On mobile, use the on-screen joystick and hold landscape orientation.",
+      },
+      {
+        question: "How do I find a specific building?",
+        answer:
+          "Open the pin icon in the toolbar to search buildings and start guided wayfinding with distance arrows. You can also use the mini-map to teleport to pinned destinations.",
+      },
+      {
+        question: "How do I switch my avatar or camera view?",
+        answer:
+          "Click your portrait in the toolbar to change avatars. Open Settings (gear icon) and choose 1st Person or 3rd Person under Camera View.",
+      },
+      {
+        question: "How do I send feedback about the tour?",
+        answer:
+          "Click the chat bubble icon in the toolbar to rate your visit and share comments. You can also use the Contact page for longer inquiries.",
+      },
+    ],
+  },
+  {
+    title: "Troubleshooting",
+    items: [
+      {
+        question: "Why is there no sound?",
+        answer:
+          "Browsers block audio until you interact with the page. Click or tap inside the tour once it loads. Check Settings → Audio and confirm volume is turned up.",
+      },
+      {
+        question: "Why is the tour slow or not loading?",
+        answer:
+          "The 3D campus uses large models and needs a stable internet connection and a device with WebGL support. Try refreshing, closing other tabs, or using a newer browser such as Chrome or Edge.",
+      },
+      {
+        question: "Why does mobile ask for landscape orientation?",
+        answer:
+          "The tour is designed for landscape on phones so controls and the mini-map fit on screen. Rotate your device or use a tablet or desktop for the best experience.",
+      },
+      {
+        question: "Who should I contact for technical tour issues?",
+        answer:
+          "Use the feedback button inside the tour or send a message through the Contact page. Include your device, browser, and a short description of the problem.",
+      },
+    ],
+  },
+];
+
+export const PUPLQ_FAQ_SECTIONS: ContactFaqSection[] = [
+  {
+    title: "General",
+    items: [
       {
         question: "Who should I contact for enrollment questions?",
         answer:
@@ -444,7 +512,13 @@ export const CONTACT_FAQ_SECTIONS: ContactFaqSection[] = [
   },
 ];
 
-/** @deprecated Use CONTACT_FAQ_SECTIONS */
+/** @deprecated Use TOUR_FAQ_SECTIONS or PUPLQ_FAQ_SECTIONS */
+export const CONTACT_FAQ_SECTIONS: ContactFaqSection[] = [
+  ...TOUR_FAQ_SECTIONS,
+  ...PUPLQ_FAQ_SECTIONS,
+];
+
+/** @deprecated Use TOUR_FAQ_SECTIONS or PUPLQ_FAQ_SECTIONS */
 export const CONTACT_FAQ_ITEMS: ContactFaqItem[] = CONTACT_FAQ_SECTIONS.flatMap(
   (section) => section.items,
 );

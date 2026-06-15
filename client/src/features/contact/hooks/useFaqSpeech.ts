@@ -248,7 +248,8 @@ function prepareSpeechText(text: string): string {
     .replace(/\bMEM\b/g, "M E M")
     .replace(/\bINSPIRED\b/g, "inspired")
     .replace(/\bNN\b/g, "noon")
-    .replace(/\bISKA\b/gi, "iska");
+    .replace(/\bISKA\b/gi, "iska")
+    .replace(/\bJamito\b/g, "Hamito");
 }
 
 function splitSpeechText(text: string): string[] {
