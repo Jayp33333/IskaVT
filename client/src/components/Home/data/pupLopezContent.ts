@@ -147,9 +147,6 @@ export type ProgramOffer = {
   college?: ProgramCollege;
 };
 
-export const programsPageIntro =
-  "The branch offers sixteen (16) undergraduate degree programs and six (6) diploma programs across eight colleges, plus graduate offerings through PUP Open University.";
-
 export const undergraduateDegreeCourses: ProgramOffer[] = [
   {
     code: "BSA",

@@ -13,8 +13,8 @@ export type ViewMapPinPosition = {
 
 export const VIEW_MAP_PIN_POSITIONS: ViewMapPinPosition[] = [
   { id: "grandstand", x: 47, y: 46 },
-  { id: "gymnasium", x: 70, y: 33 },
-  { id: "yumul-building", x: 65, y: 82 },
+  { id: "gymnasium", x: 80, y: 31 },
+  { id: "yumul-building", x: 67, y: 82 },
   { id: "administration-building", x: 60, y: 94 },
   { id: "nantes-building", x: 55, y: 38 },
   { id: "health-sciences", x: 20, y: 70 },
@@ -23,8 +23,11 @@ export const VIEW_MAP_PIN_POSITIONS: ViewMapPinPosition[] = [
   { id: "pylon", x: 53, y: 65 },
   { id: "comlab-1", x: 40, y: 88 },
   { id: "comlab-2", x: 46, y: 82 },
-  { id: "hm-rooms", x: 64, y: 34 },
-  { id: "pup-sintahan", x: 46, y: 49 },
+  { id: "hm-rooms", x: 76, y: 47 },
+  { id: "pup-sintahan", x: 47, y: 36 },
+   { id: "green-house", x: 24, y: 26 },
+   { id: "eco-park", x: 47, y: 23 },
+   { id: "new-canteen", x: 44, y: 59 },
 ];
 
 const viewMapPositionById = new Map(
