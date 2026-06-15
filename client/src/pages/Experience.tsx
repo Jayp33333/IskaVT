@@ -7,6 +7,7 @@ import NPCs from "../components/Experience/NPCs";
 import Pin from "../components/Experience/Pin";
 import { CampusGraphDebug } from "../components/Experience/CampusGraphDebug";
 import Lights from "../components/Experience/Lights";
+import SceneFog from "../components/Experience/SceneFog";
 import useWorld from "../hooks/useWorld";
 import DistanceUpdater from "../components/Experience/ui/DistanceUpdater";
 
@@ -17,6 +18,7 @@ const Experience = () => {
   return (
     <>
       <Sky />
+      <SceneFog />
       <Lights />
       <World />
       <Suspense fallback={null}>
