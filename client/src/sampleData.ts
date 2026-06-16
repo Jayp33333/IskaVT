@@ -518,19 +518,23 @@ export const floorZones = [
   },
   {
     name: "Nantes Building",
-    xMin: 17.5,
-    xMax: 29,
-    zMin: -170.5,
-    zMax: -102.7,
+    polygon: [
+      { x: 15.41, z: -170.58 },
+      { x: 28.25, z: -170.49 },
+      { x: 29.63, z: -103.33 },
+      { x: 17.37, z: -102.46 },
+    ],
     yMin: 0,
     yMax: 7,
   },
-   {
+  {
     name: "Education Building",
-    xMin: -36,
-    xMax: 16.5,
-    zMin: -221,
-    zMax: -174.5,
+    polygon: [
+      { x: -26.24, z: -221.46 },
+      { x: 20.68, z: -186.12 },
+      { x: 11.44, z: -174.14 },
+      { x: -35.45, z: -208.00   },
+    ],
     yMin: 0,
     yMax: 7,
   },
@@ -546,10 +550,10 @@ export const floorZones = [
   },
   {
     name: "HM Laboratories ",
-    xMin: 40,
+    xMin: 48,
     xMax: 62,
-    zMin: -136,
-    zMax: -98,
+    zMin: -132,
+    zMax: -93,
     yMin: 0,
     yMax: 7,
   },
@@ -564,10 +568,13 @@ export const floorZones = [
   },
   {
     name: "Health and Sciences Building",
-    xMin: -51,
-    xMax: -12.31,
-    zMin: -85.85,
-    zMax: -38.5,
+    // Rotated footprint (~44° Y); corners from HS_BUILDING group in PUPCampus.glb
+    polygon: [
+      { x: -48.98, z: -86.79 },
+      { x: -11, z: -49.5 },
+      { x: -22.76, z: -37.57 },
+      { x: -60.7, z: -76   },
+    ],
     yMin: 0,
     yMax: 7,
   },
@@ -607,57 +614,118 @@ export const floorZones = [
     yMin: 0,
     yMax: 7,
   },
-  {
-    name: "Eco Park ",
-    xMin: -8,
-    xMax: 20,
-    zMin: -178,
-    zMax: -158,
+ {
+    name: "Eco Park",
+    polygon: [
+      { x: -16.97, z: -189.52 },
+      { x: 13.27, z: -171.60 },
+      { x: 12.02, z: -158.30 },
+      { x: -22.71, z: -174.45 },
+    ],
     yMin: 0,
     yMax: 7,
   },
   {
     name: "Green House ",
-    xMin: -52,
-    xMax: -18,
+    xMin: -38.53,
+    xMax: -25,
     zMin: -178,
-    zMax: -152,
+    zMax: -158.43,
     yMin: 0,
     yMax: 7,
   },
   {
     name: "PUP Sintahanan ",
-    xMin: 4,
+    xMin: 1,
     xMax: 14,
-    zMin: -146,
+    zMin: -151.46,
     zMax: -134,
     yMin: 0,
     yMax: 8,
   },
 ];
 
-export type FloorZone = (typeof floorZones)[number];
+export type FloorZonePoint = { x: number; z: number };
+
+type FloorZoneBase = {
+  name: string;
+  yMin?: number;
+  yMax?: number;
+};
+
+export type AxisAlignedFloorZone = FloorZoneBase & {
+  xMin: number;
+  xMax: number;
+  zMin: number;
+  zMax: number;
+};
+
+export type PolygonFloorZone = FloorZoneBase & {
+  polygon: readonly FloorZonePoint[];
+};
+
+export type FloorZone = AxisAlignedFloorZone | PolygonFloorZone;
+
+function isPolygonFloorZone(zone: FloorZone): zone is PolygonFloorZone {
+  return "polygon" in zone;
+}
+
+/** Ray-casting point-in-polygon test on the XZ plane. */
+export function isPointInPolygon(
+  point: { x: number; z: number },
+  polygon: readonly FloorZonePoint[],
+): boolean {
+  if (polygon.length < 3) return false;
+
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].x;
+    const zi = polygon[i].z;
+    const xj = polygon[j].x;
+    const zj = polygon[j].z;
+    const intersects =
+      zi > point.z !== zj > point.z &&
+      point.x <
+        ((xj - xi) * (point.z - zi)) / (zj - zi) + xi;
+    if (intersects) inside = !inside;
+  }
+  return inside;
+}
 
 export function isPositionInFloorZone(
   position: { x: number; y: number; z: number },
-  zone: FloorZone
+  zone: FloorZone,
 ): boolean {
+  const inY =
+    position.y >= (zone.yMin ?? 0) && position.y <= (zone.yMax ?? 10);
+  if (!inY) return false;
+
+  if (isPolygonFloorZone(zone)) {
+    return isPointInPolygon(position, zone.polygon);
+  }
+
   return (
     position.x >= zone.xMin &&
     position.x <= zone.xMax &&
     position.z >= zone.zMin &&
-    position.z <= zone.zMax &&
-    position.y >= (zone.yMin ?? 0) &&
-    position.y <= (zone.yMax ?? 10)
+    position.z <= zone.zMax
   );
 }
 
 function floorZoneVolume(zone: FloorZone): number {
-  return (
-    (zone.xMax - zone.xMin) *
-    (zone.zMax - zone.zMin) *
-    ((zone.yMax ?? 10) - (zone.yMin ?? 0))
-  );
+  const height = (zone.yMax ?? 10) - (zone.yMin ?? 0);
+
+  if (isPolygonFloorZone(zone)) {
+    const polygon = zone.polygon;
+    let area = 0;
+    for (let i = 0; i < polygon.length; i++) {
+      const j = (i + 1) % polygon.length;
+      area += polygon[i].x * polygon[j].z - polygon[j].x * polygon[i].z;
+    }
+    return (Math.abs(area) / 2) * height;
+  }
+
+  return (zone.xMax - zone.xMin) * (zone.zMax - zone.zMin) * height;
 }
 
 /** All zones containing the position, most specific (smallest) first. */
@@ -1206,7 +1274,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     id: "eco-park",
     name: "Eco Park",
     position: new THREE.Vector3(10, 0.4, -168),
-    teleportPosition: new THREE.Vector3(9.87, 0.4, -171.91),
+    teleportPosition: new THREE.Vector3(10.57, 0.40, -172.28),
     highlighted: false,
     imageSrc: ECO_PARK_IMAGE,
     kind: "poi",
@@ -1214,8 +1282,8 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
   {
     id: "green-house",
     name: "Green House",
-    position: new THREE.Vector3(-34, 0.4, -166),
-    teleportPosition: new THREE.Vector3(-34, 0.4, -166),
+    position: new THREE.Vector3(-31, 0.4, -166),
+    teleportPosition: new THREE.Vector3(-32.68, 0.40, -158.88),
     highlighted: false,
     imageSrc: GREEN_HOUSE_IMAGE,
     kind: "poi",
@@ -1225,7 +1293,7 @@ export const FIXED_LOCATION_PINS: FixedLocationPin[] = [
     name: "PUP Sintahanan",
     // WOOD_BUILDING mesh in PUP_CAMPUS.glb + Gltf offset [10, 0.1, 0]
     position: new THREE.Vector3(9.18, 4.5, -140.12),
-    teleportPosition: new THREE.Vector3(9.18, 0.4, -140.12),
+    teleportPosition: new THREE.Vector3(7.71, 0.40, -134.95),
     highlighted: false,
     imageSrc: PUP_SINTAHAN_IMAGE,
     kind: "poi",
