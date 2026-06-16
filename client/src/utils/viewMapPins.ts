@@ -25,7 +25,7 @@ export const VIEW_MAP_PIN_POSITIONS: ViewMapPinPosition[] = [
   { id: "comlab-2", x: 46, y: 82 },
   { id: "hm-rooms", x: 76, y: 47 },
   { id: "pup-sintahan", x: 47, y: 36 },
-   { id: "green-house", x: 24, y: 26 },
+   { id: "green-house", x: 24, y: 24.5 },
    { id: "eco-park", x: 47, y: 23 },
    { id: "new-canteen", x: 44, y: 59 },
 ];

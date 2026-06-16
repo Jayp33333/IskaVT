@@ -54,9 +54,9 @@ export const featureItems: FeatureItem[] = [
     icon: Navigation,
     title: "Guided Wayfinding",
     description:
-      "Dynamic arrow guides and distance meters help you find any building with precision.",
+      "Dynamic guide lines and distance meters help you find any building with precision.",
     details:
-      "Select a destination and follow on-screen arrows with distance readouts. Wayfinding keeps you on track even when exploring large areas like the gymnasium or Nantes Building.",
+      "Select a destination and follow the glowing path line with distance readouts. Wayfinding keeps you on track even when exploring large areas like the gymnasium or Nantes Building.",
     color: "white",
   },
   {
@@ -83,7 +83,7 @@ export const featureCategories = [
   {
     title: "Navigation",
     summary:
-      "Find your way with maps, wayfinding arrows, and teleport pins designed for quick orientation.",
+      "Find your way with maps, guide lines, and teleport pins designed for quick orientation.",
     items: ["Mini-Map Navigation", "Guided Wayfinding", "Area Detection"],
   },
   {

@@ -395,7 +395,7 @@ export const TOUR_FAQ_SECTIONS: ContactFaqSection[] = [
       {
         question: "How do I find a specific building?",
         answer:
-          "Open the pin icon in the toolbar to search buildings and start guided wayfinding with distance arrows. You can also use the mini-map to teleport to pinned destinations.",
+          "Open the pin icon in the toolbar to search buildings and start guided wayfinding with a path guide line and distance readout. You can also use the mini-map to teleport to pinned destinations.",
       },
       {
         question: "How do I switch my avatar or camera view?",
