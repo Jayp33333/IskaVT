@@ -4,7 +4,11 @@ import {
   lightIntensityPercentToDirectional,
 } from "../../utils/experienceLightingSettings";
 
-const Lights = () => {
+type LightsProps = {
+  sunPosition: [number, number, number];
+};
+
+const Lights = ({ sunPosition }: LightsProps) => {
   const lightIntensity = useWorld((s) => s.lightIntensity);
   const shadowsEnabled = useWorld((s) => s.shadowsEnabled);
 
@@ -12,7 +16,7 @@ const Lights = () => {
     <>
       <directionalLight
         intensity={lightIntensityPercentToDirectional(lightIntensity)}
-        position={[-20, 40, -60]}
+        position={sunPosition}
         castShadow={shadowsEnabled}
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-120}

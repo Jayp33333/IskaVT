@@ -1,12 +1,10 @@
-import { useEffect, useId, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Facebook } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { PageHeader, Section } from "../marketing";
-import { useFaqSpeech } from "../../features/contact/hooks/useFaqSpeech";
 import { homeWelcomeContent } from "./data/homeContent";
 import { developersPageIntro } from "./data/resourcesContent";
-import { buildDevelopersSpeechText } from "./utils/developersSpeechText";
 
 const socialIcons: Record<string, LucideIcon> = {
   facebook: Facebook,
@@ -128,18 +126,6 @@ function DeveloperProfileCard({
 
 export function Developers() {
   const { projectDevelopers } = homeWelcomeContent;
-  const speechId = useId();
-  const { speak, stop, isSupported } = useFaqSpeech();
-
-  useEffect(() => {
-    if (!isSupported) {
-      return;
-    }
-
-    speak(speechId, buildDevelopersSpeechText());
-
-    return () => stop();
-  }, [isSupported, speak, speechId, stop]);
 
   return (
     <Section id="developers" dotGrid>

@@ -9,17 +9,23 @@ import { CampusGraphDebug } from "../components/Experience/CampusGraphDebug";
 import Lights from "../components/Experience/Lights";
 // import SceneFog from "../components/Experience/SceneFog";
 import useWorld from "../hooks/useWorld";
+import { useSunPosition } from "../hooks/useSunPosition";
 import DistanceUpdater from "../components/Experience/ui/DistanceUpdater";
 
 const Experience = () => {
   const pinPosition = useWorld((s: any) => s.pinPosition);
   const isPinConfirmed = useWorld((s: any) => s.isPinConfirmed);
+  const { sunPosition, skyInclination, skyAzimuth } = useSunPosition();
 
   return (
     <>
-      <Sky />
+      <Sky
+        sunPosition={sunPosition}
+        inclination={skyInclination}
+        azimuth={skyAzimuth}
+      />
       {/* <SceneFog /> */}
-      <Lights />
+      <Lights sunPosition={[sunPosition.x, sunPosition.y, sunPosition.z]} />
       <World />
       <Suspense fallback={null}>
         <Character />
