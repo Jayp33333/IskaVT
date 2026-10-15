@@ -4,11 +4,13 @@ import { useFrame } from "@react-three/fiber";
 import {
   SimpleCharacter,
   usePointerLockRotateZoomActionBindings,
-  useKeyboardLocomotionActionBindings,
+  KeyboardLocomotionActionBindings,
+  Vanilla,
   FirstPersonCharacterCameraBehavior,
   useIsMobile,
 } from "@react-three/viverse";
 import useWorld from "../../hooks/useWorld";
+import { useSmoothLookControls } from "../../hooks/useSmoothLookControls";
 import {
   sensitivityPercentToLookSpeed,
   sensitivityPercentToMoveMult,
@@ -51,7 +53,10 @@ const Character = () => {
     lockOnClick: !isMobile && !interactionLocked && !cursorRevealedByAlt,
     rotationSpeed: lookSpeed,
   });
-  useKeyboardLocomotionActionBindings({ requiresPointerLock: false });
+  useSmoothLookControls({
+    enabled: isMobile && !lookLocked,
+    rotationSpeed: lookSpeed,
+  });
 
   // When an NPC dialog opens, immediately release pointer lock so the user
   // regains the cursor and cannot rotate the camera by moving the mouse.
@@ -133,9 +138,19 @@ const Character = () => {
     <SimpleCharacter
       ref={characterRef}
       position={[10, 3, 0]}
+      // Rotation is handled above: pointer lock on desktop and a touch-drag
+      // hook on mobile. Excluding the default pointer-capture binding avoids
+      // unreliable movementX/Y values on mobile browsers.
+      actionBindings={
+        isMobile
+          ? [
+              Vanilla.ScreenJoystickLocomotionActionBindings,
+              Vanilla.ScreenButtonJumpActionBindings,
+              KeyboardLocomotionActionBindings,
+            ]
+          : [KeyboardLocomotionActionBindings]
+      }
       actionBindingOptions={{
-        pointerCaptureRotationSpeed: lookSpeed,
-        pointerLockRotationSpeed: lookSpeed,
         // Default library dead zone is 24px (~43% of radius) — too large on our themed joystick.
         screenJoystickDeadZonePx: 0,
         screenJoystickRunDistancePx: 36,

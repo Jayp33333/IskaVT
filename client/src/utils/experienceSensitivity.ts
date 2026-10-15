@@ -1,10 +1,13 @@
 export const SENSITIVITY_STORAGE_KEY = "experience-sensitivity";
 export const DEFAULT_SENSITIVITY_PERCENT = 50;
 
-const LOOK_SPEED_MIN = 0.06;
-const LOOK_SPEED_MAX = 0.16;
-const LOOK_SPEED_MIN_MOBILE = 0.1;
-const LOOK_SPEED_MAX_MOBILE = 0.32;
+// @pmndrs/viverse uses 4.0 as its default pointer-lock rotation speed.
+// Keeping our range near that scale makes the slider perceptible without
+// making its lowest setting unusably slow.
+const LOOK_SPEED_MIN = 0.8;
+const LOOK_SPEED_MAX = 5;
+const LOOK_SPEED_MIN_MOBILE = 1;
+const LOOK_SPEED_MAX_MOBILE = 7;
 const MOVE_SPEED_MULT_MIN = 0.85;
 const MOVE_SPEED_MULT_MAX = 1.2;
 const MOVE_SPEED_MULT_MIN_MOBILE = 0.9;
