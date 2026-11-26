@@ -1,5 +1,5 @@
 import { Inbox, LayoutDashboard, MessageSquare, Users } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { AdminTab } from "../../types";
 
 type NavItem = {

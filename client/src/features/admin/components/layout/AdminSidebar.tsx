@@ -1,5 +1,5 @@
 import { FileText, Inbox, LayoutDashboard, MessageSquare, Users } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { AdminTab } from "../../types";
 
 type SidebarItem = {
@@ -8,7 +8,7 @@ type SidebarItem = {
   icon: typeof LayoutDashboard;
 };
 
-export const SIDEBAR_ITEMS: readonly SidebarItem[] = [
+const SIDEBAR_ITEMS: readonly SidebarItem[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "visitors", label: "Visitors", icon: Users },
   { id: "messages", label: "Messages", icon: Inbox },

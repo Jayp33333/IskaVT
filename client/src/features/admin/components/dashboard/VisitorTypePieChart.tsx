@@ -11,13 +11,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { useAdmin } from "../../context/AdminContext";
-import {
-  ChartEmpty,
-  ChartSummary,
-  ChartTooltip,
-  MODERN_CHART_PALETTE,
-} from "./chartShared";
+import { useAdmin } from "../../context/adminContextValue";
+import { ChartEmpty, ChartSummary, ChartTooltip } from "./chartShared";
+import { MODERN_CHART_PALETTE } from "./chartTheme";
 
 type VisitorTypeRow = {
   visitorType: string;
@@ -25,9 +21,13 @@ type VisitorTypeRow = {
   percent: number;
 };
 
+type VisitorTypeStat = { visitorType: string; count: number };
+
+const EMPTY_VISITOR_TYPES: readonly VisitorTypeStat[] = [];
+
 export function VisitorTypePieChart() {
   const { data } = useAdmin();
-  const raw = data.stats?.visitsByVisitorType ?? [];
+  const raw = data.stats?.visitsByVisitorType ?? EMPTY_VISITOR_TYPES;
 
   const { chartData, total } = useMemo(() => {
     const sum = raw.reduce((s, v) => s + v.count, 0);

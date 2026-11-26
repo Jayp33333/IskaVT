@@ -7,7 +7,7 @@ import {
   REFRESH_LABELS,
   TOAST_SHORT_DURATION_MS,
 } from "../../constants";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type {
   AdminSettings,
   ExportFormat,

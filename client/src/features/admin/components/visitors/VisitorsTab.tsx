@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import type { LogbookEntry } from "../../../../services/api";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { ExportRange, VisitorRecord } from "../../types";
 import { exportVisitors, PopupBlockedError } from "../../utils/exporters";
 import { ConfirmDialog } from "../common/ConfirmDialog";

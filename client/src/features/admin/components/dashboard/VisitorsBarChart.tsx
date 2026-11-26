@@ -9,17 +9,17 @@ import {
   YAxis,
 } from "recharts";
 
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { VisitorPeriod } from "../../types";
 import { aggregateTimelineData } from "../../utils/aggregateTimeline";
 import {
-  CHART_PRIMARY_MUTED,
   ChartEmpty,
   ChartGradientDefs,
   ChartSummary,
   ChartTooltip,
   PeriodPills,
 } from "./chartShared";
+import { CHART_PRIMARY_MUTED } from "./chartTheme";
 
 const PERIOD_OPTIONS: { value: VisitorPeriod; label: string }[] = [
   { value: "daily", label: "Daily" },

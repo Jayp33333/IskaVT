@@ -1,4 +1,4 @@
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import { AdminCard, AdminCardHeader } from "../common/adminUi";
 
 const RANK_STYLES = [

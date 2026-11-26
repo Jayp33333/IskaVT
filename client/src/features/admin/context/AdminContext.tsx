@@ -20,8 +20,6 @@ import { useVisitors } from "../hooks/useVisitors";
 import type { AdminNotification, AdminTab, VisitorPeriod } from "../types";
 import { AdminContext, type AdminContextValue } from "./adminContextValue";
 
-export { useAdmin } from "./adminContextValue";
-
 type AdminProviderProps = {
   children: ReactNode;
 };

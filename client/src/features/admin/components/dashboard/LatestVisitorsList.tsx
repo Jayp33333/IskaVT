@@ -1,5 +1,5 @@
 import { LATEST_VISITOR_COLORS } from "../../constants";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { VisitorRecord } from "../../types";
 import { AdminButton, AdminCard, AdminCardHeader } from "../common/adminUi";
 

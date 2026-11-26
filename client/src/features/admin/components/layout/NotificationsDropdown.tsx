@@ -1,5 +1,5 @@
 import { Bell, Mail, Users } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import { formatTimeAgo } from "../../utils/time";
 import type { AdminNotification } from "../../types";
 import { AdminButton } from "../common/adminUi";

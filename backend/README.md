@@ -75,6 +75,22 @@ npm start
 
 The server will start on `http://localhost:5000` (or the port specified in `.env`).
 
+## Testing
+
+```bash
+yarn test
+```
+
+Tests use Node's built-in runner (`node:test`, Node 22+) and `supertest`, and
+live in `test/` as `*.test.js` files. They import the Express app from `app.js`
+(which builds routes without connecting to MongoDB or listening); `server.js` is
+the runtime entry point that connects and listens.
+
+`test/authMatrix.test.js` checks the unauthenticated response of every route
+and needs no database or `.env`. Cases marked `todo` are admin routes that are
+still public (roadmap Wave 1 / 1.1); remove the `todo` marker once a route is
+protected so the case is enforced.
+
 ## API Endpoints
 
 ### Health Check

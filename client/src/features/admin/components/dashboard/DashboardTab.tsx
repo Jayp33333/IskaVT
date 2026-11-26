@@ -1,4 +1,4 @@
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import { LatestFeedbackList } from "./LatestFeedbackList";
 import { LatestVisitorsList } from "./LatestVisitorsList";
 import { StatsGrid } from "./StatsGrid";

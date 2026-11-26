@@ -1,5 +1,5 @@
 import { MessageSquare } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { FeedbackRecord } from "../../types";
 import { StarRatingDisplay } from "../common/StarRatingDisplay";
 import { AdminButton, AdminCard, AdminCardHeader } from "../common/adminUi";

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAdmin } from "../../context/AdminContext";
-import { ADMIN_TAB_META } from "../common/adminUi";
+import { useAdmin } from "../../context/adminContextValue";
+import { ADMIN_TAB_META } from "../common/adminUiConstants";
 import { AccountDropdown } from "./AccountDropdown";
 import { EmailDropdown } from "./EmailDropdown";
 import { NotificationsDropdown } from "./NotificationsDropdown";

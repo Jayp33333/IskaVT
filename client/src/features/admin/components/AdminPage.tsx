@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useAdmin } from "../context/AdminContext";
+import { useAdmin } from "../context/adminContextValue";
 import { Toast } from "./common/Toast";
 import { DashboardTab } from "./dashboard/DashboardTab";
 import { AdminMobileNav } from "./layout/AdminMobileNav";

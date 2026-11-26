@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { MessageRecord } from "../../types";
 import { AdminCard } from "../common/adminUi";
 import { ConfirmDialog } from "../common/ConfirmDialog";

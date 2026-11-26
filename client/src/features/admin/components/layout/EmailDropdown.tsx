@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import type { MessageRecord } from "../../types";
 import { AdminButton } from "../common/adminUi";
 import { AdminDropdownPanel } from "./AdminDropdownPanel";

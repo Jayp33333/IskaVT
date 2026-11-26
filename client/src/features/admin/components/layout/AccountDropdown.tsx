@@ -1,5 +1,5 @@
 import { ChevronDown, HelpCircle, LogOut, Settings } from "lucide-react";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context/adminContextValue";
 import { AdminDropdownPanel } from "./AdminDropdownPanel";
 
 type AccountDropdownProps = {
