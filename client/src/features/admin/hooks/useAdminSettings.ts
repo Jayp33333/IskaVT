@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   DEFAULT_SETTINGS,
   REFRESH_INTERVAL_MS,
@@ -61,5 +61,8 @@ export function useAdminSettings(): UseAdminSettingsValue {
     return DEFAULT_SETTINGS;
   }, []);
 
-  return { settings, saveSettings, resetSettings };
+  return useMemo(
+    () => ({ settings, saveSettings, resetSettings }),
+    [settings, saveSettings, resetSettings]
+  );
 }

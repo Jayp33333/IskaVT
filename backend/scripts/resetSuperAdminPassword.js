@@ -25,6 +25,8 @@ async function reset() {
   }
 
   user.passwordHash = await bcrypt.hash(password, 10);
+  // Invalidate any sessions issued with the old password.
+  user.tokenVersion = (user.tokenVersion ?? 0) + 1;
   await user.save();
 
   console.log(`Password updated for super admin: ${user.username}`);

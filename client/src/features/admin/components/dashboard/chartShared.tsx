@@ -3,43 +3,83 @@ import { CHART_PRIMARY, CHART_PRIMARY_LIGHT } from "./chartTheme";
 
 type ChartTooltipPayload = {
   name?: string;
-  value?: number;
+  value?: number | string;
   color?: string;
+  payload?: unknown;
 };
 
 type ChartTooltipProps = {
   active?: boolean;
   payload?: ChartTooltipPayload[];
   label?: string | number;
+  // Recharts passes the <Tooltip> formatter props through to custom content.
+  labelFormatter?: (label: never, payload: never) => ReactNode;
+  formatter?: (
+    value: never,
+    name: never,
+    item: never,
+    index: number,
+    payload: never
+  ) => ReactNode | [ReactNode, ReactNode];
 };
 
-export function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
+function formatValue(value: ReactNode): ReactNode {
+  return typeof value === "number" ? value.toLocaleString() : value;
+}
+
+export function ChartTooltip({
+  active,
+  payload,
+  label,
+  labelFormatter,
+  formatter,
+}: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
 
   const items = payload;
+  const title = labelFormatter
+    ? labelFormatter(label as never, items as never)
+    : label;
 
   return (
     <div className="rounded-lg border border-gray-200/80 bg-white/95 px-3 py-2.5 shadow-lg backdrop-blur-sm">
-      {label != null && label !== "" && (
-        <p className="mb-1.5 text-xs font-semibold text-gray-900">{label}</p>
+      {title != null && title !== "" && (
+        <p className="mb-1.5 text-xs font-semibold text-gray-900">{title}</p>
       )}
       <ul className="space-y-1">
-        {items.map((entry, i) => (
-          <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
-            {entry.color && (
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: entry.color }}
-              />
-            )}
-            <span className="font-medium text-gray-800">{entry.name ?? "Count"}</span>
-            <span className="ml-auto tabular-nums text-gray-900">
-              {typeof entry.value === "number"
-                ? entry.value.toLocaleString()
-                : entry.value}
-            </span>
-          </li>
-        ))}
+        {items.map((entry, i) => {
+          let value: ReactNode = entry.value;
+          let name: ReactNode = entry.name ?? "Count";
+          if (formatter) {
+            const out = formatter(
+              entry.value as never,
+              entry.name as never,
+              entry as never,
+              i,
+              items as never
+            );
+            if (Array.isArray(out)) {
+              value = out[0];
+              name = out[1] ?? name;
+            } else {
+              value = out;
+            }
+          }
+          return (
+            <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
+              {entry.color && (
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: entry.color }}
+                />
+              )}
+              <span className="font-medium text-gray-800">{name}</span>
+              <span className="ml-auto tabular-nums text-gray-900">
+                {formatValue(value)}
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

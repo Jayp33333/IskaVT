@@ -25,6 +25,17 @@ export function FeedbackTab() {
     }
   };
 
+  const loadPage = async (page: number) => {
+    try {
+      await feedback.loadFeedback(page);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to load feedback";
+      toast.showToast(msg, "error");
+    }
+  };
+
+  const handleRefresh = () => loadPage(feedback.feedbackPage);
+
   const requestDelete = (f: FeedbackRecord) => {
     setFeedbackToDelete(f);
     setDeleteOpen(true);
@@ -57,7 +68,7 @@ export function FeedbackTab() {
         unreadCount={feedback.feedbackUnread}
         onFilterChange={feedback.setFeedbackFilter}
         onSearchChange={feedback.setFeedbackSearch}
-        onRefresh={() => feedback.loadFeedback(feedback.feedbackPage).catch(() => {})}
+        onRefresh={handleRefresh}
       />
 
       <AdminCard padding="none" className="overflow-hidden">
@@ -72,15 +83,9 @@ export function FeedbackTab() {
               page={feedback.feedbackPage}
               totalPages={feedback.feedbackTotalPages}
               onSelect={(f) => feedback.openFeedback(f).catch(() => {})}
-              onPrev={() =>
-                feedback.loadFeedback(Math.max(1, feedback.feedbackPage - 1)).catch(() => {})
-              }
+              onPrev={() => loadPage(Math.max(1, feedback.feedbackPage - 1))}
               onNext={() =>
-                feedback
-                  .loadFeedback(
-                    Math.min(feedback.feedbackTotalPages, feedback.feedbackPage + 1)
-                  )
-                  .catch(() => {})
+                loadPage(Math.min(feedback.feedbackTotalPages, feedback.feedbackPage + 1))
               }
             />
           </div>

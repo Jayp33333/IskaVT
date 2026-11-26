@@ -1,9 +1,8 @@
-import dotenv from 'dotenv';
+// Must be the first import: app.js reads env (CLIENT_ORIGIN) when it loads.
+import 'dotenv/config';
 
 import app from './app.js';
 import connectDB from './config/db.js';
-
-dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 

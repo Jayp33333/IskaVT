@@ -11,7 +11,10 @@ import {
 
 import { useAdmin } from "../../context/adminContextValue";
 import type { VisitorPeriod } from "../../types";
-import { aggregateTimelineData } from "../../utils/aggregateTimeline";
+import {
+  aggregateTimelineData,
+  type TimelineBar,
+} from "../../utils/aggregateTimeline";
 import {
   ChartEmpty,
   ChartGradientDefs,
@@ -36,11 +39,15 @@ const PERIOD_LABELS: Record<VisitorPeriod, string> = {
 };
 
 const PERIOD_SUBTITLES: Record<VisitorPeriod, string> = {
-  daily: "Last 7 days",
-  weekly: "Last 12 weeks",
+  daily: "Last 7 days, including today",
+  weekly: "Last 12 weeks (Monday to Sunday)",
   monthly: "Last 12 months",
   yearly: "All years",
 };
+
+// An older backend only sends a ~30-day daily timeline, so monthly/yearly
+// views derived from it are incomplete; say so instead of implying full data.
+const LIMITED_DATA_NOTE = " · based on recent days only";
 
 const EMPTY_PHRASE: Record<VisitorPeriod, string> = {
   daily: "the last 7 days",
@@ -60,7 +67,10 @@ export function VisitorsBarChart() {
   const stats = data.stats;
   if (!stats) return null;
 
-  const chartData = aggregateTimelineData(stats.visitsTimeline, visitorPeriod);
+  const chartData = aggregateTimelineData(stats, visitorPeriod);
+  const limitedData =
+    (visitorPeriod === "monthly" && !Array.isArray(stats.visitsByMonth)) ||
+    (visitorPeriod === "yearly" && !Array.isArray(stats.visitsByYear));
   const rotated = isRotatedPeriod(visitorPeriod);
   const periodTotal = chartData.reduce((sum, d) => sum + d.count, 0);
   const peak = chartData.reduce(
@@ -75,7 +85,10 @@ export function VisitorsBarChart() {
           <h2 className="text-base font-semibold text-gray-900">
             {PERIOD_LABELS[visitorPeriod]}
           </h2>
-          <p className="text-xs text-gray-500">{PERIOD_SUBTITLES[visitorPeriod]}</p>
+          <p className="text-xs text-gray-500">
+            {PERIOD_SUBTITLES[visitorPeriod]}
+            {limitedData && LIMITED_DATA_NOTE}
+          </p>
         </div>
         <PeriodPills
           value={visitorPeriod}
@@ -84,12 +97,10 @@ export function VisitorsBarChart() {
         />
       </div>
 
-      {stats.visitsTimeline.length === 0 ? (
+      {periodTotal === 0 ? (
         <ChartEmpty
-          message={`No data available for ${EMPTY_PHRASE[visitorPeriod]}.`}
+          message={`No visits recorded in ${EMPTY_PHRASE[visitorPeriod]}.`}
         />
-      ) : chartData.length === 0 ? (
-        <ChartEmpty message="No data available for the selected period." />
       ) : (
         <>
           <ChartSummary
@@ -137,18 +148,9 @@ export function VisitorsBarChart() {
               <Tooltip
                 content={<ChartTooltip />}
                 cursor={{ fill: CHART_PRIMARY_MUTED, radius: 6 }}
-                labelFormatter={(label) => {
-                  if (visitorPeriod === "daily") {
-                    const match = chartData.find((d) => d.label === label);
-                    if (match) {
-                      return new Date(match.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        month: "short",
-                        day: "numeric",
-                      });
-                    }
-                  }
-                  return label;
+                labelFormatter={(label, payload) => {
+                  const point = payload?.[0]?.payload as TimelineBar | undefined;
+                  return point?.tooltipLabel ?? label;
                 }}
                 formatter={(value) => [
                   typeof value === "number" ? value : Number(value) || 0,

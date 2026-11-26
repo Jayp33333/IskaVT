@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TOAST_DEFAULT_DURATION_MS } from "../constants";
 import type { ToastKind, ToastState } from "../types";
 
@@ -42,5 +42,8 @@ export function useToast(): UseToastValue {
 
   useEffect(() => clearTimer, [clearTimer]);
 
-  return { toast, showToast, hideToast };
+  return useMemo(
+    () => ({ toast, showToast, hideToast }),
+    [toast, showToast, hideToast]
+  );
 }

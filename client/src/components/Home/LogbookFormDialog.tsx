@@ -7,7 +7,10 @@ import {
   setSessionFullName,
 } from "../../constants/logbookSession";
 import { upsertDeviceVisit } from "../../constants/logbookDeviceHistory";
-import { DESTINATIONS } from "../../sampleData";
+import {
+  LOGBOOK_DESTINATIONS,
+  LOGBOOK_VISITOR_TYPES,
+} from "../../constants/logbookOptions";
 import { logbookAPI, type LogbookEntry } from "../../services/api";
 import { enterKioskLandscape } from "../../utils/kiosk";
 import { getErrorMessage } from "../../utils/errors";
@@ -29,8 +32,6 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const visitorTypes = ["Student", "Faculty", "Staff", "Visitor", "Alumni", "Guest"];
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -51,7 +52,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
         timeIn: now.toISOString(),
       };
 
-      const response = await logbookAPI.createEntry(entryData);
+      const response = await logbookAPI.createPublicEntry(entryData);
       
       if (response.data?._id) {
         localStorage.setItem(LOGBOOK_ENTRY_ID_KEY, response.data._id);
@@ -157,7 +158,7 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                           className={inputBase}
                         >
                           <option value="">Select</option>
-                          {visitorTypes.map((t) => (
+                          {LOGBOOK_VISITOR_TYPES.map((t) => (
                             <option key={t} value={t}>
                               {t}
                             </option>
@@ -174,9 +175,9 @@ export const LogbookFormDialog = ({ open, onClose, onSuccess, required = false }
                           className={inputBase}
                         >
                           <option value="">Select</option>
-                          {DESTINATIONS.map((d) => (
-                            <option key={d.id} value={d.name}>
-                              {d.name}
+                          {LOGBOOK_DESTINATIONS.map((name) => (
+                            <option key={name} value={name}>
+                              {name}
                             </option>
                           ))}
                         </select>

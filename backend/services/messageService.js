@@ -2,6 +2,8 @@ import Message from '../models/Message.js';
 import { badRequest, notFound } from '../utils/HttpError.js';
 import { escapeRegex } from '../utils/parseDate.js';
 
+const MAX_EMAIL_LENGTH = 254;
+
 function buildFilters({ isRead, search }) {
   const filter = {};
   if (isRead === 'true') filter.isRead = true;
@@ -18,9 +20,17 @@ export async function createMessage({ name, email, message }) {
     throw badRequest('Missing required fields: name, email, and message are required');
   }
 
+  const normalizedEmail = String(email).trim().toLowerCase();
+  // Checked before the model's email regex runs on oversized input.
+  if (normalizedEmail.length > MAX_EMAIL_LENGTH) {
+    throw badRequest('Validation failed', {
+      email: `Email must be ${MAX_EMAIL_LENGTH} characters or fewer`,
+    });
+  }
+
   const entry = new Message({
     name: String(name).trim(),
-    email: String(email).trim().toLowerCase(),
+    email: normalizedEmail,
     message: String(message).trim(),
   });
 

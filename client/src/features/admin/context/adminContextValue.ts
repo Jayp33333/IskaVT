@@ -20,7 +20,9 @@ export type AdminContextValue = {
   tab: AdminTab;
   setTab: (tab: AdminTab) => void;
 
+  /** True only while the very first load is in flight. */
   loading: boolean;
+  /** Last load/refresh error; cleared by the next successful reload or tick. */
   error: string | null;
 
   visitorPeriod: VisitorPeriod;

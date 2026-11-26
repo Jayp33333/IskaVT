@@ -8,11 +8,27 @@ export function toDatetimeLocal(value?: string | null): string {
   )}:${pad(d.getMinutes())}`;
 }
 
+const DATE_ONLY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Formats a date/ISO string as a local-calendar `YYYY-MM-DD` for
+ * `<input type="date">`. A value that is already a bare `YYYY-MM-DD` is
+ * returned unchanged (it is a calendar date, not an instant, so it must not
+ * be shifted through UTC).
+ */
 export function toDateInputValue(iso?: string | null): string {
   if (!iso) return "";
+  if (DATE_ONLY_RE.test(iso)) {
+    const [y, m, day] = iso.split("-").map(Number);
+    const d = new Date(y, m - 1, day);
+    return d.getFullYear() === y && d.getMonth() === m - 1 && d.getDate() === day
+      ? iso
+      : "";
+  }
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toISOString().slice(0, 10);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 export function formatTimeAgo(iso: string): string {

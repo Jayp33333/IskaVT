@@ -14,12 +14,21 @@ import {
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFeedbackSettings } from "../../../context/FeedbackSettingsContext";
+import { ApiError } from "../../../services/apiClient";
 import { settingsAPI, type FeedbackMode } from "../../../services/settingsApi";
 import { usersAPI, type AdminAccount } from "../../../services/usersApi";
 import {
   clearAdminSession,
   getAdminSession,
 } from "../../admin/utils/adminAuth";
+
+const MIN_ADMIN_PASSWORD_LENGTH = 8;
+
+const FIELD_LABELS: Record<string, string> = {
+  username: "Username",
+  password: "Password",
+  email: "Email",
+};
 
 const INPUT_CLASS =
   "w-full rounded-xl border-2 border-ink bg-white px-4 py-2.5 text-sm font-semibold focus:border-maroon focus:outline-none disabled:opacity-60";
@@ -32,6 +41,9 @@ export function SuperAdminPage() {
   const [admins, setAdmins] = useState<AdminAccount[]>([]);
   const [loadingAdmins, setLoadingAdmins] = useState(true);
   const [adminError, setAdminError] = useState<string | null>(null);
+  const [adminFieldErrors, setAdminFieldErrors] = useState<
+    Record<string, string>
+  >({});
 
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -89,6 +101,7 @@ export function SuperAdminPage() {
     event.preventDefault();
     setCreatingAdmin(true);
     setAdminError(null);
+    setAdminFieldErrors({});
 
     try {
       await usersAPI.create({
@@ -103,6 +116,9 @@ export function SuperAdminPage() {
     } catch (err) {
       setAdminError(
         err instanceof Error ? err.message : "Failed to create admin account"
+      );
+      setAdminFieldErrors(
+        err instanceof ApiError && err.details ? err.details : {}
       );
     } finally {
       setCreatingAdmin(false);
@@ -374,10 +390,17 @@ export function SuperAdminPage() {
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
                 required
-                minLength={6}
-                placeholder="••••••••"
+                minLength={MIN_ADMIN_PASSWORD_LENGTH}
+                placeholder={`At least ${MIN_ADMIN_PASSWORD_LENGTH} characters`}
+                aria-describedby="new-admin-password-hint"
                 className={INPUT_CLASS}
               />
+              <p
+                id="new-admin-password-hint"
+                className="text-[11px] font-semibold text-ink/50"
+              >
+                Minimum {MIN_ADMIN_PASSWORD_LENGTH} characters
+              </p>
             </div>
             <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
               <label
@@ -414,7 +437,18 @@ export function SuperAdminPage() {
           {adminError && (
             <div className="mb-4 flex items-start gap-2 rounded-xl border-2 border-ink bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{adminError}</span>
+              <div>
+                <p>{adminError}</p>
+                {Object.keys(adminFieldErrors).length > 0 && (
+                  <ul className="mt-1 list-disc space-y-0.5 pl-4 font-medium">
+                    {Object.entries(adminFieldErrors).map(([field, message]) => (
+                      <li key={field}>
+                        {FIELD_LABELS[field] ?? field}: {message}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           )}
 

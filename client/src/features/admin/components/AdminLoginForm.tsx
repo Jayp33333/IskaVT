@@ -9,7 +9,8 @@ import {
   User,
 } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthNotice, useLoginRedirect } from "../auth/useLoginFlow";
 import { SectionDotGrid } from "../../../components/marketing/SectionDotGrid";
 import { loginWithApi } from "../utils/adminAuth";
 
@@ -18,19 +19,20 @@ const INPUT_CLASS =
 
 export function AdminLoginForm() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirectTo =
-    (location.state as { from?: string } | null)?.from ?? "/admin";
+  const redirectTo = useLoginRedirect("/admin");
+  const authNotice = useAuthNotice();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setNoticeDismissed(true);
 
     setSubmitting(true);
 
@@ -170,6 +172,18 @@ export function AdminLoginForm() {
                     </button>
                   </div>
                 </div>
+
+                {authNotice && !noticeDismissed && !error && (
+                  <motion.div
+                    role="status"
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-start gap-2.5 rounded-xl border-2 border-ink bg-gold/20 px-4 py-3 text-sm font-semibold text-ink"
+                  >
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-maroon" />
+                    <span>{authNotice}</span>
+                  </motion.div>
+                )}
 
                 {error && (
                   <motion.div

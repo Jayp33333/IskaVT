@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   logbookAPI,
   type LogbookEntry,
@@ -11,6 +11,7 @@ export type UseVisitorsValue = {
   visitors: VisitorRecord[];
   visitorsPage: number;
   visitorsTotalPages: number;
+  visitorsLoading: boolean;
   searchQuery: string;
   filteredVisitors: VisitorRecord[];
   setSearchQuery: (q: string) => void;
@@ -25,13 +26,28 @@ export function useVisitors(): UseVisitorsValue {
   const [visitors, setVisitors] = useState<VisitorRecord[]>([]);
   const [visitorsPage, setVisitorsPage] = useState(1);
   const [visitorsTotalPages, setVisitorsTotalPages] = useState(1);
+  const [visitorsLoading, setVisitorsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Only the most recent request may write state; older responses are dropped.
+  const requestIdRef = useRef(0);
+
   const loadVisitors = useCallback(async (page: number) => {
-    const res = await logbookAPI.getEntries(page, PAGE_SIZE);
-    setVisitors(res.data || []);
-    setVisitorsPage(res.pagination?.page || page);
-    setVisitorsTotalPages(res.pagination?.pages || 1);
+    const requestId = ++requestIdRef.current;
+    const isLatest = () => requestId === requestIdRef.current;
+
+    try {
+      setVisitorsLoading(true);
+      const res = await logbookAPI.getEntries(page, PAGE_SIZE);
+      if (!isLatest()) return;
+      setVisitors(res.data || []);
+      setVisitorsPage(res.pagination?.page || page);
+      setVisitorsTotalPages(res.pagination?.pages || 1);
+    } catch (err) {
+      if (isLatest()) throw err;
+    } finally {
+      if (isLatest()) setVisitorsLoading(false);
+    }
   }, []);
 
   const createVisitor = useCallback(async (entry: LogbookEntry) => {
@@ -75,17 +91,33 @@ export function useVisitors(): UseVisitorsValue {
     );
   }, [visitors, searchQuery]);
 
-  return {
-    visitors,
-    visitorsPage,
-    visitorsTotalPages,
-    searchQuery,
-    filteredVisitors,
-    setSearchQuery,
-    loadVisitors,
-    createVisitor,
-    updateVisitor,
-    deleteVisitor,
-    fetchAllVisitors,
-  };
+  return useMemo(
+    () => ({
+      visitors,
+      visitorsPage,
+      visitorsTotalPages,
+      visitorsLoading,
+      searchQuery,
+      filteredVisitors,
+      setSearchQuery,
+      loadVisitors,
+      createVisitor,
+      updateVisitor,
+      deleteVisitor,
+      fetchAllVisitors,
+    }),
+    [
+      visitors,
+      visitorsPage,
+      visitorsTotalPages,
+      visitorsLoading,
+      searchQuery,
+      filteredVisitors,
+      loadVisitors,
+      createVisitor,
+      updateVisitor,
+      deleteVisitor,
+      fetchAllVisitors,
+    ]
+  );
 }

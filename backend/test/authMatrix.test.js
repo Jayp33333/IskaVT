@@ -5,21 +5,21 @@
  * fails immediately (500) instead of hanging; that is fine for "public"
  * routes, which only need to prove they are not rejected with 401/403.
  *
- * Cases marked `todo` are admin routes that are currently public. That is a
- * known critical bug tracked in docs/admin-panel-roadmap.md (Wave 1 / 1.1).
- * When it is fixed, remove the `todo` option so the case is enforced.
+ * Every admin route must answer 401 without a token (roadmap 1.1). Add new
+ * routes to one of the two lists so this matrix keeps covering the whole API.
  */
 import assert from 'node:assert/strict';
 import { after, before, describe, test } from 'node:test';
 
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 import request from 'supertest';
 
 process.env.JWT_SECRET = 'test-secret';
+process.env.NODE_ENV = 'test'; // disables rate limiters
 mongoose.set('bufferCommands', false);
 
 const ID = '64b7f0f0f0f0f0f0f0f0f0f0';
-const WAVE_1 = { todo: 'Wave 1 / roadmap 1.1' };
 
 /** Routes anyone (visitors, the public tour) must be able to call. */
 const PUBLIC_ROUTES = [
@@ -35,21 +35,21 @@ const PUBLIC_ROUTES = [
 
 /** Routes that must reject a request without a token (401). */
 const PROTECTED_ROUTES = [
-  ['get', '/api/logbook', WAVE_1],
-  ['get', '/api/logbook/stats/summary', WAVE_1],
-  ['patch', `/api/logbook/${ID}`, WAVE_1],
-  ['delete', `/api/logbook/${ID}`, WAVE_1],
-  ['get', '/api/messages', WAVE_1],
-  ['get', '/api/messages/unread-count', WAVE_1],
-  ['get', `/api/messages/${ID}`, WAVE_1],
-  ['patch', `/api/messages/${ID}`, WAVE_1],
-  ['delete', `/api/messages/${ID}`, WAVE_1],
-  ['get', '/api/feedback', WAVE_1],
-  ['get', '/api/feedback/unread-count', WAVE_1],
-  ['get', '/api/feedback/stats/summary', WAVE_1],
-  ['get', `/api/feedback/${ID}`, WAVE_1],
-  ['patch', `/api/feedback/${ID}`, WAVE_1],
-  ['delete', `/api/feedback/${ID}`, WAVE_1],
+  ['get', '/api/logbook'],
+  ['get', '/api/logbook/stats/summary'],
+  ['patch', `/api/logbook/${ID}`],
+  ['delete', `/api/logbook/${ID}`],
+  ['get', '/api/messages'],
+  ['get', '/api/messages/unread-count'],
+  ['get', `/api/messages/${ID}`],
+  ['patch', `/api/messages/${ID}`],
+  ['delete', `/api/messages/${ID}`],
+  ['get', '/api/feedback'],
+  ['get', '/api/feedback/unread-count'],
+  ['get', '/api/feedback/stats/summary'],
+  ['get', `/api/feedback/${ID}`],
+  ['patch', `/api/feedback/${ID}`],
+  ['delete', `/api/feedback/${ID}`],
   ['get', '/api/users'],
   ['post', '/api/users'],
   ['patch', `/api/users/${ID}`],
@@ -87,10 +87,70 @@ describe('public routes (no token) are not rejected by auth', () => {
 });
 
 describe('protected routes (no token) return 401', () => {
-  for (const [method, path, options = {}] of PROTECTED_ROUTES) {
-    test(`${method.toUpperCase()} ${path}`, options, async () => {
+  for (const [method, path] of PROTECTED_ROUTES) {
+    test(`${method.toUpperCase()} ${path}`, async () => {
       const res = await request(app)[method](path).send({});
       assert.equal(res.status, 401, `expected 401, got ${res.status}`);
     });
   }
+});
+
+describe('protected routes reject a token with a bad signature (401)', () => {
+  const forged = jwt.sign(
+    { sub: ID, role: 'super_admin', username: 'mallory', tv: 0 },
+    'not-the-server-secret',
+    { expiresIn: '1h' }
+  );
+
+  for (const [method, path] of PROTECTED_ROUTES) {
+    test(`${method.toUpperCase()} ${path}`, async () => {
+      const res = await request(app)
+        [method](path)
+        .set('Authorization', `Bearer ${forged}`)
+        .send({});
+      assert.equal(res.status, 401, `expected 401, got ${res.status}`);
+    });
+  }
+});
+
+describe('auth edge cases', () => {
+  test('an expired token gets 401', async () => {
+    const expired = jwt.sign(
+      { sub: ID, role: 'admin', tv: 0, exp: Math.floor(Date.now() / 1000) - 60 },
+      process.env.JWT_SECRET
+    );
+    const res = await request(app)
+      .get('/api/logbook')
+      .set('Authorization', `Bearer ${expired}`);
+    assert.equal(res.status, 401);
+  });
+
+  test('missing JWT_SECRET is reported as 503, not 401', async () => {
+    const secret = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+    try {
+      const res = await request(app)
+        .get('/api/logbook')
+        .set('Authorization', 'Bearer some.token.value');
+      assert.equal(res.status, 503);
+    } finally {
+      process.env.JWT_SECRET = secret;
+    }
+  });
+
+  test('public POST /api/logbook without a token is not an auth failure', async () => {
+    const res = await request(app).post('/api/logbook').send({});
+    assert.notEqual(res.status, 401);
+    assert.notEqual(res.status, 403);
+  });
+
+  // A token that is sent but invalid means a lapsed admin session: reject it
+  // so admin-only fields aren't silently dropped. The tour sends no token.
+  test('a bad token on public POST /api/logbook is rejected with 401', async () => {
+    const res = await request(app)
+      .post('/api/logbook')
+      .set('Authorization', 'Bearer not-a-jwt')
+      .send({});
+    assert.equal(res.status, 401);
+  });
 });

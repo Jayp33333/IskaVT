@@ -1,50 +1,14 @@
 import type { AdminSettings, RefreshOption } from "./types";
 
-export const VISITOR_TYPES = [
-  "Student",
-  "Faculty",
-  "Staff",
-  "Parent",
-  "Visitor",
-  "Alumni",
-  "Other",
-];
-
-export const DESTINATIONS = [
-  "Grandstand",
-  "Lab 1",
-  "Lab 2",
-  "Lab 3",
-  "Library",
-  "Administration Building",
-  "Classroom Building",
-  "Cafeteria",
-  "Gymnasium",
-  "Auditorium",
-  "Computer Lab",
-  "Science Lab",
-  "Main Building",
-  "Student Center",
-  "Other",
-];
-
-export const CHART_COLORS = [
-  "#FFC107",
-  "#F44336",
-  "#FF9800",
-  "#2196F3",
-  "#4CAF50",
-  "#9C27B0",
-  "#009688",
-  "#E91E63",
-  "#00BCD4",
-  "#FF5722",
-  "#3F51B5",
-  "#8BC34A",
-  "#FFEB3B",
-  "#795548",
-  "#607D8B",
-];
+/**
+ * Re-exported from the shared logbook options so the admin forms offer the
+ * same values the public logbook form records. Keep these names: other admin
+ * modules import them from here.
+ */
+export {
+  LOGBOOK_DESTINATIONS as DESTINATIONS,
+  LOGBOOK_VISITOR_TYPES as VISITOR_TYPES,
+} from "../../constants/logbookOptions";
 
 export const LATEST_VISITOR_COLORS = [
   "#2196F3",

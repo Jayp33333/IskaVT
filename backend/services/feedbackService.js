@@ -1,22 +1,26 @@
+import mongoose from 'mongoose';
 import Feedback from '../models/Feedback.js';
 import Logbook from '../models/Logbook.js';
 import { badRequest, notFound } from '../utils/HttpError.js';
 import { escapeRegex } from '../utils/parseDate.js';
 
-async function resolveFullName({ fullName, logbookEntryId }) {
-  if (logbookEntryId) {
-    try {
-      const entry = await Logbook.findById(logbookEntryId).select('fullName').lean();
-      if (entry?.fullName) return String(entry.fullName).trim();
-    } catch {
-      // Invalid id — fall through
-    }
-  }
+/**
+ * Looks up the linked logbook entry. Returns null when the id is missing,
+ * malformed, or does not match an entry, so bad ids are dropped rather than
+ * failing the submission.
+ */
+async function findLinkedEntry(logbookEntryId) {
+  if (typeof logbookEntryId !== 'string') return null;
+  const id = logbookEntryId.trim();
+  if (!mongoose.isValidObjectId(id)) return null;
+  return Logbook.findById(id).select('fullName').lean();
+}
 
-  const trimmed = fullName ? String(fullName).trim() : '';
-  if (trimmed) return trimmed;
-
-  return 'Guest';
+/** A linked entry's name always wins over a client-supplied fullName. */
+function resolveFullName(fullName, linkedEntry) {
+  if (linkedEntry?.fullName) return String(linkedEntry.fullName).trim();
+  const trimmed = typeof fullName === 'string' ? fullName.trim() : '';
+  return trimmed || 'Guest';
 }
 
 function buildFilters({ isRead, search }) {
@@ -44,13 +48,13 @@ export async function createFeedback({ rating, comment, fullName, logbookEntryId
     throw badRequest('Comment is required');
   }
 
-  const resolvedName = await resolveFullName({ fullName, logbookEntryId });
+  const linkedEntry = await findLinkedEntry(logbookEntryId);
 
   const entry = new Feedback({
     rating: Math.round(parsedRating),
     comment: String(comment).trim(),
-    fullName: resolvedName,
-    logbookEntryId: logbookEntryId ? String(logbookEntryId).trim() : null,
+    fullName: resolveFullName(fullName, linkedEntry),
+    logbookEntryId: linkedEntry ? String(linkedEntry._id) : null,
   });
 
   return entry.save();

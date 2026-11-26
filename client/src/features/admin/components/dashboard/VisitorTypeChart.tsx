@@ -25,7 +25,7 @@ type VisitorTypeStat = { visitorType: string; count: number };
 
 const EMPTY_VISITOR_TYPES: readonly VisitorTypeStat[] = [];
 
-export function VisitorTypePieChart() {
+export function VisitorTypeChart() {
   const { data } = useAdmin();
   const raw = data.stats?.visitsByVisitorType ?? EMPTY_VISITOR_TYPES;
 
@@ -47,7 +47,7 @@ export function VisitorTypePieChart() {
     <div className="rounded-2xl border border-gray-200/80 bg-white/90 p-5 shadow-sm shadow-gray-200/50 backdrop-blur-sm sm:p-6">
       <div className="mb-4">
         <h2 className="text-base font-semibold text-gray-900">Visitor Types</h2>
-        <p className="text-xs text-gray-500">Distribution by category</p>
+        <p className="text-xs text-gray-500">All time, by category</p>
       </div>
 
       {chartData.length === 0 ? (

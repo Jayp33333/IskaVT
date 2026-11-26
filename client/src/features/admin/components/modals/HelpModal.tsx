@@ -1,4 +1,8 @@
 import { HelpCircle } from "lucide-react";
+import {
+  ADMIN_SUPPORT_CONTACT,
+  hasAdminSupportContact,
+} from "../../../../config/adminSupport";
 import { ModalShell } from "../common/ModalShell";
 
 type HelpModalProps = {
@@ -16,15 +20,15 @@ const SECTIONS: HelpSection[] = [
   {
     heading: "Getting Started",
     body:
-      "Welcome to the ISKA Visitor Monitor admin dashboard. Use this panel to manage visitor records, view analytics, and export reports.",
+      "Welcome to the ISKA Visitor Monitor admin dashboard. Use the tabs in the sidebar to review visitor activity, manage visitor records, answer contact messages, and read tour feedback.",
   },
   {
     heading: "Dashboard",
     body: "",
     bullets: [
-      "View visitor statistics and trends",
+      "See visitor statistics and trends at a glance",
       "Monitor daily, weekly, and monthly visitor counts",
-      "Analyze visitor patterns with interactive charts",
+      "Explore visitor patterns with interactive charts",
     ],
   },
   {
@@ -32,18 +36,36 @@ const SECTIONS: HelpSection[] = [
     body: "",
     bullets: [
       "Add new visitor entries manually",
-      "Edit existing visitor records",
-      "Delete visitor entries",
-      "Export reports in PDF format",
+      "Edit or delete existing visitor records",
+      "Export visitor reports as PDF or CSV for today, this week, or this month",
+      "Set your default export format in Settings",
     ],
   },
   {
-    heading: "Export Reports",
-    body: "Export visitor data by selecting a time range:",
+    heading: "Messages",
+    body: "Messages sent through the public contact form arrive in this inbox.",
     bullets: [
-      "Today: All visitors who logged in today",
-      "This Week: Visitors from Monday until today",
-      "This Month: All visitors for the current month",
+      "Open a message to read it in full",
+      "Mark messages as read or unread to keep track of follow-ups",
+      "Reply by email using the sender's address",
+      "Delete messages you no longer need",
+    ],
+  },
+  {
+    heading: "Tour Feedback",
+    body: "Feedback submitted by visitors after the virtual tour.",
+    bullets: [
+      "Review star ratings and visitor comments",
+      "Mark feedback as read or unread, or delete it",
+    ],
+  },
+  {
+    heading: "Settings",
+    body: "Open Settings from the account menu. Preferences are saved on this device.",
+    bullets: [
+      "New activity alerts when visitors sign in or messages arrive",
+      "Auto-refresh interval for dashboard data",
+      "Default export format (PDF or CSV)",
     ],
   },
 ];
@@ -86,18 +108,28 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
           </div>
         ))}
 
-        <div className="pt-3 border-t border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2">Need More Help?</h3>
-          <div className="space-y-2">
-            <a
-              href="mailto:support@iska.edu"
-              className="block text-xs text-[#660B05] hover:underline"
-            >
-              Email: support@iska.edu
-            </a>
-            <p className="text-xs text-gray-600">Phone: (02) 123-4567</p>
+        {hasAdminSupportContact() && (
+          <div className="pt-3 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">
+              Need More Help?
+            </h3>
+            <div className="space-y-2">
+              {ADMIN_SUPPORT_CONTACT.email && (
+                <a
+                  href={`mailto:${ADMIN_SUPPORT_CONTACT.email}`}
+                  className="block text-xs text-[#660B05] hover:underline"
+                >
+                  Email: {ADMIN_SUPPORT_CONTACT.email}
+                </a>
+              )}
+              {ADMIN_SUPPORT_CONTACT.phone && (
+                <p className="text-xs text-gray-600">
+                  Phone: {ADMIN_SUPPORT_CONTACT.phone}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </ModalShell>
   );

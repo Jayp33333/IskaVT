@@ -1,5 +1,6 @@
 import type { ExportRange, VisitorRecord } from "../../types";
 import { filterVisitorsByRange, getRangeFileTag } from "./dateRanges";
+import { neutralizeCsvFormula } from "./escape";
 
 const COLUMNS = [
   "Full Name",
@@ -12,7 +13,8 @@ const COLUMNS = [
 ];
 
 function escapeCsvCell(val: unknown): string {
-  const s = val == null ? "" : String(val);
+  // Neutralize formula injection first, then apply RFC 4180 quoting.
+  const s = neutralizeCsvFormula(val == null ? "" : String(val));
   if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
@@ -31,7 +33,7 @@ function visitorToRow(v: VisitorRecord): string {
     .join(",");
 }
 
-function buildCsv(visitors: VisitorRecord[]): string {
+export function buildCsv(visitors: VisitorRecord[]): string {
   const lines = [COLUMNS.join(","), ...visitors.map(visitorToRow)];
   // UTF-8 BOM so Excel detects encoding correctly.
   return "\uFEFF" + lines.join("\r\n");

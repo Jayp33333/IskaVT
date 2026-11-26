@@ -58,6 +58,12 @@ export type UseAdminNotificationsParams = {
   latestEntries: VisitorRecord[];
   recentMessages: MessageRecord[];
   alertsEnabled: boolean;
+  /**
+   * True once the first dashboard load has completed. Until then the lists are
+   * empty placeholders, so seeding "known" IDs from them would make the first
+   * real load look like a burst of new activity.
+   */
+  ready: boolean;
   onNewActivity: (notifications: AdminNotification[]) => void;
 };
 
@@ -72,6 +78,7 @@ export function useAdminNotifications({
   latestEntries,
   recentMessages,
   alertsEnabled,
+  ready,
   onNewActivity,
 }: UseAdminNotificationsParams): UseAdminNotificationsValue {
   const [lastSeenNotificationAt, setLastSeenNotificationAt] =
@@ -118,6 +125,9 @@ export function useAdminNotifications({
   }, [onNewActivity]);
 
   useEffect(() => {
+    if (!ready) return;
+
+    // First completed load: everything already there is "known", not new.
     if (knownIdsRef.current === null) {
       knownIdsRef.current = new Set(notifications.map((n) => n.id));
       return;
@@ -135,12 +145,20 @@ export function useAdminNotifications({
     }
 
     knownIdsRef.current = new Set(notifications.map((n) => n.id));
-  }, [notifications, lastSeenNotificationAt]);
+  }, [ready, notifications, lastSeenNotificationAt]);
 
-  return {
-    notifications,
-    unreadNotificationsCount,
-    lastSeenNotificationAt,
-    markAllNotificationsRead,
-  };
+  return useMemo(
+    () => ({
+      notifications,
+      unreadNotificationsCount,
+      lastSeenNotificationAt,
+      markAllNotificationsRead,
+    }),
+    [
+      notifications,
+      unreadNotificationsCount,
+      lastSeenNotificationAt,
+      markAllNotificationsRead,
+    ]
+  );
 }

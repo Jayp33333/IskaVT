@@ -1,5 +1,6 @@
 import type { ExportRange, VisitorRecord } from "../../types";
 import { filterVisitorsByRange, getRangeTitle } from "./dateRanges";
+import { escapeHtml } from "./escape";
 
 const PRINT_STYLES = `
   body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; padding: 16px; }
@@ -35,7 +36,8 @@ function buildRow(v: VisitorRecord): string {
     formatTime(v.timeIn),
     v.timeOut ? formatTime(v.timeOut) : "In Progress",
   ];
-  return `<tr>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+  // Every cell is visitor-controlled (public logbook form): always escape.
+  return `<tr>${cells.map((c) => `<td>${escapeHtml(c)}</td>`).join("")}</tr>`;
 }
 
 export class PopupBlockedError extends Error {
@@ -45,21 +47,25 @@ export class PopupBlockedError extends Error {
   }
 }
 
-export function exportVisitorsToPdf(
+/**
+ * Pure builder for the printable HTML document. All interpolated values are
+ * HTML-escaped so visitor-supplied text can never become markup or script in
+ * the same-origin print window.
+ */
+export function buildPrintHtml(
   visitors: VisitorRecord[],
-  range: ExportRange
-): void {
-  const now = new Date();
+  range: ExportRange,
+  now: Date
+): string {
   const filtered = filterVisitorsByRange(visitors, range, now);
-  const title = getRangeTitle(range);
+  const title = escapeHtml(getRangeTitle(range));
 
-  const win = window.open("", "_blank");
-  if (!win) throw new PopupBlockedError();
-
-  const headerCells = COLUMNS.map((h) => `<th>${h}</th>`).join("");
+  const headerCells = COLUMNS.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
   const rows = filtered.map(buildRow).join("");
+  const generated = escapeHtml(now.toLocaleString());
+  const total = escapeHtml(filtered.length);
 
-  win.document.write(`
+  return `
     <html>
       <head>
         <title>${title}</title>
@@ -67,16 +73,29 @@ export function exportVisitorsToPdf(
       </head>
       <body>
         <h1>${title}</h1>
-        <div class="meta">Generated: ${now.toLocaleString()} &mdash; Total records: ${filtered.length}</div>
+        <div class="meta">Generated: ${generated} &mdash; Total records: ${total}</div>
         <table>
           <thead><tr>${headerCells}</tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </body>
     </html>
-  `);
+  `;
+}
 
+export function exportVisitorsToPdf(
+  visitors: VisitorRecord[],
+  range: ExportRange
+): void {
+  const now = new Date();
+
+  const win = window.open("", "_blank");
+  if (!win) throw new PopupBlockedError();
+
+  win.document.write(buildPrintHtml(visitors, range, now));
   win.document.close();
+  // Sever the back-reference to the admin window to reduce exposure.
+  win.opener = null;
   win.focus();
   win.print();
 }

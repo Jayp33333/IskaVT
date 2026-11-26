@@ -25,6 +25,17 @@ export function MessagesTab() {
     }
   };
 
+  const loadPage = async (page: number) => {
+    try {
+      await messages.loadMessages(page);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to load messages";
+      toast.showToast(msg, "error");
+    }
+  };
+
+  const handleRefresh = () => loadPage(messages.messagesPage);
+
   const requestDelete = (m: MessageRecord) => {
     setMessageToDelete(m);
     setDeleteOpen(true);
@@ -54,7 +65,7 @@ export function MessagesTab() {
         unreadCount={messages.messagesUnread}
         onFilterChange={messages.setMessageFilter}
         onSearchChange={messages.setMessageSearch}
-        onRefresh={() => messages.loadMessages(messages.messagesPage).catch(() => {})}
+        onRefresh={handleRefresh}
       />
 
       <AdminCard padding="none" className="overflow-hidden">
@@ -69,15 +80,9 @@ export function MessagesTab() {
               page={messages.messagesPage}
               totalPages={messages.messagesTotalPages}
               onSelect={(m) => messages.openMessage(m).catch(() => {})}
-              onPrev={() =>
-                messages.loadMessages(Math.max(1, messages.messagesPage - 1)).catch(() => {})
-              }
+              onPrev={() => loadPage(Math.max(1, messages.messagesPage - 1))}
               onNext={() =>
-                messages
-                  .loadMessages(
-                    Math.min(messages.messagesTotalPages, messages.messagesPage + 1)
-                  )
-                  .catch(() => {})
+                loadPage(Math.min(messages.messagesTotalPages, messages.messagesPage + 1))
               }
             />
           </div>

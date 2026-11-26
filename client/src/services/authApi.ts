@@ -22,6 +22,9 @@ export const authAPI = {
     return apiRequest<LoginResponse>("/auth/login", {
       method: "POST",
       body: { username, password },
+      // Never send a stale token with a login attempt: a failed login must not
+      // be treated as an expired session.
+      skipAuth: true,
     });
   },
 

@@ -23,12 +23,33 @@ export type LogbookRecord = {
   updatedAt: string;
 };
 
-export type LogbookStatsSummary = {
+export type LogbookPeriodCounts = {
   todayCount: number;
   weekCount: number;
   monthCount: number;
-  visitsPerDestination: { destination: string; count: number }[];
+};
+
+/**
+ * Response of GET /logbook/stats/summary.
+ *
+ * Fields marked optional were added in Wave 1 (roadmap 1.4/1.5). The UI must
+ * tolerate an older backend that omits them, so treat them as possibly
+ * undefined at runtime.
+ */
+export type LogbookStatsSummary = LogbookPeriodCounts & {
+  /** IANA timezone the server bucketed dates in (e.g. "Asia/Manila"). */
+  timezone?: string;
+  /** Open sessions (no timeOut) that started today in `timezone`. */
+  activeCount?: number;
+  /** Same elapsed span of the previous day / week / month. */
+  previous?: Partial<LogbookPeriodCounts>;
+  /** Last 84 days, tz-local 'YYYY-MM-DD', ascending, only days with data. */
   visitsTimeline: { date: string; count: number }[];
+  /** Last 12 months, 'YYYY-MM', ascending, only months with data. */
+  visitsByMonth?: { month: string; count: number }[];
+  /** All years, ascending. */
+  visitsByYear?: { year: number; count: number }[];
+  visitsPerDestination: { destination: string; count: number }[];
   visitsByVisitorType?: { visitorType: string; count: number }[];
   visitsByHour?: { hour: number; count: number }[];
   visitsByDayOfWeek?: { day: number; count: number }[];
@@ -55,6 +76,7 @@ export type LogbookEntryResponse = {
 };
 
 export const logbookAPI = {
+  /** Admin create: sends the admin token so date/timeIn/timeOut are honored. */
   createEntry(entry: LogbookEntry) {
     return apiRequest<LogbookEntryResponse>("/logbook", {
       method: "POST",
@@ -62,14 +84,29 @@ export const logbookAPI = {
     });
   },
 
+  // Public tour calls never send a token: a stale admin session left in a
+  // kiosk browser must not break (or be expired by) visitor sign-ins.
+
+  /** Visitor sign-in from the tour. The server stamps date/time itself. */
+  createPublicEntry(entry: LogbookEntry) {
+    return apiRequest<LogbookEntryResponse>("/logbook", {
+      method: "POST",
+      body: entry,
+      skipAuth: true,
+    });
+  },
+
   updateTimeout(entryId: string) {
     return apiRequest<LogbookEntryResponse>(`/logbook/${entryId}/timeout`, {
       method: "PATCH",
+      skipAuth: true,
     });
   },
 
   getEntry(entryId: string) {
-    return apiRequest<LogbookEntryResponse>(`/logbook/${entryId}`);
+    return apiRequest<LogbookEntryResponse>(`/logbook/${entryId}`, {
+      skipAuth: true,
+    });
   },
 
   getEntries(page = 1, limit = 50) {

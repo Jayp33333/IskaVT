@@ -1,9 +1,18 @@
 import { Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { withCurrentOption } from "../../../../constants/logbookOptions";
 import type { LogbookEntry } from "../../../../services/api";
 import { DESTINATIONS, VISITOR_TYPES } from "../../constants";
 import type { VisitorRecord } from "../../types";
-import { toDatetimeLocal } from "../../utils/time";
+import { toDateInputValue, toDatetimeLocal } from "../../utils/time";
+import {
+  validateVisitorForm,
+  VISITOR_FULL_NAME_MAX,
+  VISITOR_PURPOSE_MAX,
+  type VisitorFormErrors,
+  type VisitorFormField,
+  type VisitorFormValues,
+} from "../../utils/visitorForm";
 import { ModalShell } from "../common/ModalShell";
 
 type EditVisitorModalProps = {
@@ -15,58 +24,98 @@ type EditVisitorModalProps = {
   onSubmit: (id: string, patch: Partial<LogbookEntry>) => Promise<void>;
 };
 
-type FormState = Partial<LogbookEntry>;
+type FormState = VisitorFormValues;
 
-function buildFormFromEntry(entry: VisitorRecord | null): FormState {
-  if (!entry) return {};
+const ID_PREFIX = "edit-visitor";
+const fieldId = (field: VisitorFormField) => `${ID_PREFIX}-${field}`;
+const errorId = (field: VisitorFormField) => `${ID_PREFIX}-${field}-error`;
+
+const fieldClass = (invalid: boolean) =>
+  `w-full px-3 py-2 rounded-lg border ${
+    invalid ? "border-red-300" : "border-gray-200"
+  } text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]`;
+
+function buildFormFromEntry(entry: VisitorRecord): FormState {
   return {
     fullName: entry.fullName,
     visitorType: entry.visitorType,
     destination: entry.destination,
     purpose: entry.purpose,
-    date: entry.date,
+    date: toDateInputValue(entry.date),
     timeIn: entry.timeIn,
     timeOut: entry.timeOut ?? "",
   };
 }
 
-export function EditVisitorModal({
+function FieldError({ field, message }: { field: VisitorFormField; message?: string }) {
+  if (!message) return null;
+  return (
+    <div id={errorId(field)} className="text-[11px] text-red-600 mt-1">
+      {message}
+    </div>
+  );
+}
+
+export function EditVisitorModal(props: EditVisitorModalProps) {
+  // Remount per record (keyed by id) so the form is seeded from the entry
+  // without setState-in-effect, and a background refresh that replaces the
+  // entry object does not wipe in-progress edits.
+  if (!props.open || !props.entry) return null;
+  return <EditVisitorModalBody key={props.entry._id} {...props} entry={props.entry} />;
+}
+
+function EditVisitorModalBody({
   open,
   saving,
   error,
   entry,
   onClose,
   onSubmit,
-}: EditVisitorModalProps) {
+}: EditVisitorModalProps & { entry: VisitorRecord }) {
   const [form, setForm] = useState<FormState>(() => buildFormFromEntry(entry));
+  const [errors, setErrors] = useState<VisitorFormErrors>({});
 
-  useEffect(() => {
-    setForm(buildFormFromEntry(entry));
-  }, [entry]);
+  // Keep the record's saved value selectable even if it is a legacy option.
+  const visitorTypeOptions = useMemo(
+    () => withCurrentOption(VISITOR_TYPES, entry.visitorType),
+    [entry.visitorType]
+  );
+  const destinationOptions = useMemo(
+    () => withCurrentOption(DESTINATIONS, entry.destination),
+    [entry.destination]
+  );
 
-  const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+  const updateField = <K extends VisitorFormField>(key: K, value: FormState[K]) => {
     setForm((p) => ({ ...p, [key]: value }));
+    setErrors((prev) => {
+      // The timeOut error depends on timeIn, so clear both together.
+      const clear: VisitorFormField[] = key === "timeIn" ? ["timeIn", "timeOut"] : [key];
+      if (!clear.some((f) => prev[f])) return prev;
+      const next = { ...prev };
+      for (const f of clear) delete next[f];
+      return next;
+    });
+  };
+
+  const a11y = (field: VisitorFormField) => ({
+    id: fieldId(field),
+    "aria-invalid": errors[field] ? true : undefined,
+    "aria-describedby": errors[field] ? errorId(field) : undefined,
+  });
 
   const handleSubmit = async () => {
-    if (!entry) return;
-
-    const patch: Partial<LogbookEntry> = {
-      fullName: form.fullName?.trim(),
-      visitorType: form.visitorType?.trim(),
-      destination: form.destination?.trim(),
-      purpose: form.purpose?.trim(),
-    };
-
-    if (form.date !== undefined) patch.date = form.date;
-    if (form.timeIn !== undefined) patch.timeIn = form.timeIn;
-    if (form.timeOut !== undefined) patch.timeOut = form.timeOut;
-
-    await onSubmit(entry._id, patch);
+    const result = validateVisitorForm(form, { mode: "edit" });
+    if (!result.ok) {
+      setErrors(result.errors);
+      return;
+    }
+    setErrors({});
+    await onSubmit(entry._id, result.value);
   };
 
   return (
     <ModalShell
-      open={open && !!entry}
+      open={open}
       title="Edit Visitor"
       subtitle="Update fields then save"
       disableClose={saving}
@@ -75,6 +124,7 @@ export function EditVisitorModal({
       footer={
         <div className="flex items-center justify-end gap-2">
           <button
+            type="button"
             onClick={onClose}
             disabled={saving}
             className="px-4 py-2 rounded-lg text-sm font-semibold border border-gray-200 bg-white disabled:opacity-50"
@@ -82,6 +132,7 @@ export function EditVisitorModal({
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={saving}
             className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#660B05] text-white hover:bg-[#8C1007] disabled:opacity-50"
@@ -100,46 +151,74 @@ export function EditVisitorModal({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name</label>
+            <label
+              htmlFor={fieldId("fullName")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Full Name <span className="text-red-500">*</span>
+            </label>
             <input
+              {...a11y("fullName")}
               value={form.fullName || ""}
               onChange={(e) => updateField("fullName", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              maxLength={VISITOR_FULL_NAME_MAX}
+              className={fieldClass(!!errors.fullName)}
             />
+            <FieldError field="fullName" message={errors.fullName} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Visitor Type</label>
+            <label
+              htmlFor={fieldId("visitorType")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Visitor Type <span className="text-red-500">*</span>
+            </label>
             <select
+              {...a11y("visitorType")}
               value={form.visitorType || ""}
               onChange={(e) => updateField("visitorType", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              className={`${fieldClass(!!errors.visitorType)} bg-white`}
             >
               <option value="">Select</option>
-              {VISITOR_TYPES.map((t) => (
+              {visitorTypeOptions.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
               ))}
             </select>
+            <FieldError field="visitorType" message={errors.visitorType} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Destination</label>
+            <label
+              htmlFor={fieldId("destination")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Destination <span className="text-red-500">*</span>
+            </label>
             <select
+              {...a11y("destination")}
               value={form.destination || ""}
               onChange={(e) => updateField("destination", e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              className={`${fieldClass(!!errors.destination)} bg-white`}
             >
               <option value="">Select</option>
-              {DESTINATIONS.map((d) => (
+              {destinationOptions.map((d) => (
                 <option key={d} value={d}>
                   {d}
                 </option>
               ))}
             </select>
+            <FieldError field="destination" message={errors.destination} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Time Out</label>
+            <label
+              htmlFor={fieldId("timeOut")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Time Out
+            </label>
             <input
+              {...a11y("timeOut")}
               type="datetime-local"
               value={toDatetimeLocal(form.timeOut)}
               onChange={(e) =>
@@ -148,28 +227,46 @@ export function EditVisitorModal({
                   e.target.value ? new Date(e.target.value).toISOString() : ""
                 )
               }
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              className={fieldClass(!!errors.timeOut)}
             />
-            <div className="text-[11px] text-gray-500 mt-1">
-              Leave blank for In Progress
-            </div>
+            {errors.timeOut ? (
+              <FieldError field="timeOut" message={errors.timeOut} />
+            ) : (
+              <div className="text-[11px] text-gray-500 mt-1">
+                Leave blank for In Progress
+              </div>
+            )}
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-1">Purpose</label>
+          <label
+            htmlFor={fieldId("purpose")}
+            className="block text-xs font-semibold text-gray-700 mb-1"
+          >
+            Purpose <span className="text-red-500">*</span>
+          </label>
           <textarea
+            {...a11y("purpose")}
             value={form.purpose || ""}
             onChange={(e) => updateField("purpose", e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+            maxLength={VISITOR_PURPOSE_MAX}
+            className={fieldClass(!!errors.purpose)}
           />
+          <FieldError field="purpose" message={errors.purpose} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Time In</label>
+            <label
+              htmlFor={fieldId("timeIn")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Time In
+            </label>
             <input
+              {...a11y("timeIn")}
               type="datetime-local"
               value={toDatetimeLocal(form.timeIn)}
               onChange={(e) =>
@@ -178,22 +275,25 @@ export function EditVisitorModal({
                   e.target.value ? new Date(e.target.value).toISOString() : form.timeIn
                 )
               }
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              className={fieldClass(!!errors.timeIn)}
             />
+            <FieldError field="timeIn" message={errors.timeIn} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Date</label>
+            <label
+              htmlFor={fieldId("date")}
+              className="block text-xs font-semibold text-gray-700 mb-1"
+            >
+              Date
+            </label>
             <input
+              {...a11y("date")}
               type="date"
-              value={form.date ? new Date(form.date).toISOString().slice(0, 10) : ""}
-              onChange={(e) =>
-                updateField(
-                  "date",
-                  e.target.value ? new Date(e.target.value).toISOString() : form.date
-                )
-              }
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#660B05]/20 focus:border-[#660B05]"
+              value={form.date || ""}
+              onChange={(e) => updateField("date", e.target.value)}
+              className={fieldClass(!!errors.date)}
             />
+            <FieldError field="date" message={errors.date} />
           </div>
         </div>
       </div>

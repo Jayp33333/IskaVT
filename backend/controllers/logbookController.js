@@ -1,9 +1,13 @@
 import * as logbookService from '../services/logbookService.js';
 import * as logbookStatsService from '../services/logbookStatsService.js';
+import { isAdminUser } from '../middleware/auth.js';
 import { buildPagination, parsePagination } from '../utils/parsePagination.js';
 
 export async function createEntry(req, res) {
-  const entry = await logbookService.createEntry(req.body || {});
+  // req.user is only set when optionalAuthenticate saw a valid token.
+  const entry = await logbookService.createEntry(req.body || {}, {
+    isAdmin: isAdminUser(req.user),
+  });
   res.status(201).json({
     success: true,
     message: 'Logbook entry created successfully',
@@ -13,7 +17,7 @@ export async function createEntry(req, res) {
 
 export async function listEntries(req, res) {
   const { page, limit, skip } = parsePagination(req.query);
-  const sortBy = req.query.sortBy || '-createdAt';
+  const sortBy = logbookService.parseSortBy(req.query.sortBy);
 
   const { entries, total } = await logbookService.listEntries({
     page,
@@ -30,7 +34,7 @@ export async function listEntries(req, res) {
 }
 
 export async function getEntry(req, res) {
-  const entry = await logbookService.getEntryById(req.params.id);
+  const entry = await logbookService.getPublicEntryById(req.params.id);
   res.json({ success: true, data: entry });
 }
 

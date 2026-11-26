@@ -41,6 +41,7 @@ export const feedbackAPI = {
     return apiRequest<FeedbackResponse>("/feedback", {
       method: "POST",
       body: payload,
+      skipAuth: true,
     });
   },
 

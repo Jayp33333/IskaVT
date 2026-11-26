@@ -34,13 +34,29 @@ describe("toDateInputValue", () => {
     expect(toDateInputValue("nope")).toBe("");
   });
 
-  it("returns the UTC calendar date (toISOString), not the local date", () => {
-    expect(toDateInputValue("2025-01-08T00:30:00.000Z")).toBe("2025-01-08");
-    expect(toDateInputValue("2025-01-08T23:30:00.000Z")).toBe("2025-01-08");
-    const local = new Date(2025, 0, 8, 12, 0);
-    expect(toDateInputValue(local.toISOString())).toBe(
-      local.toISOString().slice(0, 10)
+  // Previously characterized the old UTC behaviour (toISOString().slice(0, 10)),
+  // which showed "yesterday" before 08:00 in Manila. Now uses the local date.
+  it("returns the LOCAL calendar date, not the UTC one", () => {
+    expect(toDateInputValue(new Date(2025, 0, 8, 0, 30).toISOString())).toBe(
+      "2025-01-08"
     );
+    expect(toDateInputValue(new Date(2025, 0, 8, 23, 30).toISOString())).toBe(
+      "2025-01-08"
+    );
+  });
+
+  it("zero-pads month and day", () => {
+    expect(toDateInputValue(new Date(2025, 2, 4, 12).toISOString())).toBe(
+      "2025-03-04"
+    );
+  });
+
+  it("passes a bare YYYY-MM-DD through unchanged", () => {
+    expect(toDateInputValue("2025-01-08")).toBe("2025-01-08");
+  });
+
+  it("returns '' for an impossible YYYY-MM-DD", () => {
+    expect(toDateInputValue("2025-02-30")).toBe("");
   });
 });
 

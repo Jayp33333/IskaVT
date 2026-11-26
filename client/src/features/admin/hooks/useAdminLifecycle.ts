@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { AdminTab } from "../types";
 import type { UseDashboardDataValue } from "./useDashboardData";
 import type { UseFeedbackValue } from "./useFeedback";
@@ -18,10 +18,22 @@ type UseAdminLifecycleParams = {
 };
 
 export type UseAdminLifecycleValue = {
+  /** Reloads dashboard + visitors + unread badges. Never throws. */
   reloadAll: () => Promise<void>;
+  /** One auto-refresh pass for whatever is on screen. Never throws. */
   refreshTick: () => void;
 };
 
+function errorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error && err.message ? err.message : fallback;
+}
+
+/**
+ * Initial load, auto-refresh pass and per-tab loads.
+ *
+ * Messages/Feedback list loads are owned by their hooks (`enabled` flag), so
+ * they are intentionally not triggered here on tab change.
+ */
 export function useAdminLifecycle({
   tab,
   data,
@@ -32,80 +44,96 @@ export function useAdminLifecycle({
   setLoading,
   setError,
 }: UseAdminLifecycleParams): UseAdminLifecycleValue {
+  const { loadDashboard } = data;
+  const { loadVisitors, visitorsPage } = visitors;
+  const {
+    loadMessages,
+    messagesPage,
+    refreshUnreadCount: refreshMessagesUnread,
+  } = messages;
+  const {
+    loadFeedback,
+    feedbackPage,
+    refreshUnreadCount: refreshFeedbackUnread,
+  } = feedback;
+  const { showToast } = toast;
+
+  // The full-page spinner is only for the very first load; Retry and later
+  // reloads keep the current content on screen.
+  const initialLoadStartedRef = useRef(false);
+
   const reloadAll = useCallback(async () => {
+    const isInitial = !initialLoadStartedRef.current;
+    initialLoadStartedRef.current = true;
+
     try {
-      setLoading(true);
-      setError(null);
+      if (isInitial) setLoading(true);
       await Promise.all([
-        data.loadDashboard(),
-        visitors.loadVisitors(1),
-        messages.refreshUnreadCount(),
-        feedback.refreshUnreadCount(),
+        loadDashboard(),
+        loadVisitors(1),
+        refreshMessagesUnread(),
+        refreshFeedbackUnread(),
       ]);
+      setError(null);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load admin data";
-      setError(errorMessage);
+      setError(errorMessage(err, "Failed to load admin data"));
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
-  }, [data, visitors, messages, feedback, setLoading, setError]);
+  }, [
+    loadDashboard,
+    loadVisitors,
+    refreshMessagesUnread,
+    refreshFeedbackUnread,
+    setLoading,
+    setError,
+  ]);
 
   const refreshTick = useCallback(() => {
-    data.loadDashboard().catch(() => {});
+    loadDashboard().then(
+      () => setError(null),
+      (err: unknown) =>
+        setError(errorMessage(err, "Failed to refresh admin data"))
+    );
+
     if (tab === "visitors") {
-      visitors.loadVisitors(visitors.visitorsPage).catch(() => {});
+      loadVisitors(visitorsPage).catch(() => {});
     } else if (tab === "messages") {
-      messages
-        .loadMessages(messages.messagesPage, {
-          search: messages.messageSearch,
-          filter: messages.messageFilter,
-        })
-        .catch(() => {});
+      // Uses the hook's current search/filter.
+      loadMessages(messagesPage).catch(() => {});
     } else if (tab === "feedback") {
-      feedback
-        .loadFeedback(feedback.feedbackPage, {
-          search: feedback.feedbackSearch,
-          filter: feedback.feedbackFilter,
-        })
-        .catch(() => {});
-    } else {
-      messages.refreshUnreadCount().catch(() => {});
-      feedback.refreshUnreadCount().catch(() => {});
+      loadFeedback(feedbackPage).catch(() => {});
     }
-  }, [data, tab, visitors, messages, feedback]);
+
+    // Badges for inboxes that weren't just reloaded as a list.
+    if (tab !== "messages") refreshMessagesUnread().catch(() => {});
+    if (tab !== "feedback") refreshFeedbackUnread().catch(() => {});
+  }, [
+    tab,
+    loadDashboard,
+    loadVisitors,
+    visitorsPage,
+    loadMessages,
+    messagesPage,
+    loadFeedback,
+    feedbackPage,
+    refreshMessagesUnread,
+    refreshFeedbackUnread,
+    setError,
+  ]);
 
   useEffect(() => {
     void reloadAll();
+    // Mount only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (tab === "visitors") {
-      visitors.loadVisitors(visitors.visitorsPage).catch(() => {});
-    } else if (tab === "messages") {
-      messages
-        .loadMessages(1, {
-          search: messages.messageSearch,
-          filter: messages.messageFilter,
-        })
-        .catch((err: unknown) => {
-          const msg =
-            err instanceof Error ? err.message : "Failed to load messages";
-          toast.showToast(msg, "error");
-        });
-    } else if (tab === "feedback") {
-      feedback
-        .loadFeedback(1, {
-          search: feedback.feedbackSearch,
-          filter: feedback.feedbackFilter,
-        })
-        .catch((err: unknown) => {
-          const msg =
-            err instanceof Error ? err.message : "Failed to load feedback";
-          toast.showToast(msg, "error");
-        });
-    }
+    if (tab !== "visitors") return;
+    loadVisitors(visitorsPage).catch((err: unknown) => {
+      showToast(errorMessage(err, "Failed to load visitors"), "error");
+    });
+    // Only when the Visitors tab is opened, not on every page change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 

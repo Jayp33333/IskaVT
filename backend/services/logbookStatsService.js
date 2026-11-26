@@ -1,6 +1,17 @@
 import Logbook from '../models/Logbook.js';
+import {
+  addDaysInZone,
+  addMonthsToStartOfMonthInZone,
+  getAppTimezone,
+  startOfDayInZone,
+  startOfIsoWeekInZone,
+  startOfMonthInZone,
+} from '../utils/timezone.js';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const TIMELINE_DAYS = 84; // 12 weeks, including today
+const MONTHS_WINDOW = 12; // including the current month
+const RECENT_DAYS = 30; // hour / weekday / duration stats
 
 const DURATION_BUCKETS = [
   { key: 'bucket_0_15', label: '0-15m', min: 0, max: 15 },
@@ -8,6 +19,43 @@ const DURATION_BUCKETS = [
   { key: 'bucket_30_60', label: '30-60m', min: 30, max: 60 },
   { key: 'bucket_60_plus', label: '60m+', min: 60, max: Infinity },
 ];
+
+/**
+ * Pure date-window computation for the stats summary. Every boundary is a
+ * real instant at local midnight in `tz`; ranges are half-open [start, end).
+ */
+export function computeWindows(now, tz) {
+  const nowDate = new Date(now);
+  const nowMs = nowDate.getTime();
+
+  const startOfToday = startOfDayInZone(nowDate, tz);
+  const startOfWeek = startOfIsoWeekInZone(nowDate, tz);
+  const startOfMonth = startOfMonthInZone(nowDate, tz);
+
+  const startOfYesterday = addDaysInZone(startOfToday, -1, tz);
+  const startOfPrevWeek = addDaysInZone(startOfWeek, -7, tz);
+  const startOfPrevMonth = addMonthsToStartOfMonthInZone(nowDate, -1, tz);
+
+  const elapsedInMonth = nowMs - startOfMonth.getTime();
+  const prevMonthEnd = new Date(
+    Math.min(startOfPrevMonth.getTime() + elapsedInMonth, startOfMonth.getTime())
+  );
+
+  return {
+    now: nowDate,
+    startOfToday,
+    startOfWeek,
+    startOfMonth,
+    previous: {
+      today: { start: startOfYesterday, end: addDaysInZone(nowDate, -1, tz) },
+      week: { start: startOfPrevWeek, end: addDaysInZone(nowDate, -7, tz) },
+      month: { start: startOfPrevMonth, end: prevMonthEnd },
+    },
+    timelineStart: addDaysInZone(startOfToday, -(TIMELINE_DAYS - 1), tz),
+    monthsStart: addMonthsToStartOfMonthInZone(nowDate, -(MONTHS_WINDOW - 1), tz),
+    recentStart: new Date(nowMs - RECENT_DAYS * MS_PER_DAY),
+  };
+}
 
 function emptyDurationStats() {
   return {
@@ -19,41 +67,18 @@ function emptyDurationStats() {
   };
 }
 
-function getStartOfToday(now) {
-  const start = new Date(now);
-  start.setHours(0, 0, 0, 0);
-  return start;
+function countSince(start) {
+  return Logbook.countDocuments({ timeIn: { $gte: start } });
 }
 
-function getStartOfIsoWeek(startOfToday) {
-  const start = new Date(startOfToday);
-  const day = start.getDay();
-  const diffToMonday = (day + 6) % 7;
-  start.setDate(start.getDate() - diffToMonday);
-  return start;
-}
-
-function getStartOfMonth(startOfToday) {
-  return new Date(startOfToday.getFullYear(), startOfToday.getMonth(), 1);
+function countBetween({ start, end }) {
+  return Logbook.countDocuments({ timeIn: { $gte: start, $lt: end } });
 }
 
 function destinationsAgg() {
   return Logbook.aggregate([
     { $group: { _id: '$destination', count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-  ]);
-}
-
-function timelineAgg(startRange) {
-  return Logbook.aggregate([
-    { $match: { timeIn: { $gte: startRange } } },
-    {
-      $group: {
-        _id: { $dateToString: { format: '%Y-%m-%d', date: '$timeIn' } },
-        count: { $sum: 1 },
-      },
-    },
-    { $sort: { _id: 1 } },
   ]);
 }
 
@@ -64,20 +89,15 @@ function visitorTypeAgg() {
   ]);
 }
 
-function hourAgg(startRange) {
-  return Logbook.aggregate([
-    { $match: { timeIn: { $gte: startRange } } },
-    { $group: { _id: { $hour: '$timeIn' }, count: { $sum: 1 } } },
-    { $sort: { _id: 1 } },
-  ]);
-}
-
-function dayOfWeekAgg(startRange) {
-  return Logbook.aggregate([
-    { $match: { timeIn: { $gte: startRange } } },
-    { $group: { _id: { $dayOfWeek: '$timeIn' }, count: { $sum: 1 } } },
-    { $sort: { _id: 1 } },
-  ]);
+// Groups visits by a tz-aware date expression, optionally from `start` onward.
+function groupedAgg(groupKey, start) {
+  const pipeline = [];
+  if (start) pipeline.push({ $match: { timeIn: { $gte: start } } });
+  pipeline.push(
+    { $group: { _id: groupKey, count: { $sum: 1 } } },
+    { $sort: { _id: 1 } }
+  );
+  return Logbook.aggregate(pipeline);
 }
 
 function makeDurationCondition({ min, max }) {
@@ -132,45 +152,51 @@ function shapeDurationStats(agg) {
   };
 }
 
-export async function getSummary() {
-  const now = new Date();
-  const startOfToday = getStartOfToday(now);
-  const startOfWeek = getStartOfIsoWeek(startOfToday);
-  const startOfMonth = getStartOfMonth(startOfToday);
+function toPairs(agg, key) {
+  return agg.map((d) => ({ [key]: d._id, count: d.count }));
+}
 
-  const startOf30Days = new Date(now.getTime() - 30 * MS_PER_DAY);
-  const startOfTimeline = new Date(startOfToday);
-  startOfTimeline.setDate(startOfTimeline.getDate() - 29);
+export async function getSummary() {
+  const timezone = getAppTimezone();
+  const w = computeWindows(new Date(), timezone);
+  const date = '$timeIn';
 
   const [
     todayCount,
     weekCount,
     monthCount,
+    activeCount,
+    prevTodayCount,
+    prevWeekCount,
+    prevMonthCount,
     destinationAggregation,
-    timelineAggregation,
     visitorTypeAggregation,
+    timelineAggregation,
+    monthAggregation,
+    yearAggregation,
     hourAggregation,
     dayOfWeekAggregation,
     durationAggregation,
   ] = await Promise.all([
-    Logbook.countDocuments({ timeIn: { $gte: startOfToday } }),
-    Logbook.countDocuments({ timeIn: { $gte: startOfWeek } }),
-    Logbook.countDocuments({ timeIn: { $gte: startOfMonth } }),
+    countSince(w.startOfToday),
+    countSince(w.startOfWeek),
+    countSince(w.startOfMonth),
+    Logbook.countDocuments({ timeOut: null, timeIn: { $gte: w.startOfToday } }),
+    countBetween(w.previous.today),
+    countBetween(w.previous.week),
+    countBetween(w.previous.month),
     destinationsAgg(),
-    timelineAgg(startOfTimeline),
     visitorTypeAgg(),
-    hourAgg(startOf30Days),
-    dayOfWeekAgg(startOf30Days),
-    durationAgg(startOf30Days),
+    groupedAgg({ $dateToString: { format: '%Y-%m-%d', date, timezone } }, w.timelineStart),
+    groupedAgg({ $dateToString: { format: '%Y-%m', date, timezone } }, w.monthsStart),
+    groupedAgg({ $year: { date, timezone } }),
+    groupedAgg({ $hour: { date, timezone } }, w.recentStart),
+    groupedAgg({ $dayOfWeek: { date, timezone } }, w.recentStart),
+    durationAgg(w.recentStart),
   ]);
 
   const visitsPerDestination = destinationAggregation.map((d) => ({
     destination: d._id || 'Unknown',
-    count: d.count,
-  }));
-
-  const visitsTimeline = timelineAggregation.map((d) => ({
-    date: d._id,
     count: d.count,
   }));
 
@@ -179,27 +205,26 @@ export async function getSummary() {
     count: d.count,
   }));
 
-  const visitsByHour = hourAggregation.map((d) => ({
-    hour: d._id,
-    count: d.count,
-  }));
-
-  const visitsByDayOfWeek = dayOfWeekAggregation.map((d) => ({
-    day: d._id,
-    count: d.count,
-  }));
-
   const durationStats = shapeDurationStats(durationAggregation);
 
   return {
+    timezone,
     todayCount,
     weekCount,
     monthCount,
+    activeCount,
+    previous: {
+      todayCount: prevTodayCount,
+      weekCount: prevWeekCount,
+      monthCount: prevMonthCount,
+    },
+    visitsTimeline: toPairs(timelineAggregation, 'date'),
+    visitsByMonth: toPairs(monthAggregation, 'month'),
+    visitsByYear: toPairs(yearAggregation, 'year'),
     visitsPerDestination,
-    visitsTimeline,
     visitsByVisitorType,
-    visitsByHour,
-    visitsByDayOfWeek,
+    visitsByHour: toPairs(hourAggregation, 'hour'),
+    visitsByDayOfWeek: toPairs(dayOfWeekAggregation, 'day'),
     avgDurationMinutes: durationStats.avgDurationMinutes,
     durationBuckets: durationStats.durationBuckets,
   };

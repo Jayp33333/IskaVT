@@ -34,6 +34,7 @@ export const messageAPI = {
     return apiRequest<MessageResponse>("/messages", {
       method: "POST",
       body: payload,
+      skipAuth: true,
     });
   },
 

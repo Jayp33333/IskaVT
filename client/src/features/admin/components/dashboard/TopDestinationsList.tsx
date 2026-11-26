@@ -18,7 +18,7 @@ export function TopDestinationsList() {
     <AdminCard>
       <AdminCardHeader
         title="Top Destinations"
-        subtitle="Most visited campus locations"
+        subtitle="Most visited campus locations, all time"
       />
 
       {destinations.length === 0 ? (

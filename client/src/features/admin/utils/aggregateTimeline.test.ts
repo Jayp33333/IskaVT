@@ -1,248 +1,220 @@
 import { describe, expect, it } from "vitest";
 import type { VisitorPeriod } from "../types";
-import { aggregateTimelineData } from "./aggregateTimeline";
+import { aggregateTimelineData, todayIn, type TimelineSource } from "./aggregateTimeline";
 
 /**
- * Characterization tests: these document CURRENT behaviour, including quirks
- * that are likely to change in a later wave.
- *
- * Inputs use local-time ISO strings without a "Z" ("YYYY-MM-DDTHH:mm:ss"),
- * which JS parses as local time, so bucketing is timezone-independent.
- * Date-only strings ("YYYY-MM-DD") are parsed as UTC midnight, which makes
- * some labels shift a day/month in timezones west of UTC; those assertions
- * only run where the local offset is UTC or east of it.
+ * Every test pins both `now` and `timezone`, and the implementation never
+ * formats in the machine's local zone, so results are the same wherever the
+ * suite runs. The one exception is the "invalid timezone" fallback test,
+ * which builds `now` from local components on purpose.
  */
 
-type Point = { date: string; count: number };
+const MANILA = "Asia/Manila";
 
-const localNoon = (y: number, m: number, d: number) =>
-  `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}T12:00:00`;
+// 2025-01-08T20:00Z is Thu 2025-01-09 04:00 in Manila but still Wed Jan 8 in UTC.
+const NOW = new Date("2025-01-08T20:00:00Z");
 
-// true when local time is UTC or ahead of it (e.g. UTC+8), i.e. a date-only
-// string parsed as UTC midnight still falls on the same local calendar day.
-const utcOrEast = new Date(2025, 0, 1).getTimezoneOffset() <= 0;
+const src = (
+  visitsTimeline: TimelineSource["visitsTimeline"],
+  extra: Partial<TimelineSource> = {}
+): TimelineSource => ({ timezone: MANILA, visitsTimeline, ...extra });
+
+describe("todayIn", () => {
+  it("uses the stats timezone, not the machine's", () => {
+    expect(todayIn(MANILA, NOW)).toEqual({ year: 2025, month: 1, day: 9 });
+    expect(todayIn("UTC", NOW)).toEqual({ year: 2025, month: 1, day: 8 });
+  });
+
+  it("falls back to the local date for a missing or unknown timezone", () => {
+    const localNow = new Date(2025, 2, 15, 12, 0, 0);
+    const expected = { year: 2025, month: 3, day: 15 };
+    expect(todayIn(undefined, localNow)).toEqual(expected);
+    expect(todayIn("Not/AZone", localNow)).toEqual(expected);
+  });
+});
 
 describe("aggregateTimelineData", () => {
-  describe("empty / unknown input", () => {
-    it.each<VisitorPeriod>(["daily", "weekly", "monthly", "yearly"])(
-      "returns [] for an empty timeline (%s)",
-      (period) => {
-        expect(aggregateTimelineData([], period)).toEqual([]);
-      }
-    );
+  it("returns [] without a source", () => {
+    expect(aggregateTimelineData(null, "daily", NOW)).toEqual([]);
+    expect(aggregateTimelineData(undefined, "weekly", NOW)).toEqual([]);
+  });
 
-    it("returns [] for an unknown period", () => {
-      const timeline: Point[] = [{ date: localNoon(2025, 1, 6), count: 3 }];
-      expect(
-        aggregateTimelineData(timeline, "hourly" as unknown as VisitorPeriod)
-      ).toEqual([]);
-    });
+  it("returns [] for an unknown period", () => {
+    expect(
+      aggregateTimelineData(src([]), "hourly" as unknown as VisitorPeriod, NOW)
+    ).toEqual([]);
   });
 
   describe("daily", () => {
-    it("keeps date/count and adds a short weekday label", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 6), count: 3 }, // Monday
-        { date: localNoon(2025, 1, 7), count: 5 }, // Tuesday
-      ];
-      expect(aggregateTimelineData(timeline, "daily")).toEqual([
-        { date: localNoon(2025, 1, 6), count: 3, label: "Mon" },
-        { date: localNoon(2025, 1, 7), count: 5, label: "Tue" },
+    it("returns the last 7 calendar days ending today (stats tz), zero-filled", () => {
+      const result = aggregateTimelineData(
+        src([
+          { date: "2024-12-20", count: 99 }, // outside the window
+          { date: "2025-01-04", count: 2 },
+          { date: "2025-01-09", count: 5 },
+        ]),
+        "daily",
+        NOW
+      );
+
+      expect(result.map(({ date, count, label }) => ({ date, count, label }))).toEqual([
+        { date: "2025-01-03", count: 0, label: "Fri" },
+        { date: "2025-01-04", count: 2, label: "Sat" },
+        { date: "2025-01-05", count: 0, label: "Sun" },
+        { date: "2025-01-06", count: 0, label: "Mon" },
+        { date: "2025-01-07", count: 0, label: "Tue" },
+        { date: "2025-01-08", count: 0, label: "Wed" },
+        { date: "2025-01-09", count: 5, label: "Thu" },
       ]);
+      expect(result[6].tooltipLabel).toBe("Thursday, Jan 9");
     });
 
-    it("takes the LAST 7 ENTRIES, not the last 7 calendar days (gaps are not filled)", () => {
-      // 10 entries spread over ~3 weeks with gaps
-      const days = [1, 2, 3, 5, 8, 10, 13, 15, 18, 21];
-      const timeline: Point[] = days.map((d, i) => ({
-        date: localNoon(2025, 1, d),
-        count: i + 1,
-      }));
-
-      const result = aggregateTimelineData(timeline, "daily");
-
+    it("returns 7 zero bars for an empty timeline", () => {
+      const result = aggregateTimelineData(src([]), "daily", NOW);
       expect(result).toHaveLength(7);
-      expect(result.map((p) => p.count)).toEqual([4, 5, 6, 7, 8, 9, 10]);
-      expect(result[0].date).toBe(localNoon(2025, 1, 5));
-      expect(result[6].date).toBe(localNoon(2025, 1, 21));
+      expect(result.every((p) => p.count === 0)).toBe(true);
     });
 
-    it("does not sort: preserves input order", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 8), count: 1 },
-        { date: localNoon(2025, 1, 6), count: 2 },
-      ];
-      expect(
-        aggregateTimelineData(timeline, "daily").map((p) => p.count)
-      ).toEqual([1, 2]);
+    it("merges duplicate dates and ignores input order", () => {
+      const result = aggregateTimelineData(
+        src([
+          { date: "2025-01-08", count: 1 },
+          { date: "2025-01-06", count: 2 },
+          { date: "2025-01-08", count: 3 },
+        ]),
+        "daily",
+        NOW
+      );
+      expect(result.map((p) => p.count)).toEqual([0, 0, 0, 2, 0, 4, 0]);
     });
 
-    it("does not merge duplicate dates", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 6), count: 1 },
-        { date: localNoon(2025, 1, 6), count: 2 },
-      ];
-      expect(aggregateTimelineData(timeline, "daily")).toHaveLength(2);
+    it("shifts the window with the timezone", () => {
+      const result = aggregateTimelineData(
+        src([{ date: "2025-01-09", count: 5 }], { timezone: "UTC" }),
+        "daily",
+        NOW
+      );
+      // In UTC "today" is still Jan 8, so Jan 9 is in the future and excluded.
+      expect(result[6].date).toBe("2025-01-08");
+      expect(result.reduce((s, p) => s + p.count, 0)).toBe(0);
     });
-
-    it.runIf(utcOrEast)(
-      "labels date-only strings by their UTC date (UTC or east of UTC)",
-      () => {
-        const result = aggregateTimelineData(
-          [{ date: "2025-01-06", count: 1 }],
-          "daily"
-        );
-        expect(result[0].label).toBe("Mon");
-      }
-    );
   });
 
   describe("weekly", () => {
-    it("buckets by Sunday-start weeks and sums counts", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 5), count: 1 }, // Sun -> week of Jan 5
-        { date: localNoon(2025, 1, 8), count: 2 }, // Wed -> week of Jan 5
-        { date: localNoon(2025, 1, 11), count: 3 }, // Sat -> week of Jan 5
-        { date: localNoon(2025, 1, 12), count: 4 }, // Sun -> week of Jan 12
-        { date: localNoon(2025, 1, 13), count: 5 }, // Mon -> week of Jan 12
-      ];
+    it("returns the last 12 Monday-start weeks ending this week", () => {
+      const result = aggregateTimelineData(src([]), "weekly", NOW);
+      expect(result).toHaveLength(12);
+      // Today (Manila) is Thu Jan 9 → this week starts Mon Jan 6.
+      expect(result[11].date).toBe("2025-01-06");
+      expect(result[11].label).toBe("Jan 6 - Jan 12");
+      expect(result[0].date).toBe("2024-10-21");
+      expect(result[0].label).toBe("Oct 21 - Oct 27");
+    });
 
-      const result = aggregateTimelineData(timeline, "weekly");
+    it("buckets Sunday into the week that started the previous Monday", () => {
+      const result = aggregateTimelineData(
+        src([
+          { date: "2024-12-30", count: 1 }, // Mon → week of Dec 30
+          { date: "2025-01-05", count: 2 }, // Sun → week of Dec 30
+          { date: "2025-01-06", count: 4 }, // Mon → week of Jan 6
+          { date: "2025-01-09", count: 8 }, // Thu → week of Jan 6
+        ]),
+        "weekly",
+        NOW
+      );
+      expect(result[10]).toMatchObject({ date: "2024-12-30", count: 3 });
+      expect(result[10].label).toBe("Dec 30 - Jan 5");
+      expect(result[11]).toMatchObject({ date: "2025-01-06", count: 12 });
+    });
 
-      expect(result.map(({ date, count }) => ({ date, count }))).toEqual([
-        { date: "2025-01-05", count: 6 },
-        { date: "2025-01-12", count: 9 },
+    it("zero-fills weeks without data", () => {
+      const result = aggregateTimelineData(
+        src([{ date: "2024-11-05", count: 7 }]),
+        "weekly",
+        NOW
+      );
+      expect(result.filter((p) => p.count > 0)).toEqual([
+        expect.objectContaining({ date: "2024-11-04", count: 7 }),
       ]);
     });
-
-    it("sorts weeks chronologically regardless of input order", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 15), count: 1 },
-        { date: localNoon(2025, 1, 1), count: 2 },
-      ];
-      expect(
-        aggregateTimelineData(timeline, "weekly").map((p) => p.date)
-      ).toEqual(["2024-12-29", "2025-01-12"]);
-    });
-
-    it("keeps only the latest 12 weeks", () => {
-      // 14 consecutive Sundays starting 2025-01-05
-      const timeline: Point[] = Array.from({ length: 14 }, (_, i) => {
-        const d = new Date(2025, 0, 5 + i * 7, 12);
-        return {
-          date: localNoon(d.getFullYear(), d.getMonth() + 1, d.getDate()),
-          count: i + 1,
-        };
-      });
-
-      const result = aggregateTimelineData(timeline, "weekly");
-
-      expect(result).toHaveLength(12);
-      expect(result[0].count).toBe(3);
-      expect(result[11].count).toBe(14);
-    });
-
-    it("produces a 'Mon D - Mon D' range label", () => {
-      const result = aggregateTimelineData(
-        [{ date: localNoon(2025, 1, 8), count: 1 }],
-        "weekly"
-      );
-      expect(result[0].label).toMatch(/^[A-Z][a-z]{2} \d{1,2} - [A-Z][a-z]{2} \d{1,2}$/);
-    });
-
-    it.runIf(utcOrEast)(
-      "labels the week as start..start+6 (UTC or east of UTC)",
-      () => {
-        const result = aggregateTimelineData(
-          [
-            { date: localNoon(2025, 1, 8), count: 1 },
-            { date: localNoon(2024, 12, 31), count: 1 },
-          ],
-          "weekly"
-        );
-        expect(result.map((p) => p.label)).toEqual([
-          "Dec 29 - Jan 4",
-          "Jan 5 - Jan 11",
-        ]);
-      }
-    );
   });
 
   describe("monthly", () => {
-    it("buckets by local calendar month and sums counts", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 1, 1), count: 1 },
-        { date: localNoon(2025, 1, 31), count: 2 },
-        { date: localNoon(2025, 2, 1), count: 4 },
-      ];
-
-      const result = aggregateTimelineData(timeline, "monthly");
-
-      expect(result.map(({ date, count }) => ({ date, count }))).toEqual([
-        { date: "2025-01-01", count: 3 },
-        { date: "2025-02-01", count: 4 },
-      ]);
-    });
-
-    it("does NOT sort months: output follows first-seen insertion order", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 3, 10), count: 1 },
-        { date: localNoon(2025, 1, 10), count: 2 },
-        { date: localNoon(2025, 3, 11), count: 3 },
-      ];
-      expect(
-        aggregateTimelineData(timeline, "monthly").map((p) => p.date)
-      ).toEqual(["2025-03-01", "2025-01-01"]);
-    });
-
-    it("keeps only the last 12 months by insertion order", () => {
-      // 14 consecutive months, Jan 2024 .. Feb 2025
-      const timeline: Point[] = Array.from({ length: 14 }, (_, i) => {
-        const d = new Date(2024, i, 15, 12);
-        return {
-          date: localNoon(d.getFullYear(), d.getMonth() + 1, d.getDate()),
-          count: i + 1,
-        };
-      });
-
-      const result = aggregateTimelineData(timeline, "monthly");
+    it("uses visitsByMonth when present and gap-fills the last 12 months", () => {
+      const result = aggregateTimelineData(
+        src([{ date: "2025-01-02", count: 1000 }], {
+          visitsByMonth: [
+            { month: "2024-01", count: 50 }, // older than 12 months → dropped
+            { month: "2024-03", count: 3 },
+            { month: "2025-01", count: 9 },
+          ],
+        }),
+        "monthly",
+        NOW
+      );
 
       expect(result).toHaveLength(12);
-      expect(result[0].date).toBe("2024-03-01");
-      expect(result[11].date).toBe("2025-02-01");
+      expect(result[0]).toMatchObject({ date: "2024-02-01", count: 0, label: "Feb 2024" });
+      expect(result[1]).toMatchObject({ date: "2024-03-01", count: 3, label: "Mar 2024" });
+      expect(result[11]).toMatchObject({ date: "2025-01-01", count: 9, label: "Jan 2025" });
+      expect(result.reduce((s, p) => s + p.count, 0)).toBe(12);
     });
 
-    it.runIf(utcOrEast)("labels as 'Mon YYYY' (UTC or east of UTC)", () => {
+    it("derives months from the timeline for an older backend", () => {
       const result = aggregateTimelineData(
-        [{ date: localNoon(2025, 3, 10), count: 1 }],
-        "monthly"
+        src([
+          { date: "2024-12-01", count: 1 },
+          { date: "2024-12-31", count: 2 },
+          { date: "2025-01-01", count: 4 },
+        ]),
+        "monthly",
+        NOW
       );
-      expect(result[0].label).toBe("Mar 2025");
+      expect(result.slice(-2).map(({ date, count }) => ({ date, count }))).toEqual([
+        { date: "2024-12-01", count: 3 },
+        { date: "2025-01-01", count: 4 },
+      ]);
     });
   });
 
   describe("yearly", () => {
-    it("buckets by local year, sums counts, and sorts ascending", () => {
-      const timeline: Point[] = [
-        { date: localNoon(2025, 6, 1), count: 5 },
-        { date: localNoon(2023, 1, 1), count: 1 },
-        { date: localNoon(2025, 12, 31), count: 2 },
-        { date: localNoon(2024, 7, 4), count: 3 },
-      ];
-
-      expect(aggregateTimelineData(timeline, "yearly")).toEqual([
-        { date: "2023-01-01", count: 1, label: "2023" },
-        { date: "2024-01-01", count: 3, label: "2024" },
-        { date: "2025-01-01", count: 7, label: "2025" },
+    it("uses visitsByYear when present, sorted and gap-filled through this year", () => {
+      const result = aggregateTimelineData(
+        src([], {
+          visitsByYear: [
+            { year: 2023, count: 5 },
+            { year: 2021, count: 1 },
+          ],
+        }),
+        "yearly",
+        NOW
+      );
+      expect(result).toEqual([
+        { date: "2021-01-01", count: 1, label: "2021", tooltipLabel: "2021" },
+        { date: "2022-01-01", count: 0, label: "2022", tooltipLabel: "2022" },
+        { date: "2023-01-01", count: 5, label: "2023", tooltipLabel: "2023" },
+        { date: "2024-01-01", count: 0, label: "2024", tooltipLabel: "2024" },
+        { date: "2025-01-01", count: 0, label: "2025", tooltipLabel: "2025" },
       ]);
     });
 
-    it("does not cap the number of years", () => {
-      const timeline: Point[] = Array.from({ length: 15 }, (_, i) => ({
-        date: localNoon(2000 + i, 6, 1),
-        count: 1,
-      }));
-      expect(aggregateTimelineData(timeline, "yearly")).toHaveLength(15);
+    it("derives years from the timeline for an older backend", () => {
+      const result = aggregateTimelineData(
+        src([
+          { date: "2024-12-31", count: 2 },
+          { date: "2025-01-01", count: 3 },
+        ]),
+        "yearly",
+        NOW
+      );
+      expect(result.map(({ label, count }) => ({ label, count }))).toEqual([
+        { label: "2024", count: 2 },
+        { label: "2025", count: 3 },
+      ]);
+    });
+
+    it("returns [] when there is no data at all", () => {
+      expect(aggregateTimelineData(src([], { visitsByYear: [] }), "yearly", NOW)).toEqual([]);
     });
   });
 });

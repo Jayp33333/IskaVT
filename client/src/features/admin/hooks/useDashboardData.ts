@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   feedbackAPI,
   logbookAPI,
@@ -19,6 +19,8 @@ export type UseDashboardDataValue = {
   recentFeedback: FeedbackRecord[];
   feedbackStats: FeedbackStatsSummary | null;
   messagesUnreadFromDashboard: number | null;
+  /** True once the first dashboard load has completed successfully. */
+  hasLoaded: boolean;
   loadDashboard: () => Promise<void>;
 };
 
@@ -30,28 +32,47 @@ export function useDashboardData(): UseDashboardDataValue {
   const [feedbackStats, setFeedbackStats] = useState<FeedbackStatsSummary | null>(null);
   const [messagesUnreadFromDashboard, setMessagesUnreadFromDashboard] =
     useState<number | null>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  // Drops out-of-order responses (e.g. a slow auto-refresh landing after a
+  // post-mutation reload).
+  const requestIdRef = useRef(0);
 
   const loadDashboard = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
+
+    const request = Promise.all([
+      logbookAPI.getStatsSummary(),
+      logbookAPI.getEntries(1, LATEST_ENTRIES_LIMIT),
+      messageAPI
+        .getMessages(1, RECENT_MESSAGES_LIMIT, { isRead: false })
+        .catch(() => ({ data: [] as MessageRecord[], unreadCount: 0 } as const)),
+      feedbackAPI
+        .getFeedback(1, RECENT_FEEDBACK_LIMIT)
+        .catch(() => ({ data: [] as FeedbackRecord[] } as const)),
+      feedbackAPI
+        .getStatsSummary()
+        .catch(() => ({ data: { averageRating: null, totalCount: 0 } } as const)),
+    ]);
+
+    let results: Awaited<typeof request>;
+    try {
+      results = await request;
+    } catch (err) {
+      if (requestId !== requestIdRef.current) return;
+      throw err;
+    }
     const [statsRes, entriesRes, recentMsgRes, recentFeedbackRes, feedbackStatsRes] =
-      await Promise.all([
-        logbookAPI.getStatsSummary(),
-        logbookAPI.getEntries(1, LATEST_ENTRIES_LIMIT),
-        messageAPI
-          .getMessages(1, RECENT_MESSAGES_LIMIT, { isRead: false })
-          .catch(() => ({ data: [] as MessageRecord[], unreadCount: 0 } as const)),
-        feedbackAPI
-          .getFeedback(1, RECENT_FEEDBACK_LIMIT)
-          .catch(() => ({ data: [] as FeedbackRecord[] } as const)),
-        feedbackAPI
-          .getStatsSummary()
-          .catch(() => ({ data: { averageRating: null, totalCount: 0 } } as const)),
-      ]);
+      results;
+
+    if (requestId !== requestIdRef.current) return;
 
     setStats(statsRes.data);
     setLatestEntries(entriesRes.data || []);
     setRecentMessages(recentMsgRes.data || []);
     setRecentFeedback(recentFeedbackRes.data || []);
     setFeedbackStats(feedbackStatsRes.data ?? null);
+    setHasLoaded(true);
 
     if (typeof (recentMsgRes as { unreadCount?: number }).unreadCount === "number") {
       setMessagesUnreadFromDashboard(
@@ -60,13 +81,26 @@ export function useDashboardData(): UseDashboardDataValue {
     }
   }, []);
 
-  return {
-    stats,
-    latestEntries,
-    recentMessages,
-    recentFeedback,
-    feedbackStats,
-    messagesUnreadFromDashboard,
-    loadDashboard,
-  };
+  return useMemo(
+    () => ({
+      stats,
+      latestEntries,
+      recentMessages,
+      recentFeedback,
+      feedbackStats,
+      messagesUnreadFromDashboard,
+      hasLoaded,
+      loadDashboard,
+    }),
+    [
+      stats,
+      latestEntries,
+      recentMessages,
+      recentFeedback,
+      feedbackStats,
+      messagesUnreadFromDashboard,
+      hasLoaded,
+      loadDashboard,
+    ]
+  );
 }

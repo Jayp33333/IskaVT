@@ -1,13 +1,24 @@
-import { ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import type { ReactNode } from "react";
+
+export type StatTrend = "up" | "down" | "neutral";
 
 type StatCardProps = {
   label: string;
   value: ReactNode;
   description: string;
   variant?: "primary" | "default";
-  trend?: "up" | "neutral";
+  trend?: StatTrend;
+  /** Visible trend text, e.g. "+12% vs yesterday" or "In Progress". */
   trendLabel?: string;
+  /** Screen-reader / tooltip text for the trend; defaults to `trendLabel`. */
+  trendDescription?: string;
+};
+
+const TREND_SR_PREFIX: Record<StatTrend, string> = {
+  up: "Up",
+  down: "Down",
+  neutral: "",
 };
 
 export function StatCard({
@@ -17,8 +28,21 @@ export function StatCard({
   variant = "default",
   trend = "neutral",
   trendLabel,
+  trendDescription,
 }: StatCardProps) {
   const isPrimary = variant === "primary";
+
+  const trendColor = isPrimary
+    ? "text-white/80"
+    : trend === "up"
+      ? "text-[#660B05]"
+      : trend === "down"
+        ? "text-amber-700"
+        : "text-gray-500";
+
+  const srText = [TREND_SR_PREFIX[trend], trendDescription ?? trendLabel]
+    .filter(Boolean)
+    .join(": ");
 
   return (
     <div
@@ -36,21 +60,15 @@ export function StatCard({
         >
           {label}
         </span>
-        {trend === "up" && (
+        {trendLabel && (
           <div
-            className={`flex items-center gap-1 text-xs ${
-              isPrimary ? "text-white/80" : "text-[#660B05]"
-            }`}
+            className={`flex items-center gap-1 text-xs ${trendColor}`}
+            title={trendDescription}
           >
-            <ArrowUp className="h-3 w-3" />
-            <span>{trendLabel ?? "Increased"}</span>
-          </div>
-        )}
-        {trend === "neutral" && trendLabel && (
-          <div
-            className={`text-xs ${isPrimary ? "text-white/80" : "text-gray-500"}`}
-          >
-            {trendLabel}
+            {trend === "up" && <ArrowUp className="h-3 w-3" aria-hidden="true" />}
+            {trend === "down" && <ArrowDown className="h-3 w-3" aria-hidden="true" />}
+            <span aria-hidden="true">{trendLabel}</span>
+            <span className="sr-only">{srText}</span>
           </div>
         )}
       </div>

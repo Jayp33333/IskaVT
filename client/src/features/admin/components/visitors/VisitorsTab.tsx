@@ -11,7 +11,6 @@ import {
   AdminCard,
   AdminCardHeader,
   AdminEmptyState,
-  AdminPagination,
   AdminSearchInput,
   PageHeader,
 } from "../common/adminUi";
@@ -39,6 +38,16 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [visitorToDelete, setVisitorToDelete] = useState<VisitorRecord | null>(null);
+
+  const goToPage = async (page: number) => {
+    if (visitors.visitorsLoading) return;
+    try {
+      await visitors.loadVisitors(page);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to load visitors";
+      toast.showToast(msg, "error");
+    }
+  };
 
   const refreshAfterMutation = async () => {
     await Promise.all([
@@ -157,22 +166,36 @@ export function VisitorsTab({ onChangeExportDefault }: Props) {
           <AdminCardHeader
             title="Visitor Records"
             action={
-              <AdminPagination
-                page={visitors.visitorsPage}
-                totalPages={visitors.visitorsTotalPages}
-                onPrev={() =>
-                  visitors.loadVisitors(Math.max(1, visitors.visitorsPage - 1))
-                }
-                onNext={() =>
-                  visitors.loadVisitors(
-                    Math.min(
-                      visitors.visitorsTotalPages,
-                      visitors.visitorsPage + 1
+              // Same layout as AdminPagination, plus a disabled state while a
+              // page is loading.
+              <div className="flex items-center gap-2" aria-busy={visitors.visitorsLoading}>
+                <AdminButton
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => goToPage(Math.max(1, visitors.visitorsPage - 1))}
+                  disabled={visitors.visitorsLoading || visitors.visitorsPage <= 1}
+                >
+                  Prev
+                </AdminButton>
+                <span className="px-2 text-xs text-gray-600 tabular-nums sm:text-sm">
+                  {visitors.visitorsPage} / {visitors.visitorsTotalPages}
+                </span>
+                <AdminButton
+                  size="sm"
+                  variant="secondary"
+                  onClick={() =>
+                    goToPage(
+                      Math.min(visitors.visitorsTotalPages, visitors.visitorsPage + 1)
                     )
-                  )
-                }
-                size="sm"
-              />
+                  }
+                  disabled={
+                    visitors.visitorsLoading ||
+                    visitors.visitorsPage >= visitors.visitorsTotalPages
+                  }
+                >
+                  Next
+                </AdminButton>
+              </div>
             }
           />
 

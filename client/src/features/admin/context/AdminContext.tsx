@@ -28,15 +28,45 @@ export function AdminProvider({ children }: AdminProviderProps) {
   const navigate = useNavigate();
   const [tab, setTab] = useState<AdminTab>("dashboard");
   const [visitorPeriod, setVisitorPeriod] = useState<VisitorPeriod>("daily");
+  // `loading` is only true during the very first load (full-page spinner).
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const toast = useToast();
+  const { showToast } = toast;
   const settings = useAdminSettings();
   const data = useDashboardData();
   const visitors = useVisitors();
-  const messages = useMessages();
-  const feedback = useFeedback();
+
+  const handleMessagesLoadError = useCallback(
+    (err: unknown) => {
+      showToast(
+        err instanceof Error && err.message ? err.message : "Failed to load messages",
+        "error"
+      );
+    },
+    [showToast]
+  );
+  const handleFeedbackLoadError = useCallback(
+    (err: unknown) => {
+      showToast(
+        err instanceof Error && err.message ? err.message : "Failed to load feedback",
+        "error"
+      );
+    },
+    [showToast]
+  );
+
+  // Inbox lists only load while their tab is open; unread badges refresh
+  // separately via refreshUnreadCount.
+  const messages = useMessages({
+    enabled: tab === "messages",
+    onLoadError: handleMessagesLoadError,
+  });
+  const feedback = useFeedback({
+    enabled: tab === "feedback",
+    onLoadError: handleFeedbackLoadError,
+  });
 
   const handleNewActivity = useCallback(
     (incoming: AdminNotification[]) => {
@@ -44,15 +74,16 @@ export function AdminProvider({ children }: AdminProviderProps) {
       const extra = incoming.length - 1;
       const message =
         extra > 0 ? `${newest.title} (and ${extra} more)` : newest.title;
-      toast.showToast(message, "success", TOAST_ACTIVITY_DURATION_MS);
+      showToast(message, "success", TOAST_ACTIVITY_DURATION_MS);
     },
-    [toast]
+    [showToast]
   );
 
   const notifications = useAdminNotifications({
     latestEntries: data.latestEntries,
     recentMessages: data.recentMessages,
     alertsEnabled: settings.settings.alertsEnabled,
+    ready: data.hasLoaded,
     onNewActivity: handleNewActivity,
   });
 

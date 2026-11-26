@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_FEEDBACK_GOOGLE_FORM_URL?: string;
+  readonly VITE_ADMIN_SUPPORT_EMAIL?: string;
+  readonly VITE_ADMIN_SUPPORT_PHONE?: string;
 }
 
 interface ImportMeta {
