@@ -7,32 +7,6 @@ export type AdminSession = AuthUser & {
   authenticatedAt: number;
 };
 
-function getExpectedCredentials() {
-  const username =
-    import.meta.env.VITE_ADMIN_USERNAME ??
-    (import.meta.env.DEV ? "admin" : "");
-  const password =
-    import.meta.env.VITE_ADMIN_PASSWORD ??
-    (import.meta.env.DEV ? "iska-admin" : "");
-
-  return { username, password };
-}
-
-export function isAdminAuthConfigured(): boolean {
-  return true;
-}
-
-export function validateAdminCredentials(
-  username: string,
-  password: string,
-): boolean {
-  const expected = getExpectedCredentials();
-  if (!expected.username || !expected.password) {
-    return false;
-  }
-  return username === expected.username && password === expected.password;
-}
-
 export function getAdminSession(): AdminSession | null {
   const raw = sessionStorage.getItem(ADMIN_AUTH_SESSION_KEY);
   if (!raw) {
