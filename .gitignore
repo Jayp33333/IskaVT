@@ -1,0 +1,3 @@
+# Claude Code: personal settings and session snapshots stay local
+.claude/settings.local.json
+.claude/.session-context.md
